@@ -333,6 +333,17 @@ img, video { max-width: 100%; display: block; }
   font-weight: 600;
   color: var(--ink-soft);
 }
+/* Placeholder shown while the gallery has no photos in it. */
+.gallery-empty {
+  margin: 0;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--ink-soft);
+  background: #fff;
+  border: 1px dashed rgba(0,0,0,0.14);
+  border-radius: var(--radius);
+  word-break: keep-all;
+}
 .gallery-note {
   margin-top: 16px;
   color: var(--ink-soft);
