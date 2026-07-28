@@ -304,6 +304,12 @@ img, video { max-width: 100%; display: block; }
 }
 .program-card h3 { margin: 0 0 10px; color: var(--pink); }
 .program-card p { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+/* Secondary line — a footnote that shouldn't compete with the main description. */
+.program-card .card-note {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  opacity: 0.75;
+}
 
 .gallery { background: var(--paper); }
 .gallery-grid {
