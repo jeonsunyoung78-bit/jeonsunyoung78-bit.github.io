@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#3f6b4a">
+<title>책걷담프로젝트_양산12경</title>
+<style>
+  :root {
+    --navy: #3f6b4a;
+    --navy-light: #588a63;
+    --accent: #8bc34a;
+    --bg: #f2f7f0;
+    --card-bg: #ffffff;
+    --done: #2e7d32;
+    --done-bg: #e8f5e9;
+    --border: #dce8dc;
+    --text: #2a3327;
+    --muted: #708070;
+  }
+  * { box-sizing: border-box; }
+  html {
+    -webkit-text-size-adjust: 100%;  /* 아이폰 가로 전환 시 글자가 커지는 현상 방지 */
+    text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    font-family: "Malgun Gothic", "Apple SD Gothic Neo", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body.no-scroll { overflow: hidden; }   /* 창이 열려 있을 때 뒤 화면이 밀리지 않도록 */
+  button, .p-btn, .photo-input-wrap, .spot-photo-box, .spot-main {
+    touch-action: manipulation;          /* 아이폰에서 두 번 탭하면 확대되는 지연 제거 */
+  }
+  img { max-width: 100%; }
+  header {
+    background: var(--navy);
+    color: #fff;
+    padding: 28px 20px 22px;
+    padding-top: max(28px, env(safe-area-inset-top));
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .header-bg svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .header-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(63,107,74,0.6), rgba(88,138,99,0.35));
+    z-index: 0;
+  }
+  .header-inner { position: relative; z-index: 1; }
+  header h1 { margin: 0 0 6px; font-size: clamp(19px, 5vw, 28px); letter-spacing: 0.5px; word-break: keep-all; }
+  header p { margin: 0; font-size: clamp(12px, 3.2vw, 15px); color: #e3efe4; word-break: keep-all; }
+
+  .progress-wrap {
+    max-width: 760px;
+    margin: -20px auto 0;
+    padding: 0 16px;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+  .progress-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(15,42,74,0.12);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .progress-track {
+    flex: 1;
+    position: relative;
+    padding-top: 20px;
+  }
+  .progress-bar-outer {
+    height: 14px;
+    background: #e6ebf1;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--navy));
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .progress-runner {
+    position: absolute;
+    top: -4px;
+    left: 0%;
+    width: 30px;
+    height: 30px;
+    transform: translateX(-50%);
+    transition: left 0.4s ease;
+  }
+  .progress-text { font-size: 14px; font-weight: 700; color: var(--navy); white-space: nowrap; }
+
+  .participant-bar {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(15,42,74,0.08);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .participant-label { font-size: 12px; font-weight: 700; color: var(--navy); white-space: nowrap; }
+  .participant-bar select {
+    flex: 1;
+    min-width: 90px;
+    padding: 8px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 16px;   /* 16px 미만이면 아이폰에서 선택할 때 화면이 확대됨 */
+    font-family: inherit;
+    color: var(--text);
+    background: #fff;
+    min-height: 40px;
+  }
+  .participant-bar .p-btn {
+    background: #eef3f9;
+    border: 1px solid var(--border);
+    color: var(--navy);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    min-height: 40px;
+  }
+  .participant-bar .p-btn:hover { background: #dfe9f5; }
+
+  .dash-list { display: flex; flex-direction: column; gap: 10px; }
+  .dash-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .dash-row:last-child { border-bottom: none; }
+  .dash-pct {
+    width: 44px;
+    text-align: right;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    flex-shrink: 0;
+  }
+  .dash-info { flex: 1; min-width: 0; }
+  .dash-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .dash-bar-outer {
+    height: 8px;
+    background: #e6ebf1;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .dash-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--navy));
+  }
+  .dash-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .toolbar {
+    max-width: 760px;
+    margin: 14px auto 0;
+    padding: 0 16px;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .toolbar button {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--navy);
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    min-height: 40px;
+  }
+  .toolbar button:hover { background: #eef3f9; }
+  @media (max-width: 560px) {
+    /* 좁은 화면에서는 버튼을 2줄로 고르게 채워 누르기 쉽게 */
+    .toolbar { justify-content: stretch; }
+    .toolbar button { flex: 1 1 calc(50% - 8px); }
+  }
+
+  main {
+    max-width: 760px;
+    margin: 18px auto 60px;
+    padding: 0 16px;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+  }
+  @media (max-width: 560px) {
+    main { grid-template-columns: 1fr; }
+  }
+  /* 태블릿 가로 · PC에서는 화면을 더 넓게 쓰고 3열로 */
+  @media (min-width: 1024px) {
+    .progress-wrap, .toolbar, main { max-width: 1100px; }
+    main { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .spot-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    transition: box-shadow 0.15s, transform 0.15s;
+    position: relative;
+  }
+  .spot-card:hover { box-shadow: 0 4px 12px rgba(15,42,74,0.12); transform: translateY(-1px); }
+  .spot-card.done { border-color: var(--done); background: var(--done-bg); }
+
+  .spot-main { flex: 1; min-width: 0; cursor: pointer; }
+
+  .spot-photo-box {
+    width: 84px;
+    height: 84px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .spot-photo-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .spot-photo-box.empty {
+    border: 2px dashed var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    background: #fafbfc;
+    color: var(--muted);
+  }
+  .spot-photo-box.empty:hover { border-color: var(--accent); background: #eef3f9; }
+  .spot-photo-box .date-stamp {
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+
+  .spot-num {
+    display: inline-block;
+    width: 24px; height: 24px;
+    background: var(--navy);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 12px;
+    text-align: center;
+    line-height: 24px;
+    margin-right: 8px;
+  }
+  .spot-card.done .spot-num { background: var(--done); }
+
+  .spot-cat {
+    font-size: 11px;
+    color: var(--muted);
+    background: #eef3f9;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+  .spot-name { font-size: 16px; font-weight: 700; margin: 4px 0 4px; }
+  .spot-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  .spot-thumb-wrap {
+    position: relative;
+    margin-top: 8px;
+  }
+  .spot-thumb {
+    width: 100%;
+    height: 110px;
+    border-radius: 6px;
+    object-fit: cover;
+    display: block;
+  }
+  .date-stamp {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    background: rgba(0,0,0,0.55);
+    color: #ffb136;
+    font-family: "Courier New", monospace;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .badge-done {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-size: 11px;
+    color: var(--done);
+    font-weight: 700;
+  }
+  .badge-date {
+    font-size: 11px;
+    color: var(--navy);
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  /* Modal */
+  .overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(15,42,74,0.55);
+    z-index: 50;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 30px 14px;
+    padding-top: max(30px, env(safe-area-inset-top));
+    padding-bottom: max(30px, env(safe-area-inset-bottom));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .overlay.active { display: flex; }
+  .modal {
+    background: #fff;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 12px;
+    padding: 20px;
+    max-height: 85vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* 아이폰 사파리는 주소창 때문에 vh가 부정확 — dvh를 쓸 수 있으면 그것으로 */
+  @supports (height: 100dvh) {
+    .modal { max-height: 85dvh; }
+  }
+  @media (min-width: 768px) {
+    .modal { max-width: 560px; }
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .modal-header h2 { margin: 0; font-size: 18px; color: var(--navy); }
+  .modal-header .close-btn {
+    background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted);
+  }
+  .modal-cat { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .modal label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 12px 0 4px;
+  }
+  .modal input[type="date"], .modal textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 16px;   /* 16px 미만이면 아이폰에서 입력할 때 화면이 확대됨 */
+    font-family: inherit;
+    color: var(--text);
+    background: #fff;
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 44px;
+  }
+  .modal textarea { resize: vertical; min-height: 84px; }
+  .modal-header .close-btn { min-width: 44px; min-height: 44px; }
+
+  .photo-btn-row {
+    display: flex;
+    gap: 8px;
+  }
+  .photo-btn-row .photo-input-wrap { flex: 1; }
+  .photo-input-wrap {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 13px;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: keep-all;
+  }
+  .photo-input-wrap:hover { border-color: var(--accent); color: var(--accent); }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .photo-grid .ph-item { position: relative; }
+  .photo-grid img {
+    width: 100%; height: 80px; object-fit: cover; border-radius: 6px; cursor: pointer; display: block;
+  }
+  .photo-grid .del-x {
+    position: absolute; top: -6px; right: -6px;
+    background: #d9534f; color: #fff; border: none;
+    width: 26px; height: 26px; border-radius: 50%;
+    font-size: 13px; cursor: pointer; line-height: 24px;
+    padding: 0;
+    z-index: 2;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .photo-grid .date-stamp {
+    font-size: 9px;
+    padding: 1px 4px;
+    right: 4px;
+    bottom: 4px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .btn {
+    flex: 1;
+    padding: 12px 8px;
+    border: none;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 46px;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--navy); color: #fff; }
+  .btn-secondary { background: #eef3f9; color: var(--navy); }
+  .btn-danger { background: #fdeceb; color: #c0392b; }
+
+  /* lightbox */
+  .lightbox {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .lightbox.active { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 88vh; border-radius: 6px; object-fit: contain; }
+  @supports (height: 100dvh) {
+    .lightbox img { max-height: 88dvh; }
+  }
+
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 20px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));  /* 아이폰 하단 홈바 여백 */
+    word-break: keep-all;
+  }
+  .footer-logo {
+    display: block;
+    max-width: 180px;
+    height: auto;
+    margin: 0 auto 8px;
+    opacity: 0.9;
+  }
+  .footer-brand {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .footer-contact {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<div id="appContent">
+
+<header>
+  <div class="header-bg" id="headerBg"></div>
+  <div class="header-overlay"></div>
+  <div class="header-inner">
+    <h1>🏞 책걷담프로젝트_양산12경</h1>
+    <p>양산의 아름다운 12곳을 방문하고 사진과 기록을 남겨보세요</p>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="participant-bar">
+    <span class="participant-label">👤 참가자</span>
+    <select id="participantSelect" onchange="onParticipantChange(this.value)"></select>
+    <button class="p-btn" onclick="promptAddParticipant()">➕ 추가</button>
+    <button class="p-btn" onclick="promptRemoveParticipant()">🗑 삭제</button>
+  </div>
+  <div class="progress-card">
+    <div class="progress-track">
+      <div class="progress-bar-outer">
+        <div class="progress-bar-inner" id="progressBar"></div>
+      </div>
+      <div class="progress-runner" id="progressRunner"></div>
+    </div>
+    <div class="progress-text" id="progressText">0 / 12 완료</div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <button onclick="openDashboard()">📊 현황판</button>
+  <button onclick="exportPrintView()">🖨 인쇄용 보기</button>
+  <button onclick="exportData()">💾 백업 내보내기</button>
+  <button onclick="document.getElementById('importFile').click()">📂 불러오기</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+  <button onclick="resetAll()">🗑 현재 참가자 초기화</button>
+</div>
+
+<main id="grid"></main>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<div class="overlay" id="dashboardOverlay">
+  <div class="modal" id="dashboardModal"></div>
+</div>
+
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="">
+</div>
+
+<footer>
+  <div class="footer-brand">초록테라스교육연구소</div>
+  <div>양산12경 방문 기록 · 사진과 메모는 이 브라우저에 자동 저장됩니다</div>
+  <div class="footer-contact">문의사항 : jsy7808@naver.com</div>
+</footer>
+
+</div>
+
+<script>
+// 오리지널 캐릭터 (토끼) - 양산프렌즈와 무관한 자체 제작 캐릭터
+const RABBIT_SVG = `
+<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="36" cy="16" rx="9" ry="22" fill="#ffffff" stroke="#e3c8d8" stroke-width="2"/>
+  <ellipse cx="64" cy="16" rx="9" ry="22" fill="#ffffff" stroke="#e3c8d8" stroke-width="2"/>
+  <ellipse cx="36" cy="18" rx="4" ry="14" fill="#f6b8cf"/>
+  <ellipse cx="64" cy="18" rx="4" ry="14" fill="#f6b8cf"/>
+  <ellipse cx="50" cy="58" rx="34" ry="30" fill="#ffffff" stroke="#e3c8d8" stroke-width="2"/>
+  <circle cx="35" cy="52" r="5" fill="#3a2a1a"/>
+  <circle cx="65" cy="52" r="5" fill="#3a2a1a"/>
+  <ellipse cx="50" cy="62" rx="5" ry="4" fill="#f28fae"/>
+  <path d="M42 68 Q50 74 58 68" stroke="#3a2a1a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="20" cy="60" r="6" fill="#ffd9e6"/>
+  <circle cx="80" cy="60" r="6" fill="#ffd9e6"/>
+</svg>`;
+
+// 양산천 오리지널 일러스트 (사진 아님, 자체 제작)
+const RIVER_SVG = `
+<svg viewBox="0 0 800 220" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a4d78"/>
+      <stop offset="100%" stop-color="#3b6ea5"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="800" height="220" fill="url(#skyGrad)"/>
+  <circle cx="670" cy="55" r="34" fill="#ffe9b3" opacity="0.85"/>
+  <path d="M0 90 Q100 40 220 75 T460 60 T800 85 V0 H0 Z" fill="#2f5a86" opacity="0.55"/>
+  <path d="M0 110 Q120 65 260 95 T520 85 T800 105 V0 H0 Z" fill="#254a70" opacity="0.55"/>
+  <path d="M0 150 C 80 130, 140 165, 220 148 S 360 132, 440 150 S 580 168, 660 150 S 760 130, 800 148 V220 H0 Z" fill="#bcd9e8"/>
+  <path d="M0 160 C 90 145, 150 172, 230 158 S 370 145, 450 160 S 590 175, 670 158 S 770 142, 800 158 V220 H0 Z" fill="#e7f3f8" opacity="0.85"/>
+  <path d="M40 180 q6 -14 12 0" stroke="#3d6b4a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M60 182 q6 -16 12 0" stroke="#3d6b4a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M700 178 q6 -14 12 0" stroke="#3d6b4a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M720 181 q6 -16 12 0" stroke="#3d6b4a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="150" cy="60" r="10" fill="#ffffff" opacity="0.7"/>
+  <circle cx="168" cy="55" r="13" fill="#ffffff" opacity="0.7"/>
+  <circle cx="188" cy="62" r="9" fill="#ffffff" opacity="0.7"/>
+</svg>`;
+
+const SPOTS = [
+  { id: 1, name: "영축산 통도사", cat: "사찰", desc: "삼보사찰 중 하나인 불보사찰, 유네스코 세계유산" },
+  { id: 2, name: "천성산", cat: "산", desc: "억새와 습지, 사계절 트레킹 명소" },
+  { id: 3, name: "내원사 계곡", cat: "계곡", desc: "맑은 물과 울창한 숲의 힐링 계곡" },
+  { id: 4, name: "홍룡폭포", cat: "폭포", desc: "천성산 자락의 시원한 폭포" },
+  { id: 5, name: "배내골", cat: "계곡·휴양", desc: "청정 자연 속 캠핑·휴양 명소" },
+  { id: 6, name: "천태산", cat: "산", desc: "조용한 산행과 전망을 즐길 수 있는 곳" },
+  { id: 7, name: "오봉산 임경대", cat: "산·전망", desc: "낙동강을 내려다보는 절경 전망대" },
+  { id: 8, name: "대운산 자연휴양림", cat: "휴양림", desc: "울창한 숲속 산림욕과 산책" },
+  { id: 9, name: "황산공원", cat: "공원", desc: "사계절 가족 나들이 명소, 낙동강변 공원" },
+  { id: 10, name: "법기수원지", cat: "수변", desc: "히말라야삼나무 숲길과 저수지 풍경의 치유 명소" },
+  { id: 11, name: "양산타워", cat: "전망대", desc: "야경과 전망이 아름다운 지역 랜드마크" },
+  { id: 12, name: "가야진사", cat: "문화유적", desc: "가야진용신제가 전승되는 역사 문화 명소" }
+];
+
+const OLD_STORAGE_KEY = "yangsan12_records";
+const STORAGE_KEY = "yangsan12_data_v2";
+let appData = { participants: [], current: null, records: {} };
+let currentSpotId = null;
+
+function currentRecords() {
+  if (!appData.records[appData.current]) appData.records[appData.current] = {};
+  return appData.records[appData.current];
+}
+
+function loadData() {
+  let loaded = null;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) loaded = JSON.parse(raw);
+  } catch (e) {
+    loaded = null;
+  }
+
+  if (loaded && loaded.participants && loaded.participants.length > 0) {
+    appData = loaded;
+  } else {
+    // 이전 버전(단일 사용자) 데이터가 있으면 첫 참가자로 이전
+    let migrated = {};
+    try {
+      const oldRaw = localStorage.getItem(OLD_STORAGE_KEY);
+      if (oldRaw) migrated = JSON.parse(oldRaw);
+    } catch (e) {
+      migrated = {};
+    }
+    appData = { participants: ["참가자1"], current: "참가자1", records: { "참가자1": migrated } };
+  }
+
+  if (!appData.records) appData.records = {};
+  if (!appData.participants || appData.participants.length === 0) appData.participants = ["참가자1"];
+  appData.participants.forEach(p => { if (!appData.records[p]) appData.records[p] = {}; });
+  if (!appData.current || !appData.participants.includes(appData.current)) {
+    appData.current = appData.participants[0];
+  }
+  saveData();
+}
+
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    return true;
+  } catch (e) {
+    alert("저장 공간이 가득 찼습니다.\n\n💾 백업 내보내기로 기록을 저장한 뒤, 오래된 사진을 몇 장 지우고 다시 시도해주세요.");
+    return false;
+  }
+}
+
+// 사진을 저장 전에 줄여서 용량을 확보한다 (원본 그대로 넣으면 localStorage 한도를 금방 넘김)
+const PHOTO_MAX_DIM = 1280;
+const PHOTO_QUALITY = 0.72;
+
+// 압축에 실패한 사진은 1.5MB 미만일 때만 원본 그대로 저장한다
+// (너무 크면 저장소를 통째로 잡아먹고 화면에도 안 보이므로 아예 막는다)
+function fallbackPhoto(original) {
+  return original.length < 1.5 * 1024 * 1024 ? original : null;
+}
+
+function compressPhoto(file) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const original = e.target.result;
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const scale = Math.min(1, PHOTO_MAX_DIM / Math.max(img.width, img.height));
+          const w = Math.round(img.width * scale);
+          const h = Math.round(img.height * scale);
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL("image/jpeg", PHOTO_QUALITY));
+        } catch (err) {
+          resolve(fallbackPhoto(original));
+        }
+      };
+      // 아이폰 HEIC 등 브라우저가 못 여는 형식일 때
+      img.onerror = () => resolve(fallbackPhoto(original));
+      img.src = original;
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderParticipantSelect() {
+  const sel = document.getElementById("participantSelect");
+  sel.innerHTML = appData.participants.map(p =>
+    `<option value="${p}" ${p === appData.current ? "selected" : ""}>${p}</option>`
+  ).join("");
+}
+
+function onParticipantChange(name) {
+  appData.current = name;
+  saveData();
+  renderGrid();
+}
+
+function promptAddParticipant() {
+  const name = prompt("추가할 참가자 이름을 입력하세요");
+  if (!name) return;
+  const trimmed = name.trim();
+  if (!trimmed) return;
+  if (appData.participants.includes(trimmed)) {
+    alert("이미 있는 이름입니다.");
+    return;
+  }
+  appData.participants.push(trimmed);
+  appData.records[trimmed] = {};
+  appData.current = trimmed;
+  saveData();
+  renderParticipantSelect();
+  renderGrid();
+}
+
+function promptRemoveParticipant() {
+  if (appData.participants.length <= 1) {
+    alert("최소 1명의 참가자는 있어야 합니다.");
+    return;
+  }
+  if (!confirm(`'${appData.current}' 참가자와 그 기록을 삭제할까요?`)) return;
+  const name = appData.current;
+  appData.participants = appData.participants.filter(p => p !== name);
+  delete appData.records[name];
+  appData.current = appData.participants[0];
+  saveData();
+  renderParticipantSelect();
+  renderGrid();
+}
+
+function openDashboard() {
+  const input = prompt("관리자 비밀번호를 입력하세요");
+  if (input === null) return;
+  if (input !== pwConfig.adminPw) {
+    alert("관리자 비밀번호가 올바르지 않습니다.");
+    return;
+  }
+  openDashboardReal();
+}
+
+function openDashboardReal() {
+  const rows = appData.participants.map(p => {
+    const recs = appData.records[p] || {};
+    const count = SPOTS.filter(s => recs[s.id] && recs[s.id].visited).length;
+    const pct = Math.round(count / SPOTS.length * 100);
+    return { name: p, count, pct };
+  });
+
+  const modal = document.getElementById("dashboardModal");
+  modal.innerHTML = `
+    <div class="modal-header">
+      <h2>📊 미션 현황판</h2>
+      <button class="close-btn" onclick="closeDashboard()">✕</button>
+    </div>
+    <div class="dash-list">
+      ${rows.map(r => `
+        <div class="dash-row">
+          <div class="dash-info">
+            <div class="dash-name">${r.name}</div>
+            <div class="dash-bar-outer"><div class="dash-bar-inner" style="width:${r.pct}%"></div></div>
+          </div>
+          <div class="dash-pct">${r.pct}%</div>
+          <div class="dash-count">${r.count}/${SPOTS.length}</div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+  document.getElementById("dashboardOverlay").classList.add("active");
+  syncScrollLock();
+}
+
+function closeDashboard() {
+  document.getElementById("dashboardOverlay").classList.remove("active");
+  syncScrollLock();
+}
+
+function renderGrid() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  let doneCount = 0;
+  const records = currentRecords();
+
+  SPOTS.forEach(spot => {
+    const rec = records[spot.id];
+    const isDone = !!(rec && rec.visited);
+    if (isDone) doneCount++;
+
+    const card = document.createElement("div");
+    card.className = "spot-card" + (isDone ? " done" : "");
+
+    const hasPhoto = !!(rec && rec.photos && rec.photos.length > 0);
+
+    card.innerHTML = `
+      ${isDone ? '<div class="badge-done">🐾 완료</div>' : ""}
+      <div class="spot-main" onclick="openModal(${spot.id})">
+        <div class="spot-cat">${spot.cat}</div>
+        <div class="spot-name"><span class="spot-num">${spot.id}</span>${spot.name}</div>
+        <div class="spot-desc">${spot.desc}</div>
+        ${rec && rec.date ? `<div class="badge-date">방문일: ${rec.date}</div>` : ""}
+      </div>
+      <div class="spot-photo-box ${hasPhoto ? "" : "empty"}" onclick="handlePhotoBoxClick(event, ${spot.id})">
+        ${hasPhoto
+          ? `<img src="${rec.photos[0]}">${rec.date ? `<div class="date-stamp">${formatStampDate(rec.date)}</div>` : ""}`
+          : `📷`
+        }
+      </div>
+      <input type="file" id="quick_photo_${spot.id}" accept="image/*" style="display:none" onchange="quickAddPhoto(event, ${spot.id})">
+    `;
+    grid.appendChild(card);
+  });
+
+  const pct = Math.round((doneCount / SPOTS.length) * 100);
+  document.getElementById("progressBar").style.width = pct + "%";
+  document.getElementById("progressText").textContent = `${doneCount} / ${SPOTS.length} 완료`;
+  const runner = document.getElementById("progressRunner");
+  if (runner) {
+    runner.style.left = pct + "%";
+    if (!runner.dataset.filled) {
+      runner.innerHTML = RABBIT_SVG;
+      runner.dataset.filled = "1";
+    }
+  }
+}
+
+function handlePhotoBoxClick(event, spotId) {
+  event.stopPropagation();
+  const rec = currentRecords()[spotId];
+  if (rec && rec.photos && rec.photos.length > 0) {
+    openLightbox(rec.photos[0]);
+  } else {
+    document.getElementById("quick_photo_" + spotId).click();
+  }
+}
+
+function quickAddPhoto(event, spotId) {
+  const file = event.target.files[0];
+  event.target.value = "";
+  if (!file) return;
+  compressPhoto(file).then(dataUrl => {
+    if (!dataUrl) {
+      alert("사진을 읽을 수 없습니다. 다시 시도해주세요.");
+      return;
+    }
+    const records = currentRecords();
+    const hadRecord = !!records[spotId];
+    const rec = records[spotId] || { visited: false, date: "", memo: "", photos: [] };
+    rec.photos = rec.photos || [];
+    const prevPhotos = rec.photos.slice();
+    const prevVisited = rec.visited;
+    const prevDate = rec.date;
+    rec.photos.unshift(dataUrl);
+    rec.visited = true;
+    if (!rec.date) {
+      const today = new Date();
+      rec.date = today.toISOString().slice(0, 10);
+    }
+    records[spotId] = rec;
+    if (!saveData()) {
+      // 저장 실패 시 방금 추가한 사진을 되돌려 화면과 저장 내용을 일치시킨다
+      if (hadRecord) {
+        rec.photos = prevPhotos;
+        rec.visited = prevVisited;
+        rec.date = prevDate;
+        records[spotId] = rec;
+      } else {
+        delete records[spotId];
+      }
+    }
+    renderGrid();
+  });
+}
+
+function openModal(spotId) {
+  currentSpotId = spotId;
+  const spot = SPOTS.find(s => s.id === spotId);
+  const rec = currentRecords()[spotId] || { visited: false, date: "", memo: "", photos: [] };
+
+  const modal = document.getElementById("modal");
+  modal.innerHTML = `
+    <div class="modal-header">
+      <h2>${spot.id}. ${spot.name}</h2>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-cat">${spot.cat} · ${spot.desc}</div>
+
+    <label>방문 날짜</label>
+    <input type="date" id="f_date" value="${rec.date || ""}" onchange="renderPhotoGrid(tempPhotos)">
+
+    <label>메모</label>
+    <textarea id="f_memo" placeholder="다녀온 소감을 기록해보세요">${rec.memo || ""}</textarea>
+
+    <label>사진</label>
+    <div class="photo-btn-row">
+      <div class="photo-input-wrap" onclick="document.getElementById('f_selfie').click()">
+        🤳 카메라로 촬영
+      </div>
+      <div class="photo-input-wrap" onclick="document.getElementById('f_photo').click()">
+        🖼 앨범에서 선택
+      </div>
+    </div>
+    <input type="file" id="f_selfie" accept="image/*" capture="user" style="display:none" onchange="handlePhotoUpload(event)">
+    <input type="file" id="f_photo" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(event)">
+    <div class="photo-grid" id="photoGrid"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">취소</button>
+      <button class="btn btn-danger" onclick="clearSpot(${spotId})">기록 삭제</button>
+      <button class="btn btn-primary" onclick="saveSpot(${spotId})">저장</button>
+    </div>
+  `;
+
+  renderPhotoGrid(rec.photos || []);
+  document.getElementById("overlay").classList.add("active");
+  syncScrollLock();
+}
+
+let tempPhotos = [];
+
+function formatStampDate(dateStr) {
+  if (!dateStr) return "";
+  const parts = dateStr.split("-");
+  if (parts.length !== 3) return dateStr;
+  return `${parts[0]}.${parts[1]}.${parts[2]}`;
+}
+
+function renderPhotoGrid(photos) {
+  tempPhotos = photos.slice();
+  const g = document.getElementById("photoGrid");
+  g.innerHTML = "";
+  const dateVal = document.getElementById("f_date") ? document.getElementById("f_date").value : "";
+  tempPhotos.forEach((p, idx) => {
+    const item = document.createElement("div");
+    item.className = "ph-item";
+    item.innerHTML = `
+      <img src="${p}" onclick="openLightbox('${p}')">
+      ${dateVal ? `<div class="date-stamp">${formatStampDate(dateVal)}</div>` : ""}
+      <button class="del-x" onclick="removePhoto(${idx}, event)">✕</button>
+    `;
+    g.appendChild(item);
+  });
+}
+
+function removePhoto(idx, evt) {
+  evt.stopPropagation();
+  tempPhotos.splice(idx, 1);
+  renderPhotoGrid(tempPhotos);
+}
+
+function handlePhotoUpload(event) {
+  const files = Array.from(event.target.files);
+  event.target.value = "";
+  if (files.length === 0) return;
+  Promise.all(files.map(compressPhoto)).then(results => {
+    let failed = 0;
+    results.forEach(dataUrl => {
+      if (dataUrl) tempPhotos.push(dataUrl); else failed++;
+    });
+    renderPhotoGrid(tempPhotos);
+    if (failed > 0) {
+      alert(failed + "장은 불러오지 못했습니다.\n다른 사진으로 다시 시도해주세요.");
+    }
+  });
+}
+
+function saveSpot(spotId) {
+  const date = document.getElementById("f_date").value;
+  const memo = document.getElementById("f_memo").value;
+  const records = currentRecords();
+  const prevRec = records[spotId];
+  records[spotId] = {
+    visited: !!(date || memo || tempPhotos.length > 0),
+    date: date,
+    memo: memo,
+    photos: tempPhotos
+  };
+  if (!saveData()) {
+    // 저장 실패 시 이전 기록으로 되돌리고, 사진을 지울 수 있도록 창을 열어둔다
+    if (prevRec) records[spotId] = prevRec; else delete records[spotId];
+    renderGrid();
+    return;
+  }
+  renderGrid();
+  closeModal();
+}
+
+function clearSpot(spotId) {
+  if (!confirm("이 장소의 기록을 삭제할까요?")) return;
+  delete currentRecords()[spotId];
+  saveData();
+  renderGrid();
+  closeModal();
+}
+
+function closeModal() {
+  document.getElementById("overlay").classList.remove("active");
+  currentSpotId = null;
+  tempPhotos = [];
+  syncScrollLock();
+}
+
+function openLightbox(src) {
+  document.getElementById("lightboxImg").src = src;
+  document.getElementById("lightbox").classList.add("active");
+  syncScrollLock();
+}
+function closeLightbox() {
+  document.getElementById("lightbox").classList.remove("active");
+  syncScrollLock();
+}
+
+// 창이 하나라도 열려 있으면 뒤 화면 스크롤을 잠근다 (아이폰에서 배경이 같이 밀리는 문제 방지)
+function syncScrollLock() {
+  const anyOpen = !!document.querySelector(".overlay.active, .lightbox.active");
+  document.body.classList.toggle("no-scroll", anyOpen);
+}
+
+function resetAll() {
+  if (!confirm(`'${appData.current}' 참가자의 방문 기록과 사진을 모두 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)) return;
+  appData.records[appData.current] = {};
+  saveData();
+  renderGrid();
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(appData, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "양산12경_기록_백업.json";
+  a.rel = "noopener";
+  // 아이폰 사파리는 문서에 붙어 있지 않은 링크나 곧바로 해제된 주소로는 저장이 안 되는 경우가 있다
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 1500);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data && data.participants && data.records) {
+        appData = data;
+      } else {
+        // 이전 버전 형식(단일 사용자 기록)일 경우 참가자1로 불러오기
+        appData = { participants: ["참가자1"], current: "참가자1", records: { "참가자1": data } };
+      }
+      saveData();
+      renderParticipantSelect();
+      renderGrid();
+      alert("불러오기 완료!");
+    } catch (err) {
+      alert("파일을 읽을 수 없습니다. 올바른 백업 파일인지 확인해주세요.");
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = "";
+}
+
+function exportPrintView() {
+  const win = window.open("", "_blank");
+  if (!win) {
+    // 아이폰 사파리에서 팝업이 차단된 경우
+    alert("인쇄용 보기 창이 차단되었습니다.\n브라우저 설정에서 '팝업 차단'을 해제한 뒤 다시 눌러주세요.");
+    return;
+  }
+  const records = currentRecords();
+  let doneSpots = SPOTS.filter(s => records[s.id] && records[s.id].visited);
+  let html = `
+    <html><head><meta charset="UTF-8"><title>책걷담프로젝트_양산12경 방문 기록</title>
+    <style>
+      body{font-family:sans-serif;padding:20px;color:#22303f;}
+      h1{color:#3f6b4a;border-bottom:3px solid #3f6b4a;padding-bottom:10px;}
+      .item{margin-bottom:30px;page-break-inside:avoid;border-bottom:1px solid #ddd;padding-bottom:20px;}
+      .item h2{color:#3f6b4a;margin-bottom:4px;}
+      .meta{color:#6b7a8d;font-size:13px;margin-bottom:8px;}
+      .memo{margin-bottom:10px;white-space:pre-wrap;}
+      .photos img{width:180px;height:130px;object-fit:cover;margin:4px;border-radius:6px;}
+    </style></head><body>
+    <h1>🏞 ${appData.current}님의 양산12경 방문 기록 (${doneSpots.length}/${SPOTS.length})</h1>
+  `;
+  if (doneSpots.length === 0) {
+    html += "<p>아직 방문 기록이 없습니다.</p>";
+  }
+  doneSpots.forEach(spot => {
+    const rec = records[spot.id];
+    html += `<div class="item">
+      <h2>${spot.id}. ${spot.name}</h2>
+      <div class="meta">${spot.cat} ${rec.date ? "· 방문일: " + rec.date : ""}</div>
+      ${rec.memo ? `<div class="memo">${rec.memo.replace(/</g,"&lt;")}</div>` : ""}
+      <div class="photos">${(rec.photos||[]).map(p => `<img src="${p}">`).join("")}</div>
+    </div>`;
+  });
+  html += "</body></html>";
+  win.document.write(html);
+  win.document.close();
+}
+
+// ===== 비밀번호 (입장 / 관리자) =====
+const PW_STORAGE_KEY = "yangsan12_pw";
+let pwConfig = { adminPw: "" };
+
+function loadPwConfig() {
+  try {
+    const raw = localStorage.getItem(PW_STORAGE_KEY);
+    if (raw) {
+      pwConfig = JSON.parse(raw);
+    }
+  } catch (e) {
+    pwConfig = { adminPw: "" };
+  }
+}
+
+function savePwConfig() {
+  // 저장소가 꽉 차 있어도 앱 자체는 떠야 하므로 실패를 삼킨다
+  try {
+    localStorage.setItem(PW_STORAGE_KEY, JSON.stringify(pwConfig));
+  } catch (e) {}
+}
+
+function initApp() {
+  loadPwConfig();
+  if (pwConfig.adminPw !== "7749") {
+    pwConfig = { adminPw: "7749" };
+    savePwConfig();
+  }
+  startApp();
+}
+
+function startApp() {
+  loadData();
+  renderParticipantSelect();
+  document.getElementById("headerBg").innerHTML = RIVER_SVG;
+  renderGrid();
+}
+
+initApp();
+</script>
+</body>
+</html>
