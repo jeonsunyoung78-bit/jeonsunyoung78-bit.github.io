@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>뇌 성장 리포트 만들기 · 초록테라스교육연구소</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#3f6b4a; --forest-2:#588a63; --leaf:#8bc34a; --mint:#e8f1e4; --mint-2:#d4e6cf;
+  --cream:#f7f5ee; --paper:#ffffff; --ink:#2a3327; --muted:#6f7c6c; --line:#dfe6da;
+  --warm:#d9923f; --warm-bg:#fbf0e2; --sky:#5e93b0; --sky-bg:#e6f0f5; --coral:#cf7d67; --coral-bg:#f8e8e3;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--cream);color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+.serif{font-family:"Gowun Batang",serif}
+
+/* ───────── 앱 화면 ───────── */
+.topbar{background:var(--forest);color:#fff;padding:14px 16px}
+.topbar-in{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.topbar h1{margin:0;font-size:18px;font-weight:700}
+.topbar small{opacity:.8;font-size:12px}
+.steps{margin-left:auto;display:flex;gap:6px}
+.steps button{border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;border-radius:999px;padding:5px 14px;font-size:13px;cursor:pointer}
+.steps button.on{background:#fff;color:var(--forest);font-weight:700}
+main.app{max-width:980px;margin:0 auto;padding:20px 16px 60px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+.card h2{margin:0 0 4px;font-size:17px;color:var(--forest)}
+.card .desc{margin:0 0 14px;color:var(--muted);font-size:13.5px}
+.grid{display:grid;gap:12px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g5{grid-template-columns:repeat(5,1fr)}
+.currtag{display:inline-block;background:var(--mint);color:var(--forest);font-weight:700;border-radius:999px;padding:2px 10px;font-size:12.5px}
+.kb h3{margin:18px 0 8px;font-size:15px;color:var(--forest)}
+.kb table{width:100%;border-collapse:collapse;font-size:13.5px}
+.kb th,.kb td{border:1px solid var(--line);padding:7px 9px;vertical-align:top;text-align:left}
+.kb th{background:var(--mint);color:var(--forest);font-weight:700;white-space:nowrap}
+.kb ul{margin:0;padding-left:16px}
+.kb .sub{color:var(--muted);font-size:12.5px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+label.f input,label.f textarea,label.f select{border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:#fbfcfa;color:var(--ink);font-size:15px;min-width:0}
+label.f textarea{resize:vertical;min-height:80px;line-height:1.55}
+input:focus,textarea:focus{outline:2px solid var(--leaf);outline-offset:0;border-color:var(--leaf)}
+.btn{border:0;border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer;background:var(--forest);color:#fff;font-size:14.5px}
+.btn:hover{background:var(--forest-2)}
+.btn.ghost{background:var(--mint);color:var(--forest)}
+.btn.ghost:hover{background:var(--mint-2)}
+.btn.warm{background:var(--warm)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end}
+.note{font-size:12.5px;color:var(--muted)}
+.ok{color:var(--forest);font-weight:700}
+.err{color:#b4533a;font-weight:700}
+
+table.mt{width:100%;border-collapse:collapse}
+table.mt th{font-size:12px;color:var(--muted);font-weight:500;text-align:left;padding:4px 6px;border-bottom:1px solid var(--line)}
+table.mt td{padding:6px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.mt td.nm{font-weight:700;white-space:nowrap}
+table.mt input{width:74px;border:1px solid var(--line);border-radius:8px;padding:7px 8px;text-align:center;background:#fbfcfa}
+table.mt .st{font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.st.low{background:var(--warm-bg);color:#a0621c}
+.st.normal{background:var(--mint);color:var(--forest)}
+.st.high{background:var(--sky-bg);color:#3a6a84}
+.st.good{background:var(--mint);color:var(--forest)}
+.st.none{background:#eee;color:#999}
+.dom{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.dom .box{border:1px dashed var(--line);border-radius:10px;padding:10px 12px}
+.dom .box b{display:block;font-size:13.5px;margin-bottom:6px}
+.dom input{width:64px;border:1px solid var(--line);border-radius:8px;padding:6px;text-align:center;background:#fbfcfa}
+.saved{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--mint);border-radius:999px;padding:5px 6px 5px 12px;font-size:13px}
+.chip button{border:0;background:transparent;cursor:pointer;color:var(--forest);font-weight:700;padding:0 4px}
+.chip button.x{color:#a86;font-weight:400}
+details summary{cursor:pointer;color:var(--forest);font-weight:700;font-size:14px}
+
+.previewbar{position:sticky;top:0;z-index:5;background:rgba(247,245,238,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:10px 16px}
+.previewbar .in{max-width:980px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pages{display:flex;flex-direction:column;align-items:center;gap:18px;padding:20px 0 60px}
+.pagebox{box-shadow:0 4px 20px rgba(40,60,40,.12)}
+.hide{display:none!important}
+
+@media (max-width:760px){
+  .g4,.g3,.g5{grid-template-columns:1fr 1fr}
+  .kb table{font-size:12.5px}
+  .kbwrap{overflow-x:auto}
+  .dom{grid-template-columns:1fr}
+  .steps{margin-left:0;width:100%}
+  table.mt th:nth-child(4),table.mt td:nth-child(4){display:none}
+  table.mt input{width:58px}
+}
+
+/* ───────── 리포트 (A4) ───────── */
+.page{width:210mm;height:297mm;background:#fff;position:relative;overflow:hidden;padding:16mm 18mm 20mm;color:var(--ink);font-size:10.5pt;line-height:1.65}
+.page [contenteditable]:hover{outline:1px dashed #c9d8c3;outline-offset:2px}
+.page [contenteditable]:focus{outline:2px solid var(--leaf);outline-offset:2px}
+.pfoot{position:absolute;left:18mm;right:18mm;bottom:10mm;display:flex;justify-content:space-between;font-size:8pt;color:var(--muted);border-top:1px solid var(--line);padding-top:3mm;letter-spacing:.02em}
+.kicker{font-size:8.5pt;letter-spacing:.18em;color:var(--forest-2);font-weight:700}
+.ptitle{font-family:"Gowun Batang",serif;font-size:21pt;font-weight:700;margin:2mm 0 1mm;color:var(--forest);line-height:1.3}
+.psub{color:var(--muted);margin:0 0 6mm;font-size:10pt}
+.pnum{display:inline-block;font-family:"Gowun Batang",serif;color:var(--leaf);font-weight:700;margin-right:2mm}
+h3.sec{font-size:12.5pt;margin:5.5mm 0 2.5mm;color:var(--forest);display:flex;align-items:center;gap:2.5mm}
+h3.sec:before{content:"";width:2.2mm;height:2.2mm;border-radius:50%;background:var(--leaf)}
+.pp{margin:0 0 3mm}
+
+/* 표지 */
+.cover{padding:0;background:var(--forest);color:#fff}
+.cover .deco{position:absolute;inset:0}
+.cover .in{position:absolute;left:20mm;right:20mm;top:34mm}
+.cover .kicker{color:#cfe6b7}
+.cover h1{font-family:"Gowun Batang",serif;font-size:34pt;line-height:1.25;margin:6mm 0 5mm;font-weight:700}
+.cover .lead{font-size:12pt;opacity:.9;max-width:130mm}
+.cover .who{position:absolute;left:20mm;right:20mm;bottom:40mm;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:5mm;padding:8mm 9mm;display:grid;grid-template-columns:1fr 1fr;gap:4mm 10mm}
+.cover .who div small{display:block;font-size:8.5pt;opacity:.7;letter-spacing:.08em}
+.cover .who div b{font-size:14pt;font-weight:700}
+.cover .org{position:absolute;left:20mm;right:20mm;bottom:16mm;display:flex;justify-content:space-between;align-items:flex-end;font-size:9pt;opacity:.85}
+.cover .org b{font-family:"Gowun Batang",serif;font-size:13pt;opacity:1}
+
+/* 안내 */
+.infogrid{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+.infobox{background:var(--mint);border-radius:4mm;padding:4mm 5mm}
+.infobox b{display:block;color:var(--forest);margin-bottom:1.5mm;font-size:11pt}
+.infobox p{margin:0;font-size:9.8pt}
+.howto{border:1px solid var(--line);border-radius:4mm;padding:6mm;display:grid;grid-template-columns:1fr 1fr;gap:6mm;align-items:center}
+.legend{display:flex;flex-direction:column;gap:2.5mm;font-size:9.5pt}
+.legend span{display:inline-flex;align-items:center;gap:2mm}
+.sw{display:inline-block;width:8mm;height:3mm;border-radius:2mm}
+.mlist{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3mm}
+.mlist div{border:1px solid var(--line);border-radius:3mm;padding:2.5mm 3.5mm;font-size:8.5pt;line-height:1.5}
+.mlist b{display:block;font-size:10pt;color:var(--forest)}
+.disclaim{margin-top:7mm;font-size:8.5pt;color:var(--muted);border-left:2px solid var(--leaf);padding-left:4mm}
+
+/* 요약 */
+.sumrow{display:grid;grid-template-columns:32mm 16mm 20mm 1fr;align-items:center;gap:3mm;padding:2.2mm 0;border-bottom:1px solid var(--line)}
+.sumrow .nm{font-weight:700;font-size:10.5pt}
+.sumrow .nm small{display:block;font-weight:400;font-size:7.5pt;color:var(--muted);letter-spacing:.1em}
+.sumrow .sc{font-family:"Gowun Batang",serif;font-size:17pt;font-weight:700;color:var(--forest);text-align:right}
+.pill{display:inline-block;font-size:8.5pt;font-weight:700;border-radius:99px;padding:.6mm 3mm;text-align:center}
+.pill.low{background:var(--warm-bg);color:#a0621c}
+.pill.normal,.pill.good{background:var(--mint);color:var(--forest)}
+.pill.high{background:var(--sky-bg);color:#3a6a84}
+.pill.none{background:#eee;color:#999}
+.twobox{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin-top:6mm}
+.twobox>div{border-radius:4mm;padding:5mm 6mm}
+.twobox .s{background:var(--mint)}
+.twobox .g{background:var(--warm-bg)}
+.twobox b.h{display:block;font-size:10.5pt;margin-bottom:2mm}
+.twobox .s b.h{color:var(--forest)}
+.twobox .g b.h{color:#a0621c}
+.twobox ul{margin:0;padding-left:4.5mm;font-size:9.8pt}
+
+/* 지표 상세 */
+.mcard{border:1px solid var(--line);border-radius:4mm;padding:4mm 5.5mm;margin-bottom:4mm}
+.mhead{display:flex;align-items:baseline;gap:3mm;margin-bottom:1mm}
+.mhead .no{font-family:"Gowun Batang",serif;color:var(--leaf);font-weight:700;font-size:13pt}
+.mhead .nm{font-size:13pt;font-weight:800}
+.mhead .en{font-size:7.5pt;color:var(--muted);letter-spacing:.14em}
+.mhead .scbox{margin-left:auto;text-align:right}
+.mhead .scbox b{font-family:"Gowun Batang",serif;font-size:19pt;color:var(--forest)}
+.mhead .scbox small{color:var(--muted);font-size:8.5pt;margin-left:1mm}
+.mwhat{color:var(--muted);font-size:9.3pt;margin:0 0 1mm}
+.mbody{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-top:2mm}
+.mbody .read{font-size:9.8pt}
+.mbody .home{background:var(--cream);border-radius:3mm;padding:3mm 4mm;font-size:9.3pt}
+.mbody .home b{display:block;color:var(--forest);font-size:9pt;margin-bottom:1mm}
+.mbody .home ul{margin:0;padding-left:4mm}
+
+.lks{display:flex;flex-wrap:wrap;gap:1.5mm;margin:1mm 0 0}
+.lk{font-size:8pt;background:#f1f5ee;border:1px solid var(--line);border-radius:99px;padding:.3mm 2.5mm;color:#4d5a4a}
+.lk b{color:var(--forest)}
+table.curr{width:100%;border-collapse:collapse;font-size:9.5pt}
+table.curr th{background:var(--forest);color:#fff;font-weight:700;padding:2.5mm 3mm;text-align:left}
+table.curr td{border-bottom:1px solid var(--line);padding:2.2mm 3mm;vertical-align:top;line-height:1.55}
+table.curr td small{display:block;color:var(--muted);font-size:7.8pt;margin-top:1mm;line-height:1.45}
+table.curr td b{color:var(--forest)}
+.rl{display:flex;align-items:center;gap:1.8mm;font-size:9.3pt}
+.rl span{margin-left:auto;color:var(--muted);font-size:8.5pt}
+.dt{display:inline-block;width:2.6mm;height:2.6mm;border-radius:50%;background:#bbb;flex:none}
+.dt.normal,.dt.good{background:#3f6b4a}.dt.low{background:#d9923f}.dt.high{background:#5e93b0}
+/* 좌우뇌 */
+.dombar{display:flex;height:11mm;border-radius:3mm;overflow:hidden;font-weight:700;font-size:10pt;color:#fff}
+.dombar div{display:flex;align-items:center;padding:0 4mm}
+.dombar .L{background:var(--sky)}
+.dombar .R{background:var(--coral);justify-content:flex-end}
+.domcard{border:1px solid var(--line);border-radius:4mm;padding:5mm 6mm;margin-bottom:5mm}
+.domcard .t{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3mm}
+.domcard .t b{font-size:12pt}
+.lr{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin-top:3mm}
+.lr div{border-radius:3mm;padding:4mm 5mm;font-size:9.5pt}
+.lr .L{background:var(--sky-bg)}
+.lr .R{background:var(--coral-bg)}
+.lr b{display:block;margin-bottom:1mm}
+
+/* 편지 · 로드맵 */
+.letter{background:var(--cream);border-radius:4mm;padding:7mm 8mm;font-family:"Gowun Batang",serif;font-size:10.8pt;line-height:1.9}
+.letter p{margin:0 0 3mm}
+.letter .sign{text-align:right;margin-top:4mm;font-weight:700;color:var(--forest)}
+.road{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm}
+.road>div{border-radius:4mm;padding:5mm;border:1px solid var(--line);position:relative}
+.road .wk{font-size:8.5pt;font-weight:700;color:#fff;background:var(--forest);border-radius:99px;padding:.6mm 3mm;display:inline-block}
+.road>div:nth-child(2) .wk{background:var(--forest-2)}
+.road>div:nth-child(3) .wk{background:var(--leaf)}
+.road b{display:block;margin:2.5mm 0 1mm;font-size:11pt}
+.road p{margin:0;font-size:9.3pt;color:#445040}
+
+/* 체크리스트 */
+table.chk{width:100%;border-collapse:collapse;font-size:9.3pt}
+table.chk th,table.chk td{border:1px solid var(--line);padding:1.8mm 2mm;text-align:center}
+table.chk th{background:var(--mint);color:var(--forest);font-weight:700}
+table.chk td.a{text-align:left;width:60mm}
+table.chk td.box:after{content:"";display:inline-block;width:4mm;height:4mm;border:1.2px solid #b8c7b2;border-radius:1mm}
+
+/* 마무리 */
+.memo{border:1px solid var(--line);border-radius:4mm;padding:5mm 6mm;min-height:60mm}
+.memo .lines{background:repeating-linear-gradient(transparent 0 8.4mm,var(--line) 8.4mm 8.6mm);min-height:52mm;font-size:10.5pt;line-height:8.6mm;white-space:pre-wrap}
+.next{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4mm;margin-top:6mm}
+.next div{background:var(--mint);border-radius:3mm;padding:4mm 5mm}
+.next small{display:block;color:var(--muted);font-size:8.5pt}
+.next b{font-size:11.5pt;color:var(--forest)}
+
+@page{size:A4;margin:0}
+@media print{
+  body{background:#fff}
+  .topbar,.previewbar,main.app{display:none!important}
+  #previewArea{display:block!important}
+  .pages{padding:0;gap:0;display:block}
+  .pagebox{box-shadow:none;zoom:1!important}
+  .page{page-break-after:always;break-after:page}
+  .page [contenteditable]:hover{outline:none}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div>
+      <h1>뇌 성장 리포트 만들기</h1>
+      <small>초록테라스교육연구소 · 영유아 BQ2 결과 → 누리과정·표준보육과정 연계 리포트</small>
+    </div>
+    <nav class="steps">
+      <button id="tab1" class="on" onclick="go(1)">① 결과 입력</button>
+      <button id="tab2" onclick="go(2)">② 리포트 보기</button>
+      <button id="tab3" onclick="go(3)">③ 기본 자료</button>
+    </nav>
+  </div>
+</header>
+
+<main class="app" id="inputArea">
+
+  <section class="card">
+    <h2>아이 정보</h2>
+    <p class="desc">부르는 이름은 리포트 문장 속에 들어가요. 예) 하은 → "하은이는", 서아 → "서아는"</p>
+    <div class="grid g5">
+      <label class="f">성명<input id="fullName" placeholder="김하은"></label>
+      <label class="f">부르는 이름<input id="callName" placeholder="하은"></label>
+      <label class="f">만 나이<select id="age" onchange="showCurr()"><option value="0">만 0세</option><option value="1">만 1세</option><option value="2">만 2세</option><option value="3">만 3세</option><option value="4" selected>만 4세</option><option value="5">만 5세</option></select></label>
+      <label class="f">검사일<input id="testDate" type="date"></label>
+      <label class="f">반 이름<input id="className" placeholder="햇살반"></label>
+    </div>
+    <p class="note" id="currNote" style="margin:10px 0 0"></p>
+  </section>
+
+  <section class="card">
+    <h2>BQ2 결과지 수치</h2>
+    <p class="desc">결과지를 보고 점수를 입력하세요. 정상범위는 표준값이 미리 들어가 있어요. 결과지에 다른 값이 적혀 있으면 그 값으로 고쳐 주세요.</p>
+
+    <details style="margin-bottom:14px">
+      <summary>AI로 결과지 수치 한 번에 읽기 (사진·스캔본)</summary>
+      <div style="margin-top:10px">
+        <p class="note">① 아래 버튼으로 요청문을 복사해요. ② 클로드(또는 챗GPT)에 붙여넣고 결과지 사진이나 PDF를 첨부해요. ③ AI가 답한 줄들을 아래 칸에 붙여넣고 [채워 넣기]를 눌러요. 채워진 숫자는 결과지와 꼭 한 번 대조해 주세요.</p>
+        <div class="row" style="margin:8px 0">
+          <button class="btn ghost" onclick="copyPrompt()">AI 요청문 복사</button>
+          <span id="copyMsg" class="note"></span>
+        </div>
+        <label class="f">AI 답변 붙여넣기
+          <textarea id="pasteBox" placeholder="인지기능 25 20~24&#10;수면효율성 46 50~55&#10;…"></textarea>
+        </label>
+        <div class="row" style="margin-top:8px">
+          <button class="btn" onclick="applyPaste()">채워 넣기</button>
+          <span id="pasteMsg" class="note"></span>
+        </div>
+      </div>
+    </details>
+
+    <table class="mt">
+      <thead><tr><th>항목</th><th>점수</th><th>정상범위</th><th>뜻</th><th>판정</th></tr></thead>
+      <tbody id="mtBody"></tbody>
+    </table>
+
+    <div class="dom">
+      <div class="box"><b>정서 우세율 (좌 / 우, %)</b>
+        <div class="row">좌 <input id="emoL" type="number" min="0" max="100"> 우 <input id="emoR" type="number" min="0" max="100"></div>
+      </div>
+      <div class="box"><b>행동 우세율 (좌 / 우, %)</b>
+        <div class="row">좌 <input id="actL" type="number" min="0" max="100"> 우 <input id="actR" type="number" min="0" max="100"></div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:8px">우세율이 결과지에 없으면 비워 두세요. 그 페이지는 리포트에서 빠져요.</p>
+  </section>
+
+  <section class="card">
+    <h2>선생님 한마디</h2>
+    <p class="desc">학부모 편지 끝에 들어가요. 검사 때 본 아이 모습, 칭찬할 점을 적어 주세요. 비워 두면 기본 문장이 들어가요.</p>
+    <label class="f"><textarea id="teacherNote" placeholder="검사 내내 차분하게 앉아 있었고, 끝나고 '재밌었어요!'라고 말해 주었어요."></textarea></label>
+  </section>
+
+  <section class="card">
+    <h2>기관 정보</h2>
+    <p class="desc">한 번 입력하면 이 기기에 저장돼요.</p>
+    <div class="grid g3">
+      <label class="f">기관명<input id="orgName"></label>
+      <label class="f">담당 선생님<input id="counselor" placeholder="전규미"></label>
+      <label class="f">연락처<input id="contact" placeholder="010-0000-0000"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>저장한 아이 목록</h2>
+    <p class="desc">이 기기의 브라우저에만 저장돼요. 인터넷으로 전송되지 않아요. 공용 컴퓨터에서는 쓰고 나서 지워 주세요.</p>
+    <div class="saved" id="savedList"></div>
+  </section>
+
+  <div class="row end">
+    <button class="btn ghost" onclick="resetForm()">새 아이 입력</button>
+    <button class="btn ghost" onclick="saveRecord()">이 아이 저장</button>
+    <button class="btn" onclick="go(2)">리포트 만들기 →</button>
+  </div>
+</main>
+
+<main class="app kb hide" id="kbArea">
+  <section class="card">
+    <h2>기본 자료</h2>
+    <p class="desc">리포트 문장은 모두 이 자료에서 나와요. 교사 검토용 초안이에요. 고칠 곳이 있으면 알려 주세요. <b>kb.js</b> 파일에 반영하면 모든 리포트에 적용돼요.</p>
+    <div class="row"><span class="note">보기:</span>
+      <button class="btn ghost" id="kbInf" onclick="renderKB('infant')">영아 (만 0~2세)</button>
+      <button class="btn ghost" id="kbChi" onclick="renderKB('child')">유아 (만 3~5세)</button></div>
+    <div id="kbBody"></div>
+  </section>
+</main>
+
+<div id="previewArea" class="hide">
+  <div class="previewbar">
+    <div class="in">
+      <button class="btn ghost" onclick="go(1)">← 입력으로</button>
+      <span class="note" style="flex:1;min-width:200px">리포트 글자를 눌러 바로 고칠 수 있어요. 다 되면 [PDF로 저장]을 누르고, 인쇄 창에서 대상을 'PDF로 저장'으로 고르세요.</span>
+      <button class="btn warm" onclick="window.print()">PDF로 저장</button>
+    </div>
+  </div>
+  <div class="pages" id="pages"></div>
+</div>
+
+<script src="kb.js"></script>
+<script>
+const DOM_KEYS = ['emoL','emoR','actL','actR'];
+const STORE = 'ctel-brainreport-v1';
+const ORG_STORE = 'ctel-brainreport-org';
+
+/* ───────── 저장소 (실패해도 동작) ───────── */
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
+
+/* ───────── 입력 표 ───────── */
+const $=id=>document.getElementById(id);
+function buildTable(){
+  $('mtBody').innerHTML = METRICS.map(m=>`
+    <tr>
+      <td class="nm">${m.name}</td>
+      <td><input id="sc_${m.key}" type="number" step="any" oninput="refreshStatus()"></td>
+      <td><input id="lo_${m.key}" type="number" step="any" value="${m.range[0]}" oninput="refreshStatus()"> ~
+          <input id="hi_${m.key}" type="number" step="any" value="${m.range[1]}" oninput="refreshStatus()"></td>
+      <td class="note">${m.what.replace(/ 보여 줘요\.$/,'')}</td>
+      <td><span class="st none" id="st_${m.key}">-</span></td>
+    </tr>`).join('');
+}
+function num(id){const v=$(id).value;return v===''?null:Number(v)}
+function readMetric(m){return {score:num('sc_'+m.key),lo:num('lo_'+m.key)??m.range[0],hi:num('hi_'+m.key)??m.range[1]}}
+function statusOf(m,v){
+  if(v.score==null) return 'none';
+  if(v.score<v.lo) return 'low';
+  if(v.score>v.hi) return m.highGood?'good':'high';
+  return 'normal';
+}
+const ST_LABEL={low:'범위보다 낮음',normal:'정상 범위',high:'범위보다 높음',good:'범위보다 높음 · 강점',none:'입력 전'};
+function refreshStatus(){
+  METRICS.forEach(m=>{const s=statusOf(m,readMetric(m));const el=$('st_'+m.key);el.className='st '+s;el.textContent=ST_LABEL[s]});
+}
+
+/* ───────── AI 요청문 · 붙여넣기 ───────── */
+const PROMPT = `첨부한 파일은 파낙토스 BQ2 뇌기능 검사 결과지입니다.
+아래 항목의 점수와 정상범위를 결과지에서 찾아, 설명 없이 한 줄에 하나씩 이 형식으로만 적어 주세요.
+
+${METRICS.map(m=>m.name+' 점수 최소~최대').join('\n')}
+정서우세 좌% 우%
+행동우세 좌% 우%
+
+지켜 주세요:
+- 숫자만 쓰고 단위는 빼 주세요. 예) 인지기능 25 20~24
+- 정상범위는 결과지에 정상 구간으로 표시된 두 숫자예요. 그래프 눈금(0, 100 등)과 헷갈리지 마세요.
+- 정상범위가 안 보이면 점수만 쓰세요. 항목 자체가 없으면 그 줄은 빼 주세요.
+- 결과지의 항목명이 조금 달라도 가장 가까운 항목에 넣어 주세요.
+- 보이는 숫자만 쓰고 추측하지 마세요.`;
+function copyPrompt(){
+  const done=()=>{$('copyMsg').textContent='복사했어요. AI 채팅창에 붙여넣으세요.'};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(PROMPT).then(done,fallback)}else fallback();
+  function fallback(){const t=document.createElement('textarea');t.value=PROMPT;document.body.appendChild(t);t.select();try{document.execCommand('copy');done()}catch(e){$('copyMsg').textContent='복사가 안 되면 이 칸의 글을 직접 복사하세요.';$('pasteBox').value=PROMPT}t.remove()}
+}
+const ALIAS={cog:['인지기능','인지'],sleep:['수면효율성','수면'],cheer:['명랑성','명랑'],active:['적극성','적극'],stress:['스트레스저항도','스트레스','항스트레스'],attn:['주의지수','주의집중','주의'],balance:['뇌균형','좌우균형','균형'],link:['좌우뇌연결성','연결성','연결'],self:['자기조절능력','자기조절','조절']};
+function applyPaste(){
+  const lines=$('pasteBox').value.split(/\n/).map(s=>s.trim()).filter(Boolean);
+  let n=0;
+  lines.forEach(line=>{
+    const clean=line.replace(/[*`|:：]/g,' ');
+    const nums=(clean.match(/-?\d+(\.\d+)?/g)||[]).map(Number);
+    if(/정서/.test(clean)&&nums.length>=2){$('emoL').value=nums[0];$('emoR').value=nums[1];n++;return}
+    if(/행동/.test(clean)&&nums.length>=2){$('actL').value=nums[0];$('actR').value=nums[1];n++;return}
+    const m=METRICS.find(m=>ALIAS[m.key].some(a=>clean.replace(/\s/g,'').includes(a)));
+    if(!m||!nums.length) return;
+    $('sc_'+m.key).value=nums[0];
+    if(nums.length>=3){$('lo_'+m.key).value=nums[1];$('hi_'+m.key).value=nums[2]}
+    n++;
+  });
+  refreshStatus();
+  $('pasteMsg').innerHTML = n?`<span class="ok">${n}개 항목을 채웠어요.</span> 결과지와 한 번 대조해 주세요.`:'<span class="err">읽을 수 있는 줄이 없어요.</span> 형식을 확인해 주세요.';
+}
+
+/* ───────── 저장 목록 ───────── */
+const FIELDS=['fullName','callName','age','className','testDate','teacherNote',...DOM_KEYS];
+function collect(){
+  const r={};FIELDS.forEach(f=>r[f]=$(f).value);
+  r.metrics={};METRICS.forEach(m=>{const v=readMetric(m);r.metrics[m.key]=v});
+  return r;
+}
+function fill(r){
+  FIELDS.forEach(f=>$(f).value=r[f]??(f==='age'?'4':''));showCurr();
+  METRICS.forEach(m=>{const v=(r.metrics||{})[m.key]||{};$('sc_'+m.key).value=v.score??'';$('lo_'+m.key).value=v.lo??m.range[0];$('hi_'+m.key).value=v.hi??m.range[1]});
+  refreshStatus();
+}
+function saveRecord(){
+  const r=collect();
+  if(!r.fullName&&!r.callName){alert('아이 이름을 먼저 입력해 주세요.');return}
+  const list=lsGet(STORE,[]);
+  const id=(r.fullName||r.callName)+'|'+r.testDate;
+  const i=list.findIndex(x=>x.id===id);
+  r.id=id; if(i>=0) list[i]=r; else list.unshift(r);
+  if(lsSet(STORE,list)) renderSaved(); else alert('이 브라우저에서는 저장할 수 없어요.');
+}
+function renderSaved(){
+  const list=lsGet(STORE,[]);
+  $('savedList').innerHTML = list.length? list.map((r,i)=>`<span class="chip">${esc(r.fullName||r.callName)} · ${esc(r.testDate||'날짜 없음')}
+    <button onclick="loadRecord(${i})">불러오기</button><button class="x" onclick="delRecord(${i})" title="삭제">✕</button></span>`).join('')
+    : '<span class="note">아직 저장한 아이가 없어요.</span>';
+}
+function loadRecord(i){const r=lsGet(STORE,[])[i];if(r){fill(r);window.scrollTo({top:0,behavior:'smooth'})}}
+function delRecord(i){const list=lsGet(STORE,[]);if(!confirm(`${list[i].fullName||list[i].callName} 기록을 지울까요?`))return;list.splice(i,1);lsSet(STORE,list);renderSaved()}
+function resetForm(){fill({testDate:today()});$('pasteBox').value='';$('pasteMsg').textContent=''}
+function saveOrg(){lsSet(ORG_STORE,{orgName:$('orgName').value,counselor:$('counselor').value,contact:$('contact').value})}
+
+/* ───────── 도우미 ───────── */
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function jo(w,a,b){return w+(hasBatchim(w)?a:b)}
+function joinWa(arr){return arr.map((x,i)=>i<arr.length-1?`<b>${x}</b>${hasBatchim(x)?'과':'와'} `:`<b>${x}</b>`).join('')}
+function hasBatchim(s){const c=s.charCodeAt(s.length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0}
+function fmtDate(s){if(!s)return '';const [y,m,d]=s.split('-');return `${y}. ${m}. ${d}`}
+function addDays(s,n){if(!s)return '';const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return fmtDate(d.toISOString().slice(0,10))}
+
+/* 게이지: 회색 트랙 + 초록 정상 띠 + 점수 점 */
+function gauge(m,v,w=300){
+  const max=Math.max(m.axis, Math.ceil(((v.score??0)+5)/10)*10, Math.ceil(v.hi/10)*10);
+  const x=t=>12+(w-24)*Math.min(Math.max(t,0),max)/max;
+  const st=statusOf(m,v);
+  const dot={low:'#d9923f',high:'#5e93b0',normal:'#3f6b4a',good:'#3f6b4a',none:'#aaa'}[st];
+  return `<svg viewBox="0 0 ${w} 40" width="100%" height="40" style="display:block">
+    <rect x="12" y="16" width="${w-24}" height="8" rx="4" fill="#eef1ec"/>
+    <rect x="${x(v.lo)}" y="16" width="${Math.max(x(v.hi)-x(v.lo),3)}" height="8" rx="4" fill="#cfe3c6"/>
+    <text x="${x(v.lo)}" y="36" font-size="8.5" fill="#6f7c6c" text-anchor="middle">${v.lo}</text>
+    <text x="${x(v.hi)}" y="36" font-size="8.5" fill="#6f7c6c" text-anchor="middle">${v.hi}</text>
+    ${v.score!=null?`<circle cx="${x(v.score)}" cy="20" r="6.5" fill="${dot}" stroke="#fff" stroke-width="2"/>
+    <text x="${x(v.score)}" y="9" font-size="9.5" font-weight="700" fill="${dot}" text-anchor="middle">${v.score}</text>`:''}
+  </svg>`;
+}
+
+/* ───────── 연령 → 교육과정 ───────── */
+function band(age){return Number(age)<=2?'infant':'child'}
+function showCurr(){
+  const b=band($('age').value), c=CURRICULUM[b];
+  $('currNote').innerHTML=`<span class="currtag">${c.label} 연계</span> ${c.target} 기준 해설과 놀이·가정 활동이 들어가요.`;
+}
+function homeOf(m,b,st){const h=m.home[b];return st==='low'?h.low:(st==='high'||st==='good')?h.high:st==='normal'?h.normal:[]}
+function readOf(m,st){return st==='none'?'결과지에 이 항목의 점수가 없어요.':m.read[st==='good'?'high':st]}
+const linkChips=(m,b)=>m.link[b].map(([a,c])=>`<span class="lk"><b>${a}</b> ${c}</span>`).join('');
+
+/* ───────── 기본 자료 화면 ───────── */
+function renderKB(b){
+  const c=CURRICULUM[b];
+  $('kbInf').className='btn '+(b==='infant'?'':'ghost');$('kbChi').className='btn '+(b==='child'?'':'ghost');
+  $('kbBody').innerHTML=`
+  <h3>${c.label} · ${c.target} 영역과 내용범주</h3>
+  <div class="kbwrap"><table><tr><th>영역</th><th>내용범주</th><th>연결된 BQ2 지표</th></tr>
+  ${Object.entries(c.areas).map(([a,cats])=>`<tr><td><b>${a}</b></td><td>${cats.join(' · ')}</td>
+    <td>${METRICS.filter(m=>m.link[b].some(l=>l[0]===a)).map(m=>m.name).join(', ')||'<span class="sub">-</span>'}</td></tr>`).join('')}
+  </table></div>
+  <h3>지표별 해설 · 연계 · 활동</h3>
+  <div class="kbwrap"><table><tr><th>지표 (정상범위)</th><th>연계 영역 &gt; 내용범주</th><th>해석</th><th>가정 활동</th><th>원에서의 놀이</th></tr>
+  ${METRICS.map(m=>`<tr>
+    <td><b>${m.name}</b><br><span class="sub">${m.range[0]}~${m.range[1]}${m.highGood?' · 높으면 강점':''}</span><br><span class="sub">${m.what}</span></td>
+    <td>${m.link[b].map(l=>l.join(' &gt; ')).join('<br>')}</td>
+    <td><span class="sub">낮음</span> ${m.read.low}<br><span class="sub">정상</span> ${m.read.normal}<br><span class="sub">높음</span> ${m.read.high}</td>
+    <td><span class="sub">낮음</span><ul>${m.home[b].low.map(x=>`<li>${x}</li>`).join('')}</ul><span class="sub">정상</span><ul>${m.home[b].normal.map(x=>`<li>${x}</li>`).join('')}</ul><span class="sub">높음</span><ul>${m.home[b].high.map(x=>`<li>${x}</li>`).join('')}</ul></td>
+    <td><b>${m.play[b][0]}</b><br>${m.play[b][1]}</td></tr>`).join('')}
+  </table></div>`;
+}
+
+/* ───────── 리포트 조립 ───────── */
+function build(){
+  const r=collect();
+  const org={orgName:$('orgName').value||'초록테라스교육연구소',counselor:$('counselor').value,contact:$('contact').value};
+  const b=band(r.age), C=CURRICULUM[b];
+  const base=(r.callName||r.fullName.replace(/^[가-힣]/,'')||'우리 아이').trim();
+  const N = /[가-힣]$/.test(base)&&hasBatchim(base)? base+'이' : base;   // "하은" → "하은이", "서아" → "서아"
+  const sub=t=>t.replace(/\{N\}/g,esc(N));
+  const data=METRICS.map(m=>{const v=r.metrics[m.key];return {m,v,st:statusOf(m,v)}});
+  const filled=data.filter(d=>d.st!=='none');
+  const dist=d=>{const {score,lo,hi}=d.v;const span=Math.max(hi-lo,1);return score<lo?(lo-score)/span:score>hi?(score-hi)/span:0};
+  const strengths=filled.filter(d=>d.st==='normal'||d.st==='good').sort((a,b)=>(b.st==='good')-(a.st==='good'));
+  const growth=filled.filter(d=>d.st==='low'||d.st==='high').sort((a,b)=>dist(b)-dist(a));
+  const hasDom=[r.emoL,r.emoR,r.actL,r.actR].some(x=>x!=='');
+  const ageTxt=`만 ${r.age}세`+(r.className?` · ${r.className}`:'');
+
+  const pages=[];
+  const foot=()=>`<div class="pfoot"><span>${esc(org.orgName)} · BRAIN GROWTH REPORT</span><span>${esc(r.fullName||N)} · {{P}} / {{T}}</span></div>`;
+
+  /* 1. 표지 */
+  pages.push(`<section class="page cover">
+    <svg class="deco" viewBox="0 0 210 297" preserveAspectRatio="none">
+      <circle cx="185" cy="40" r="70" fill="#4d7d57"/><circle cx="200" cy="120" r="38" fill="#5a8a62" opacity=".7"/>
+      <path d="M0 240 Q60 205 120 232 T210 222 V297 H0Z" fill="#355c3f"/>
+      <path d="M150 58 q18-30 40-18 q-8 28-40 18z" fill="#8bc34a" opacity=".85"/>
+      <path d="M150 58 q10-10 26-16" stroke="#355c3f" stroke-width="1" fill="none"/>
+    </svg>
+    <div class="in">
+      <div class="kicker">BRAIN GROWTH REPORT · ${C.label}</div>
+      <h1>${esc(N)}의<br>뇌 성장 리포트</h1>
+      <p class="lead" contenteditable>뇌파로 살펴본 ${esc(N)}의 지금, 그리고 ${C.label}의 놀이로 12주 동안 함께 키워 갈 힘을 담았어요.</p>
+    </div>
+    <div class="who">
+      <div><small>NAME</small><b>${esc(r.fullName||N)}</b></div>
+      <div><small>AGE</small><b>${esc(ageTxt)}</b></div>
+      <div><small>TEST</small><b>BQ2 뇌기능 검사</b></div>
+      <div><small>DATE</small><b>${fmtDate(r.testDate)||'-'}</b></div>
+    </div>
+    <div class="org"><b>${esc(org.orgName)}</b><span>${esc(org.counselor?('담당 '+org.counselor):'')}${org.contact?' · '+esc(org.contact):''}</span></div>
+  </section>`);
+
+  /* 2. 검사 안내 */
+  pages.push(`<section class="page">
+    <div class="kicker">ABOUT THE TEST</div>
+    <div class="ptitle">이 리포트를 읽기 전에</div>
+    <p class="psub">BQ2 검사가 무엇을 보는지, 그래프를 어떻게 읽는지 안내해 드려요.</p>
+    <div class="infogrid">
+      <div class="infobox"><b>어떤 검사인가요?</b><p contenteditable>이마에 센서를 붙이고 잠시 편안히 앉아 뇌에서 나오는 전기 신호(뇌파)를 재는 검사예요. 아프지 않고, 잘하고 못하는 시험도 아니에요.</p></div>
+      <div class="infobox"><b>무엇을 알 수 있나요?</b><p contenteditable>집중, 감정, 쉼, 조절 같은 뇌의 기능이 지금 어떤 상태인지 9가지 지표로 보여 줘요. 이 리포트는 그 결과를 ${C.label}의 영역과 이어서 놀이로 도울 방법을 담았어요.</p></div>
+      <div class="infobox"><b>결과는 바뀌나요?</b><p contenteditable>네. 영유아의 뇌는 하루가 다르게 자라고, 그날의 잠·기분·컨디션에 따라서도 달라져요. 그래서 12주 뒤 다시 재서 변화를 살펴봐요.</p></div>
+      <div class="infobox"><b>꼭 알아 두세요</b><p contenteditable>이 리포트는 놀이와 생활을 돕기 위한 코칭 자료예요. 발달을 진단하거나 질병을 판단하는 의료 문서가 아니에요.</p></div>
+    </div>
+    <h3 class="sec">그래프 읽는 법</h3>
+    <div class="howto">
+      ${gauge({axis:100,highGood:false},{score:62,lo:40,hi:60})}
+      <div class="legend">
+        <span><i class="sw" style="background:#cfe3c6"></i>초록 띠: 정상 범위</span>
+        <span><i class="sw" style="background:#3f6b4a;width:3mm;height:3mm"></i>초록 점: 정상 범위 안</span>
+        <span><i class="sw" style="background:#d9923f;width:3mm;height:3mm"></i>주황 점: 범위보다 낮음</span>
+        <span><i class="sw" style="background:#5e93b0;width:3mm;height:3mm"></i>파란 점: 범위보다 높음</span>
+      </div>
+    </div>
+    <h3 class="sec">9가지 지표</h3>
+    <div class="mlist">${METRICS.map(m=>`<div><b>${m.name}</b>${m.what.replace(/ 보여 줘요\.$/,'')}</div>`).join('')}</div>
+    <p class="disclaim" contenteditable>범위보다 높거나 낮다고 해서 '나쁘다'는 뜻은 아니에요. 지금 ${esc(N)}에게 어떤 놀이와 돌봄이 잘 맞는지 알려 주는 신호로 읽어 주세요.</p>
+    ${foot()}
+  </section>`);
+
+  /* 3. 한눈에 보기 */
+  pages.push(`<section class="page">
+    <div class="kicker">SUMMARY</div>
+    <div class="ptitle">한눈에 보는 ${esc(N)}의 뇌</div>
+    <p class="psub">9가지 지표의 점수와 정상 범위를 나란히 놓았어요.</p>
+    ${data.map(d=>`<div class="sumrow">
+      <div class="nm">${d.m.name}<small>${d.m.en}</small></div>
+      <div class="sc">${d.v.score??'-'}</div>
+      <div><span class="pill ${d.st}">${{low:'낮음',normal:'정상',high:'높음',good:'강점',none:'-'}[d.st]}</span></div>
+      <div>${gauge(d.m,d.v)}</div>
+    </div>`).join('')}
+    <div class="twobox">
+      <div class="s"><b class="h">빛나는 힘</b><ul contenteditable>${(strengths.length?strengths.slice(0,4).map(d=>`<li>${d.m.name}${d.st==='good'?' — 범위보다 높은 강점':''}</li>`):['<li>검사에 끝까지 참여한 씩씩함</li>']).join('')}</ul></div>
+      <div class="g"><b class="h">함께 키워 갈 힘</b><ul contenteditable>${(growth.length?growth.slice(0,4).map(d=>`<li>${d.m.name} — ${d.st==='low'?'조금 더 채우기':'조금 가라앉히기'}</li>`):['<li>지금의 좋은 균형 지키기</li>']).join('')}</ul></div>
+    </div>
+    ${foot()}
+  </section>`);
+
+  /* 4. 교육과정 영역으로 보기 */
+  const dot=st=>`<i class="dt ${st}"></i>`;
+  pages.push(`<section class="page">
+    <div class="kicker">CURRICULUM LINK · ${C.label}</div>
+    <div class="ptitle">${C.label} 영역으로 보기</div>
+    <p class="psub">${C.target} 교육과정의 영역별로, 관련된 뇌 기능과 원에서 지원할 놀이를 정리했어요.</p>
+    <table class="curr">
+      <thead><tr><th style="width:30mm">영역</th><th style="width:56mm">관련 지표</th><th>원에서의 놀이 지원</th></tr></thead>
+      <tbody>${Object.entries(C.areas).map(([a,cats])=>{
+        const rel=data.filter(d=>d.m.link[b].some(l=>l[0]===a));
+        const need=rel.filter(d=>d.st==='low'||d.st==='high');
+        const pick=(need.length?need:rel.filter(d=>d.st!=='none')).slice(0,2);
+        return `<tr><td><b>${a}</b><small>${cats.join(' · ')}</small></td>
+          <td>${rel.map(d=>`<div class="rl">${dot(d.st)}${d.m.name} <span>${d.v.score??'-'}</span></div>`).join('')||'<span style="color:var(--muted)">-</span>'}</td>
+          <td contenteditable>${pick.length?pick.map(d=>`<b>${d.m.play[b][0]}</b> ${d.m.play[b][1]}`).join('<br>'):'<span style="color:var(--muted)">일상 놀이 속에서 고르게 경험해요.</span>'}</td></tr>`}).join('')}
+      </tbody>
+    </table>
+    <div class="legend" style="flex-direction:row;gap:5mm;margin-top:4mm;font-size:8.5pt">
+      <span>${dot('normal')}정상·강점</span><span>${dot('low')}범위보다 낮음</span><span>${dot('high')}범위보다 높음</span>
+    </div>
+    <p class="disclaim">${C.label}은 놀이 중심 교육과정이에요. 뇌 기능 결과는 교사가 아이의 놀이를 이해하고 지원하는 참고 자료로 활용해요.</p>
+    ${foot()}
+  </section>`);
+
+  /* 5~7. 지표별 해설 (3개씩) */
+  for(let p=0;p<3;p++){
+    const chunk=data.slice(p*3,p*3+3);
+    pages.push(`<section class="page">
+      <div class="kicker">BRAIN FUNCTION ${p+1}</div>
+      <div class="ptitle">지표 자세히 보기 <span style="color:var(--muted);font-size:13pt">${p+1} / 3</span></div>
+      <p class="psub">점수의 뜻, 연계된 ${C.label} 영역, 집에서 해 볼 놀이예요.</p>
+      ${chunk.map((d,i)=>`<div class="mcard">
+          <div class="mhead"><span class="no">${String(p*3+i+1).padStart(2,'0')}</span><span class="nm">${d.m.name}</span><span class="en">${d.m.en}</span>
+            <span class="scbox"><b>${d.v.score??'-'}</b><small>정상 ${d.v.lo}~${d.v.hi}</small> <span class="pill ${d.st}">${ST_LABEL[d.st]}</span></span></div>
+          <p class="mwhat">${d.m.what}</p>
+          ${gauge(d.m,d.v,480)}
+          <div class="lks">${linkChips(d.m,b)}</div>
+          <div class="mbody">
+            <div class="read" contenteditable>${readOf(d.m,d.st)}</div>
+            <div class="home"><b>집에서 이렇게 해 보세요</b><ul contenteditable>${homeOf(d.m,b,d.st).map(h=>`<li>${h}</li>`).join('')||'<li>-</li>'}</ul></div>
+          </div>
+        </div>`).join('')}
+      ${foot()}
+    </section>`);
+  }
+
+  /* 8. 좌우뇌 우세 */
+  if(hasDom){
+    const domCard=(D,L,R)=>{
+      L=Number(L)||0;R=Number(R)||(L?100-L:0);const tot=L+R||1;const lp=Math.round(L/tot*100),rp=100-lp;
+      const side=Math.abs(lp-rp)<=10?'bal':lp>rp?'L':'R';
+      return `<div class="domcard">
+        <div class="t"><b>${D.title}</b><span class="pill ${side==='bal'?'normal':side==='L'?'high':'low'}">${side==='bal'?'균형':side==='L'?'좌뇌 쪽':'우뇌 쪽'}</span></div>
+        <div class="dombar"><div class="L" style="width:${Math.max(lp,12)}%">좌 ${lp}%</div><div class="R" style="width:${Math.max(rp,12)}%">우 ${rp}%</div></div>
+        <p class="pp" style="margin-top:4mm" contenteditable>${sub(D[side])}</p>
+      </div>`};
+    pages.push(`<section class="page">
+      <div class="kicker">LEFT & RIGHT</div>
+      <div class="ptitle">${esc(N)}는 어느 쪽 뇌를 더 쓸까요?</div>
+      <p class="psub">감정을 느낄 때와 행동할 때, 좌뇌와 우뇌 중 어느 쪽이 더 활발한지 비율로 보여 줘요.</p>
+      <div class="lr" style="margin-bottom:6mm">
+        <div class="L"><b style="color:#3a6a84">좌뇌가 잘하는 일</b>말, 순서, 규칙 찾기, 차근차근 따져 보기</div>
+        <div class="R"><b style="color:#a3503a">우뇌가 잘하는 일</b>그림과 소리, 분위기 느끼기, 전체 보기, 상상하기</div>
+      </div>
+      ${(r.emoL!==''||r.emoR!=='')?domCard(DOMINANCE.emo,r.emoL,r.emoR):''}
+      ${(r.actL!==''||r.actR!=='')?domCard(DOMINANCE.act,r.actL,r.actR):''}
+      <p class="disclaim" contenteditable>어느 쪽이 더 좋다는 뜻은 아니에요. 영유아기는 한쪽이 두드러지다가도 금세 달라지는 시기예요. 아이가 편하게 느끼는 방식을 알면 더 잘 도울 수 있어요.</p>
+      ${foot()}
+    </section>`);
+  }
+
+  /* 9. 학부모 편지 + 12주 로드맵 */
+  const focus=[...growth];
+  filled.filter(d=>!focus.includes(d)).sort((a,b)=>dist(b)-dist(a)).forEach(d=>{if(focus.length<3)focus.push(d)});
+  METRICS.forEach(m=>{if(focus.length<3&&!focus.some(d=>d.m===m))focus.push({m,st:'normal'})});
+  const sNames=strengths.slice(0,2).map(d=>d.m.name);
+  const gNames=growth.slice(0,2).map(d=>d.m.name);
+  const note=r.teacherNote.trim()||`검사하는 동안 ${N}는 낯선 장비 앞에서도 씩씩하게 참여해 주었어요. 그 모습만으로도 충분히 칭찬해 주고 싶어요.`;
+  const areas=[...new Set(focus.slice(0,3).flatMap(d=>d.m.link[b].map(l=>l[0])))];
+  pages.push(`<section class="page">
+    <div class="kicker">DEAR PARENT</div>
+    <div class="ptitle">부모님께 드리는 글</div>
+    <div class="letter" contenteditable>
+      <p>안녕하세요. ${esc(N)}의 뇌 성장 리포트를 전해 드립니다.</p>
+      <p>${sNames.length?`이번 검사에서 ${esc(N)}의 가장 빛나는 부분은 ${joinWa(sNames)}${hasBatchim(sNames[sNames.length-1])?'이에요':'예요'}. 이 힘은 앞으로 놀이하고 자라는 데 든든한 뿌리가 될 거예요.`:`이번 검사로 ${esc(N)}에게 지금 어떤 놀이와 돌봄이 잘 맞는지 알 수 있었어요.`}</p>
+      <p>${gNames.length?`${joinWa(gNames)}${hasBatchim(gNames[gNames.length-1])?'은':'는'} 앞으로 조금 더 함께 키워 가면 좋을 부분이에요. 부족하다는 뜻이 아니라, 지금 도와주면 가장 크게 자랄 수 있는 곳이라는 뜻이에요.`:`모든 지표가 고르게 알맞은 범위에 있어요. 지금의 생활 리듬을 잘 지켜 주세요.`}</p>
+      <p>원에서는 앞으로 12주 동안 ${C.label}의 <b>${areas.slice(0,3).join(', ')}</b> 영역 놀이를 중심으로 ${esc(N)}를 지원하겠습니다.</p>
+      <p>${esc(note)}</p>
+      <div class="sign">${esc(org.orgName)}${org.counselor?' '+esc(org.counselor):''} 드림</div>
+    </div>
+    <h3 class="sec">12주 놀이 로드맵</h3>
+    <div class="road">
+      ${[['1~4주',focus[0]],['5~8주',focus[1]],['9~12주',focus[2]]].map(([w,d])=>`<div><span class="wk">${w}</span><b contenteditable>${d.m.play[b][0]}</b><p contenteditable>${d.m.play[b][1]}</p>
+        <div class="lks" style="margin-top:2mm">${linkChips(d.m,b)}</div><p style="color:var(--muted);margin-top:1.5mm">· 중심 지표: ${d.m.name}</p></div>`).join('')}
+    </div>
+    <p class="disclaim">12주 뒤 같은 검사로 다시 재서 변화를 함께 살펴봐요.</p>
+    ${foot()}
+  </section>`);
+
+  /* 10. 가정 실천표 */
+  const acts=[];
+  focus.forEach(d=>{const list=homeOf(d.m,b,d.st||'normal');if(list[0]&&acts.length<4)acts.push({a:list[0],m:d.m.name})});
+  acts.push({a:b==='infant'?'잠들기 전 그림책 보며 이야기 들려주기':'잠자리 그림책 한 권 함께 읽기',m:'공통'});
+  const days=['월','화','수','목','금','토','일'];
+  pages.push(`<section class="page">
+    <div class="kicker">HOME PRACTICE</div>
+    <div class="ptitle">우리 집 놀이 실천표 · 첫 4주</div>
+    <p class="psub">냉장고에 붙여 두고, 한 날은 ${b==='infant'?'스티커를 붙여 주세요':`${esc(N)}가 직접 스티커를 붙여 보게 해요`}. 다 못 해도 괜찮아요.</p>
+    ${['1~2주','3~4주'].map(wk=>`<h3 class="sec">${wk}</h3>
+    <table class="chk"><thead><tr><th>놀이</th>${days.map(d=>`<th>${d}</th>`).join('')}</tr></thead>
+    <tbody>${acts.slice(0,4).map(x=>`<tr><td class="a" contenteditable>${x.a}<br><small style="color:var(--muted)">${x.m}</small></td>${days.map(()=>'<td class="box"></td>').join('')}</tr>`).join('')}</tbody></table>`).join('')}
+    <h3 class="sec">이번 주 칭찬 한마디</h3>
+    <div class="memo" style="min-height:0;padding:3mm 6mm"><div class="lines" contenteditable style="min-height:17mm"> </div></div>
+    ${foot()}
+  </section>`);
+
+  /* 11. 마무리 */
+  pages.push(`<section class="page">
+    <div class="kicker">NEXT STEP</div>
+    <div class="ptitle">상담 기록과 다음 약속</div>
+    <p class="psub">상담 때 나눈 이야기를 적어 두세요.</p>
+    <div class="memo"><div class="lines" contenteditable> </div></div>
+    <div class="next">
+      <div><small>이번 검사</small><b>${fmtDate(r.testDate)||'-'}</b></div>
+      <div><small>중간 점검 (6주 뒤)</small><b>${addDays(r.testDate,42)||'-'}</b></div>
+      <div><small>재검사 권장 (12주 뒤)</small><b>${addDays(r.testDate,84)||'-'}</b></div>
+    </div>
+    <div class="infobox" style="margin-top:8mm">
+      <b>${esc(org.orgName)}</b>
+      <p contenteditable>책과 자연, 몸놀이로 영유아의 뇌가 건강하게 자라도록 돕습니다.${org.counselor?'<br>담당 '+esc(org.counselor):''}${org.contact?' · '+esc(org.contact):''}</p>
+    </div>
+    <p class="disclaim">이 리포트는 BQ2 뇌기능 검사 결과를 바탕으로 ${C.label}과 연계한 놀이·생활 코칭 자료이며, 발달 진단이나 질병의 진단·치료를 목적으로 하지 않습니다. 아이의 발달이나 건강이 걱정되시면 소아청소년과 등 전문가와 상담해 주세요.</p>
+    ${foot()}
+  </section>`);
+
+  const T=String(pages.length).padStart(2,'0');
+  $('pages').innerHTML=pages.map((p,i)=>`<div class="pagebox">${p.replace('{{T}}',T).replace('{{P}}',String(i+1).padStart(2,'0'))}</div>`).join('');
+  fitPages();
+}
+
+function fitPages(){
+  const avail=Math.min(window.innerWidth-24,900);
+  const pw=210*96/25.4;
+  const z=Math.min(1,avail/pw);
+  document.querySelectorAll('.pagebox').forEach(b=>b.style.zoom=z);
+}
+window.addEventListener('resize',()=>{if(!$('previewArea').classList.contains('hide'))fitPages()});
+window.addEventListener('beforeprint',()=>document.querySelectorAll('.pagebox').forEach(b=>b.style.zoom=1));
+window.addEventListener('afterprint',fitPages);
+
+function go(n){
+  if(n===2){
+    const any=METRICS.some(m=>$('sc_'+m.key).value!=='');
+    if(!any){alert('점수를 하나 이상 입력해 주세요.');return}
+    saveOrg(); build();
+  }
+  if(n===3) renderKB(band($('age').value));
+  $('inputArea').classList.toggle('hide',n!==1);
+  $('kbArea').classList.toggle('hide',n!==3);$('tab3').classList.toggle('on',n===3);
+  $('previewArea').classList.toggle('hide',n!==2);
+  $('tab1').classList.toggle('on',n===1);$('tab2').classList.toggle('on',n===2);
+  window.scrollTo(0,0);
+}
+
+/* 시작 */
+buildTable();
+const org=lsGet(ORG_STORE,{});
+$('orgName').value=org.orgName||'초록테라스교육연구소';
+$('counselor').value=org.counselor||'';
+$('contact').value=org.contact||'';
+['orgName','counselor','contact'].forEach(id=>$(id).addEventListener('change',saveOrg));
+$('testDate').value=today();
+showCurr();
+renderSaved();
+</script>
+</body>
+</html>
