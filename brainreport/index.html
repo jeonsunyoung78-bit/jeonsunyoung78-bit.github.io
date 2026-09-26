@@ -155,7 +155,7 @@ h3.sec:before{content:"";width:2.2mm;height:2.2mm;border-radius:50%;background:v
 .twobox ul{margin:0;padding-left:4.5mm;font-size:9.8pt}
 
 /* 지표 상세 */
-.mcard{border:1px solid var(--line);border-radius:4mm;padding:4mm 5.5mm;margin-bottom:4mm}
+.mcard{border:1px solid var(--line);border-radius:4mm;padding:3.2mm 5mm;margin-bottom:3mm}
 .mhead{display:flex;align-items:baseline;gap:3mm;margin-bottom:1mm}
 .mhead .no{font-family:"Gowun Batang",serif;color:var(--leaf);font-weight:700;font-size:13pt}
 .mhead .nm{font-size:13pt;font-weight:800}
@@ -163,15 +163,15 @@ h3.sec:before{content:"";width:2.2mm;height:2.2mm;border-radius:50%;background:v
 .mhead .scbox{margin-left:auto;text-align:right}
 .mhead .scbox b{font-family:"Gowun Batang",serif;font-size:19pt;color:var(--forest)}
 .mhead .scbox small{color:var(--muted);font-size:8.5pt;margin-left:1mm}
-.mwhat{color:var(--muted);font-size:9.3pt;margin:0 0 1mm}
-.mbody{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-top:2mm}
+.mwhat{color:var(--muted);font-size:9pt;margin:0;line-height:1.5}
+.mbody{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-top:1.5mm}
 .mbody .read{font-size:9.8pt}
 .mbody .home{background:var(--cream);border-radius:3mm;padding:3mm 4mm;font-size:9.3pt}
 .mbody .home b{display:block;color:var(--forest);font-size:9pt;margin-bottom:1mm}
 .mbody .home ul{margin:0;padding-left:4mm}
 
 .lks{display:flex;flex-wrap:wrap;gap:1.5mm;margin:1mm 0 0}
-.lk{font-size:8pt;background:#f1f5ee;border:1px solid var(--line);border-radius:99px;padding:.3mm 2.5mm;color:#4d5a4a}
+.lk{font-size:7.6pt;background:#f1f5ee;border:1px solid var(--line);border-radius:99px;padding:.3mm 2.5mm;color:#4d5a4a}
 .lk b{color:var(--forest)}
 table.curr{width:100%;border-collapse:collapse;font-size:9.5pt}
 table.curr th{background:var(--forest);color:#fff;font-weight:700;padding:2.5mm 3mm;text-align:left}
@@ -209,10 +209,10 @@ table.curr td b{color:var(--forest)}
 .road p{margin:0;font-size:9.3pt;color:#445040}
 
 /* 체크리스트 */
-table.chk{width:100%;border-collapse:collapse;font-size:9.3pt}
+table.chk{width:100%;border-collapse:collapse;font-size:8.8pt}
 table.chk th,table.chk td{border:1px solid var(--line);padding:1.8mm 2mm;text-align:center}
 table.chk th{background:var(--mint);color:var(--forest);font-weight:700}
-table.chk td.a{text-align:left;width:60mm}
+table.chk td.a{text-align:left;width:72mm;line-height:1.4}
 table.chk td.box:after{content:"";display:inline-block;width:4mm;height:4mm;border:1.2px solid #b8c7b2;border-radius:1mm}
 
 /* 마무리 */
@@ -252,6 +252,45 @@ table.chk td.box:after{content:"";display:inline-block;width:4mm;height:4mm;bord
   </div>
 </header>
 
+<style>
+.st.good,.pill.good{background:var(--mint);color:var(--forest)}
+.st.watch,.pill.watch{background:#fbf5dc;color:#8a6d12}
+.st.grow,.pill.grow{background:var(--warm-bg);color:#a0621c}
+.st.none,.pill.none{background:#eee;color:#999}
+table.mt td.cut{white-space:nowrap;font-size:13px;color:var(--muted)}
+table.mt td.cut input{width:56px}
+.subgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.subgrid .box{border:1px dashed var(--line);border-radius:10px;padding:10px 12px}
+.subgrid .box b{display:block;font-size:13.5px;margin-bottom:6px}
+.subgrid input{width:58px;border:1px solid var(--line);border-radius:8px;padding:6px;text-align:center;background:#fbfcfa}
+.warnbox{background:#fbf5dc;border-radius:10px;padding:10px 12px;font-size:13px;color:#6d5710;margin-top:10px}
+@media (max-width:760px){.subgrid{grid-template-columns:1fr}}
+/* 뇌 컨디션 쪽 */
+.cond{display:grid;grid-template-columns:1fr 1fr;gap:5mm}
+.cbox{border:1px solid var(--line);border-radius:4mm;padding:5mm 6mm}
+.cbox h4{margin:0 0 2mm;font-size:11.5pt;color:var(--forest)}
+.cbox p{margin:0 0 2mm;font-size:9.5pt}
+.hz{display:flex;gap:4mm;align-items:baseline;margin:2mm 0}
+.hz b{font-family:"Gowun Batang",serif;font-size:20pt;color:var(--forest)}
+.hz small{color:var(--muted)}
+.sr{display:grid;grid-template-columns:22mm 1fr 12mm;align-items:center;gap:3mm;margin:2.5mm 0;font-size:9.5pt}
+.sr .bar{height:5mm;background:#eef1ec;border-radius:3mm;position:relative;overflow:hidden}
+.sr .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:3mm;background:var(--forest-2)}
+.sr .bar i.low{background:var(--warm)}
+.sr .bar u{position:absolute;top:-1mm;bottom:-1mm;width:.5mm;background:#8a9a86}
+.sr b{text-align:right}
+.mode{background:var(--forest);color:#fff;border-radius:4mm;padding:6mm 7mm;margin-top:5mm}
+.mode .k{font-size:8.5pt;letter-spacing:.16em;opacity:.8}
+.mode h4{margin:1mm 0 2mm;font-family:"Gowun Batang",serif;font-size:17pt}
+.mode p{margin:0 0 1.5mm;font-size:10pt;opacity:.95}
+.mode .g{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-top:3mm}
+.mode .g div{background:rgba(255,255,255,.12);border-radius:3mm;padding:3mm 4mm;font-size:9.5pt}
+.mode .g small{display:block;opacity:.75;font-size:8pt}
+.train{font-size:8.3pt;color:#3a6a84;margin-top:1.5mm}
+.train b{color:#3a6a84}
+.refs{font-size:7.8pt;color:var(--muted);margin-top:4mm;line-height:1.5}
+</style>
+
 <main class="app" id="inputArea">
 
   <section class="card">
@@ -265,11 +304,12 @@ table.chk td.box:after{content:"";display:inline-block;width:4mm;height:4mm;bord
       <label class="f">반 이름<input id="className" placeholder="햇살반"></label>
     </div>
     <p class="note" id="currNote" style="margin:10px 0 0"></p>
+    <div class="warnbox hide" id="infantWarn">브린트·뉴로하모니 프로그램은 만 3세 이상 유아를 대상으로 해요. 만 0~2세 결과는 측정이 흔들릴 수 있으니 참고용으로만 활용하고, 교사 관찰과 함께 해석해 주세요.</div>
   </section>
 
   <section class="card">
     <h2>BQ2 결과지 수치</h2>
-    <p class="desc">결과지를 보고 점수를 입력하세요. 정상범위는 표준값이 미리 들어가 있어요. 결과지에 다른 값이 적혀 있으면 그 값으로 고쳐 주세요.</p>
+    <p class="desc">결과지의 <b>종합 점수</b>를 입력하세요. 기준값은 파낙토스 BQ2 결과 리포트(2511판) 기준이 미리 들어가 있어요. 결과지 기준이 다르면 고쳐 주세요.</p>
 
     <details style="margin-bottom:14px">
       <summary>AI로 결과지 수치 한 번에 읽기 (사진·스캔본)</summary>
@@ -280,7 +320,7 @@ table.chk td.box:after{content:"";display:inline-block;width:4mm;height:4mm;bord
           <span id="copyMsg" class="note"></span>
         </div>
         <label class="f">AI 답변 붙여넣기
-          <textarea id="pasteBox" placeholder="인지기능 25 20~24&#10;수면효율성 46 50~55&#10;…"></textarea>
+          <textarea id="pasteBox" placeholder="인지 26&#10;수면 55&#10;정서 48 좌42 우58&#10;…"></textarea>
         </label>
         <div class="row" style="margin-top:8px">
           <button class="btn" onclick="applyPaste()">채워 넣기</button>
@@ -290,24 +330,30 @@ table.chk td.box:after{content:"";display:inline-block;width:4mm;height:4mm;bord
     </details>
 
     <table class="mt">
-      <thead><tr><th>항목</th><th>점수</th><th>정상범위</th><th>뜻</th><th>판정</th></tr></thead>
+      <thead><tr><th>항목</th><th>종합 점수</th><th>안정 기준</th><th>BQ2 판정</th><th>판정</th></tr></thead>
       <tbody id="mtBody"></tbody>
     </table>
 
-    <div class="dom">
-      <div class="box"><b>정서 우세율 (좌 / 우, %)</b>
-        <div class="row">좌 <input id="emoL" type="number" min="0" max="100"> 우 <input id="emoR" type="number" min="0" max="100"></div>
+    <div class="subgrid">
+      <div class="box"><b>좌우 우세율 (%)</b>
+        <div class="row">정서 좌 <input id="emoL" type="number"> 우 <input id="emoR" type="number"></div>
+        <div class="row" style="margin-top:6px">행동 좌 <input id="actL" type="number"> 우 <input id="actR" type="number"></div>
       </div>
-      <div class="box"><b>행동 우세율 (좌 / 우, %)</b>
-        <div class="row">좌 <input id="actL" type="number" min="0" max="100"> 우 <input id="actR" type="number" min="0" max="100"></div>
+      <div class="box"><b>자기조절 세부 (휴식·주의력·집중력)</b>
+        <div class="row">휴식 <input id="srRest" type="number"> 주의력 <input id="srAttn" type="number"></div>
+        <div class="row" style="margin-top:6px">집중력 <input id="srFocus" type="number"></div>
+      </div>
+      <div class="box"><b>기초율동 주파수 (Hz)</b>
+        <div class="row">좌뇌 <input id="hzL" type="number" step="0.1"> 우뇌 <input id="hzR" type="number" step="0.1"></div>
+        <p class="note" style="margin:6px 0 0" id="hzNote"></p>
       </div>
     </div>
-    <p class="note" style="margin-top:8px">우세율이 결과지에 없으면 비워 두세요. 그 페이지는 리포트에서 빠져요.</p>
+    <p class="note" style="margin-top:8px">세부 수치는 결과지에 있을 때만 넣으세요. 비워 두면 그 부분은 리포트에서 빠지거나 간단히 표시돼요.</p>
   </section>
 
   <section class="card">
     <h2>선생님 한마디</h2>
-    <p class="desc">학부모 편지 끝에 들어가요. 검사 때 본 아이 모습, 칭찬할 점을 적어 주세요. 비워 두면 기본 문장이 들어가요.</p>
+    <p class="desc">학부모 편지에 들어가요. 검사 때 본 아이 모습, 칭찬할 점을 적어 주세요. 비워 두면 기본 문장이 들어가요.</p>
     <label class="f"><textarea id="teacherNote" placeholder="검사 내내 차분하게 앉아 있었고, 끝나고 '재밌었어요!'라고 말해 주었어요."></textarea></label>
   </section>
 
@@ -337,7 +383,7 @@ table.chk td.box:after{content:"";display:inline-block;width:4mm;height:4mm;bord
 <main class="app kb hide" id="kbArea">
   <section class="card">
     <h2>기본 자료</h2>
-    <p class="desc">리포트 문장은 모두 이 자료에서 나와요. 교사 검토용 초안이에요. 고칠 곳이 있으면 알려 주세요. <b>kb.js</b> 파일에 반영하면 모든 리포트에 적용돼요.</p>
+    <p class="desc">리포트 문장은 모두 이 자료에서 나와요. 판정 기준은 파낙토스 BQ2 결과 리포트(2511판)와 두뇌관리사 교육 자료를 따랐고, 해설·활동 문구는 교사 검토용 초안이에요. 고칠 곳을 알려 주시면 <b>kb.js</b>에 반영해 모든 리포트에 적용할게요.</p>
     <div class="row"><span class="note">보기:</span>
       <button class="btn ghost" id="kbInf" onclick="renderKB('infant')">영아 (만 0~2세)</button>
       <button class="btn ghost" id="kbChi" onclick="renderKB('child')">유아 (만 3~5세)</button></div>
@@ -358,89 +404,142 @@ table.chk td.box:after{content:"";display:inline-block;width:4mm;height:4mm;bord
 
 <script src="kb.js"></script>
 <script>
-const DOM_KEYS = ['emoL','emoR','actL','actR'];
-const STORE = 'ctel-brainreport-v1';
+const EXTRA = ['emoL','emoR','actL','actR','srRest','srAttn','srFocus','hzL','hzR'];
+const STORE = 'ctel-brainreport-v2';
 const ORG_STORE = 'ctel-brainreport-org';
+const $=id=>document.getElementById(id);
 
 /* ───────── 저장소 (실패해도 동작) ───────── */
 function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
 
-/* ───────── 입력 표 ───────── */
-const $=id=>document.getElementById(id);
-function buildTable(){
-  $('mtBody').innerHTML = METRICS.map(m=>`
-    <tr>
-      <td class="nm">${m.name}</td>
-      <td><input id="sc_${m.key}" type="number" step="any" oninput="refreshStatus()"></td>
-      <td><input id="lo_${m.key}" type="number" step="any" value="${m.range[0]}" oninput="refreshStatus()"> ~
-          <input id="hi_${m.key}" type="number" step="any" value="${m.range[1]}" oninput="refreshStatus()"></td>
-      <td class="note">${m.what.replace(/ 보여 줘요\.$/,'')}</td>
-      <td><span class="st none" id="st_${m.key}">-</span></td>
-    </tr>`).join('');
+/* ───────── 도우미 ───────── */
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function hasBatchim(s){const c=s.charCodeAt(s.length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0}
+function joinWa(arr){return arr.map((x,i)=>i<arr.length-1?`<b>${x}</b>${hasBatchim(x)?'과':'와'} `:`<b>${x}</b>`).join('')}
+function fmtDate(s){if(!s)return '';const [y,m,d]=s.split('-');return `${y}. ${m}. ${d}`}
+function addDays(s,n){if(!s)return '';const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return fmtDate(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'))}
+function num(id){const el=$(id);if(!el)return null;const v=el.value;return v===''?null:Number(v)}
+function band(age){return Number(age)<=2?'infant':'child'}
+function baseHz(age){const a=Number(age);return (BASE_RHYTHM.find(([x])=>a<=x)||[0,10])[1]}
+
+/* ───────── 판정 ───────── */
+function readMetric(m){
+  const v={score:num('sc_'+m.key)};
+  if(m.type==='band'){v.lo=num('c1_'+m.key)??m.lo;v.hi=num('c2_'+m.key)??m.hi}
+  else{v.cut=num('c1_'+m.key)??m.good;if(m.warn!=null)v.warn=m.warn}
+  return v;
 }
-function num(id){const v=$(id).value;return v===''?null:Number(v)}
-function readMetric(m){return {score:num('sc_'+m.key),lo:num('lo_'+m.key)??m.range[0],hi:num('hi_'+m.key)??m.range[1]}}
+/* 반환: {key: 상태키, tone: good|watch|grow|none, label} */
 function statusOf(m,v){
-  if(v.score==null) return 'none';
-  if(v.score<v.lo) return 'low';
-  if(v.score>v.hi) return m.highGood?'good':'high';
-  return 'normal';
+  if(v.score==null) return {key:'none',tone:'none',label:'입력 전'};
+  const s=v.score;
+  if(m.type==='min'){
+    if(s>=v.cut) return {key:'good',tone:'good',label:'안정'};
+    if(v.warn!=null&&s>v.warn) return {key:'watch',tone:'watch',label:'살펴봐요'};
+    return {key:'grow',tone:'grow',label:'함께 키워요'};
+  }
+  if(m.type==='max'){
+    return s<=v.cut?{key:'good',tone:'good',label:'안정'}:{key:'grow',tone:'grow',label:'함께 키워요'};
+  }
+  if(s<v.lo) return {key:'low',tone:m.low.tone,label:m.low.label};
+  if(s>v.hi) return {key:'high',tone:m.high.tone,label:m.high.label};
+  return {key:'good',tone:'good',label:'안정'};
 }
-const ST_LABEL={low:'범위보다 낮음',normal:'정상 범위',high:'범위보다 높음',good:'범위보다 높음 · 강점',none:'입력 전'};
+function cutText(m,v){return m.type==='band'?`${v.lo}~${v.hi}`:m.type==='min'?`${v.cut} 이상`:`${v.cut} 이하`}
+function readOf(m,st){if(st.key==='none')return '결과지에 이 항목의 점수가 없어요.';return m.read[st.key]||m.read.grow}
+function homeOf(m,b,st){const h=m.home[b];if(st.key==='none')return[];return h[st.key]||h.grow||h.good}
+
+/* ───────── 입력 표 ───────── */
+function buildTable(){
+  $('mtBody').innerHTML = METRICS.map(m=>{
+    const cut=m.type==='band'
+      ?`<input id="c1_${m.key}" type="number" value="${m.lo}" oninput="refreshStatus()"> ~ <input id="c2_${m.key}" type="number" value="${m.hi}" oninput="refreshStatus()">`
+      :`<input id="c1_${m.key}" type="number" value="${m.good}" oninput="refreshStatus()"> ${m.type==='min'?'이상':'이하'}`;
+    return `<tr><td class="nm">${m.name}</td>
+      <td><input id="sc_${m.key}" type="number" step="any" oninput="refreshStatus()"></td>
+      <td class="cut">${cut}</td>
+      <td class="note">${m.rule}</td>
+      <td><span class="st none" id="st_${m.key}">-</span></td></tr>`}).join('');
+}
 function refreshStatus(){
-  METRICS.forEach(m=>{const s=statusOf(m,readMetric(m));const el=$('st_'+m.key);el.className='st '+s;el.textContent=ST_LABEL[s]});
+  METRICS.forEach(m=>{const s=statusOf(m,readMetric(m));const el=$('st_'+m.key);el.className='st '+s.tone;el.textContent=s.label});
+}
+function showCurr(){
+  const b=band($('age').value), c=CURRICULUM[b];
+  $('currNote').innerHTML=`<span class="currtag">${c.label} 연계</span> ${c.target} 기준 해설과 놀이·가정 활동이 들어가요.`;
+  $('infantWarn').classList.toggle('hide',b!=='infant');
+  $('hzNote').textContent=`만 ${$('age').value}세 기준 약 ${baseHz($('age').value)}Hz`;
 }
 
 /* ───────── AI 요청문 · 붙여넣기 ───────── */
 const PROMPT = `첨부한 파일은 파낙토스 BQ2 뇌기능 검사 결과지입니다.
-아래 항목의 점수와 정상범위를 결과지에서 찾아, 설명 없이 한 줄에 하나씩 이 형식으로만 적어 주세요.
+결과지에서 아래 항목의 숫자를 찾아, 설명 없이 한 줄에 하나씩 이 형식으로만 적어 주세요.
 
-${METRICS.map(m=>m.name+' 점수 최소~최대').join('\n')}
-정서우세 좌% 우%
-행동우세 좌% 우%
+인지 종합점수   (좌뇌·우뇌 인지도 중 낮은 값)
+수면 종합점수
+정서 종합점수 좌(우세율%) 우(우세율%)
+행동 종합점수 좌(우세율%) 우(우세율%)
+스트레스 종합점수
+주의 종합점수
+뇌균형 종합점수
+좌우연결 종합점수
+자기조절 종합점수 휴식(점수) 주의력(점수) 집중력(점수)
+기초율동 좌(Hz) 우(Hz)
+
+예시)
+인지 26
+정서 48 좌42 우58
+자기조절 76 휴식22 주의력30 집중력26
+기초율동 좌8 우7
 
 지켜 주세요:
-- 숫자만 쓰고 단위는 빼 주세요. 예) 인지기능 25 20~24
-- 정상범위는 결과지에 정상 구간으로 표시된 두 숫자예요. 그래프 눈금(0, 100 등)과 헷갈리지 마세요.
-- 정상범위가 안 보이면 점수만 쓰세요. 항목 자체가 없으면 그 줄은 빼 주세요.
-- 결과지의 항목명이 조금 달라도 가장 가까운 항목에 넣어 주세요.
+- 숫자와 좌/우/휴식/주의력/집중력 표시만 쓰고, 단위나 다른 말은 빼 주세요.
+- 결과지에 없는 항목은 그 줄을 빼 주세요.
+- 그래프 눈금(0, 50, 100 등)과 실제 점수를 헷갈리지 마세요.
 - 보이는 숫자만 쓰고 추측하지 마세요.`;
 function copyPrompt(){
   const done=()=>{$('copyMsg').textContent='복사했어요. AI 채팅창에 붙여넣으세요.'};
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(PROMPT).then(done,fallback)}else fallback();
   function fallback(){const t=document.createElement('textarea');t.value=PROMPT;document.body.appendChild(t);t.select();try{document.execCommand('copy');done()}catch(e){$('copyMsg').textContent='복사가 안 되면 이 칸의 글을 직접 복사하세요.';$('pasteBox').value=PROMPT}t.remove()}
 }
-const ALIAS={cog:['인지기능','인지'],sleep:['수면효율성','수면'],cheer:['명랑성','명랑'],active:['적극성','적극'],stress:['스트레스저항도','스트레스','항스트레스'],attn:['주의지수','주의집중','주의'],balance:['뇌균형','좌우균형','균형'],link:['좌우뇌연결성','연결성','연결'],self:['자기조절능력','자기조절','조절']};
+const ALIAS=[['cog',['인지기능','인지도','인지']],['sleep',['수면']],['emo',['정서']],['act',['행동']],['stress',['스트레스','항스트레스']],
+  ['balance',['뇌균형','균형']],['link',['좌우연결','좌우뇌연결','연결']],['self',['자기조절']],['attn',['주의']]];
 function applyPaste(){
   const lines=$('pasteBox').value.split(/\n/).map(s=>s.trim()).filter(Boolean);
   let n=0;
+  const tag=(s,k)=>{const m=s.match(new RegExp(k+'\\s*(-?\\d+(?:\\.\\d+)?)'));return m?m[1]:null};
   lines.forEach(line=>{
-    const clean=line.replace(/[*`|:：]/g,' ');
-    const nums=(clean.match(/-?\d+(\.\d+)?/g)||[]).map(Number);
-    if(/정서/.test(clean)&&nums.length>=2){$('emoL').value=nums[0];$('emoR').value=nums[1];n++;return}
-    if(/행동/.test(clean)&&nums.length>=2){$('actL').value=nums[0];$('actR').value=nums[1];n++;return}
-    const m=METRICS.find(m=>ALIAS[m.key].some(a=>clean.replace(/\s/g,'').includes(a)));
-    if(!m||!nums.length) return;
-    $('sc_'+m.key).value=nums[0];
-    if(nums.length>=3){$('lo_'+m.key).value=nums[1];$('hi_'+m.key).value=nums[2]}
+    const s=line.replace(/[*`|:：()%]/g,' ').replace(/\s+/g,' ').trim();
+    const head=s.replace(/\s/g,'');
+    if(head.startsWith('기초율동')){const L=tag(s,'좌'),R=tag(s,'우');if(L)$('hzL').value=L;if(R)$('hzR').value=R;if(L||R)n++;return}
+    const hit=ALIAS.find(([k,al])=>al.some(a=>head.startsWith(a)));
+    if(!hit)return;
+    const key=hit[0];
+    const rest=s.replace(/^[가-힣]+/,'');
+    const first=rest.match(/^\s*(-?\d+(?:\.\d+)?)/);
+    if(first)$('sc_'+key).value=first[1];
+    if(key==='emo'||key==='act'){const L=tag(s,'좌'),R=tag(s,'우');if(L)$(key+'L').value=L;if(R)$(key+'R').value=R}
+    if(key==='self'){const a=tag(s,'휴식'),b=tag(s,'주의력'),c=tag(s,'집중력');if(a)$('srRest').value=a;if(b)$('srAttn').value=b;if(c)$('srFocus').value=c}
     n++;
   });
   refreshStatus();
-  $('pasteMsg').innerHTML = n?`<span class="ok">${n}개 항목을 채웠어요.</span> 결과지와 한 번 대조해 주세요.`:'<span class="err">읽을 수 있는 줄이 없어요.</span> 형식을 확인해 주세요.';
+  $('pasteMsg').innerHTML = n?`<span class="ok">${n}개 줄을 채웠어요.</span> 결과지와 한 번 대조해 주세요.`:'<span class="err">읽을 수 있는 줄이 없어요.</span> 형식을 확인해 주세요.';
 }
 
 /* ───────── 저장 목록 ───────── */
-const FIELDS=['fullName','callName','age','className','testDate','teacherNote',...DOM_KEYS];
+const FIELDS=['fullName','callName','age','className','testDate','teacherNote',...EXTRA];
 function collect(){
   const r={};FIELDS.forEach(f=>r[f]=$(f).value);
-  r.metrics={};METRICS.forEach(m=>{const v=readMetric(m);r.metrics[m.key]=v});
+  r.metrics={};METRICS.forEach(m=>{r.metrics[m.key]=readMetric(m)});
   return r;
 }
 function fill(r){
-  FIELDS.forEach(f=>$(f).value=r[f]??(f==='age'?'4':''));showCurr();
-  METRICS.forEach(m=>{const v=(r.metrics||{})[m.key]||{};$('sc_'+m.key).value=v.score??'';$('lo_'+m.key).value=v.lo??m.range[0];$('hi_'+m.key).value=v.hi??m.range[1]});
-  refreshStatus();
+  FIELDS.forEach(f=>$(f).value=r[f]??(f==='age'?'4':''));
+  METRICS.forEach(m=>{const v=(r.metrics||{})[m.key]||{};$('sc_'+m.key).value=v.score??'';
+    if(m.type==='band'){$('c1_'+m.key).value=v.lo??m.lo;$('c2_'+m.key).value=v.hi??m.hi}else $('c1_'+m.key).value=v.cut??m.good});
+  showCurr();refreshStatus();
 }
 function saveRecord(){
   const r=collect();
@@ -462,60 +561,58 @@ function delRecord(i){const list=lsGet(STORE,[]);if(!confirm(`${list[i].fullName
 function resetForm(){fill({testDate:today()});$('pasteBox').value='';$('pasteMsg').textContent=''}
 function saveOrg(){lsSet(ORG_STORE,{orgName:$('orgName').value,counselor:$('counselor').value,contact:$('contact').value})}
 
-/* ───────── 도우미 ───────── */
-function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function jo(w,a,b){return w+(hasBatchim(w)?a:b)}
-function joinWa(arr){return arr.map((x,i)=>i<arr.length-1?`<b>${x}</b>${hasBatchim(x)?'과':'와'} `:`<b>${x}</b>`).join('')}
-function hasBatchim(s){const c=s.charCodeAt(s.length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0}
-function fmtDate(s){if(!s)return '';const [y,m,d]=s.split('-');return `${y}. ${m}. ${d}`}
-function addDays(s,n){if(!s)return '';const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return fmtDate(d.toISOString().slice(0,10))}
-
-/* 게이지: 회색 트랙 + 초록 정상 띠 + 점수 점 */
+/* ───────── 게이지 ───────── */
+const TONE_COLOR={good:'#3f6b4a',watch:'#c9a227',grow:'#d9923f',none:'#aaa'};
 function gauge(m,v,w=300){
-  const max=Math.max(m.axis, Math.ceil(((v.score??0)+5)/10)*10, Math.ceil(v.hi/10)*10);
+  const max=Math.max(m.axis, Math.ceil(((v.score??0)+5)/10)*10);
   const x=t=>12+(w-24)*Math.min(Math.max(t,0),max)/max;
-  const st=statusOf(m,v);
-  const dot={low:'#d9923f',high:'#5e93b0',normal:'#3f6b4a',good:'#3f6b4a',none:'#aaa'}[st];
+  let zone;
+  if(m.type==='band') zone=[v.lo,v.hi];
+  else if(m.type==='min') zone=[v.cut,max];
+  else zone=[0,v.cut];
+  const st=statusOf(m,v), dot=TONE_COLOR[st.tone];
+  const warn=(m.type==='min'&&v.warn!=null)?`<rect x="${x(v.warn)}" y="16" width="${x(v.cut)-x(v.warn)}" height="8" fill="#f3e7b5"/>`:'';
+  const ticks=(m.type==='band'?[v.lo,v.hi]:[v.cut]).concat(v.warn!=null&&m.type==='min'?[v.warn]:[]);
   return `<svg viewBox="0 0 ${w} 40" width="100%" height="40" style="display:block">
     <rect x="12" y="16" width="${w-24}" height="8" rx="4" fill="#eef1ec"/>
-    <rect x="${x(v.lo)}" y="16" width="${Math.max(x(v.hi)-x(v.lo),3)}" height="8" rx="4" fill="#cfe3c6"/>
-    <text x="${x(v.lo)}" y="36" font-size="8.5" fill="#6f7c6c" text-anchor="middle">${v.lo}</text>
-    <text x="${x(v.hi)}" y="36" font-size="8.5" fill="#6f7c6c" text-anchor="middle">${v.hi}</text>
+    ${warn}
+    <rect x="${x(zone[0])}" y="16" width="${Math.max(x(zone[1])-x(zone[0]),3)}" height="8" rx="4" fill="#cfe3c6"/>
+    ${ticks.map(t=>`<text x="${x(t)}" y="36" font-size="8.5" fill="#6f7c6c" text-anchor="middle">${t}</text>`).join('')}
     ${v.score!=null?`<circle cx="${x(v.score)}" cy="20" r="6.5" fill="${dot}" stroke="#fff" stroke-width="2"/>
     <text x="${x(v.score)}" y="9" font-size="9.5" font-weight="700" fill="${dot}" text-anchor="middle">${v.score}</text>`:''}
   </svg>`;
 }
-
-/* ───────── 연령 → 교육과정 ───────── */
-function band(age){return Number(age)<=2?'infant':'child'}
-function showCurr(){
-  const b=band($('age').value), c=CURRICULUM[b];
-  $('currNote').innerHTML=`<span class="currtag">${c.label} 연계</span> ${c.target} 기준 해설과 놀이·가정 활동이 들어가요.`;
-}
-function homeOf(m,b,st){const h=m.home[b];return st==='low'?h.low:(st==='high'||st==='good')?h.high:st==='normal'?h.normal:[]}
-function readOf(m,st){return st==='none'?'결과지에 이 항목의 점수가 없어요.':m.read[st==='good'?'high':st]}
-const linkChips=(m,b)=>m.link[b].map(([a,c])=>`<span class="lk"><b>${a}</b> ${c}</span>`).join('');
+function ageCol(age){const a=Number(age);return a<=1?2:a===2?3:4}
+function links(m,age){return m.link.map(l=>({area:l[0],cat:l[1],content:l[ageCol(age)]}))}
+const linkChips=(m,age)=>links(m,age).map(l=>`<span class="lk"><b>${l.area}</b> ${l.cat} · ${l.content}</span>`).join('');
 
 /* ───────── 기본 자료 화면 ───────── */
 function renderKB(b){
   const c=CURRICULUM[b];
   $('kbInf').className='btn '+(b==='infant'?'':'ghost');$('kbChi').className='btn '+(b==='child'?'':'ghost');
+  const st=m=>m.type==='band'?[['good','안정'],['low',m.low.label],['high',m.high.label]]:[['good','안정'],['grow','키울 점']];
   $('kbBody').innerHTML=`
   <h3>${c.label} · ${c.target} 영역과 내용범주</h3>
   <div class="kbwrap"><table><tr><th>영역</th><th>내용범주</th><th>연결된 BQ2 지표</th></tr>
   ${Object.entries(c.areas).map(([a,cats])=>`<tr><td><b>${a}</b></td><td>${cats.join(' · ')}</td>
-    <td>${METRICS.filter(m=>m.link[b].some(l=>l[0]===a)).map(m=>m.name).join(', ')||'<span class="sub">-</span>'}</td></tr>`).join('')}
+    <td>${METRICS.filter(m=>m.link.some(l=>l[0]===a)).map(m=>m.name).join(', ')||'<span class="sub">-</span>'}</td></tr>`).join('')}
   </table></div>
-  <h3>지표별 해설 · 연계 · 활동</h3>
-  <div class="kbwrap"><table><tr><th>지표 (정상범위)</th><th>연계 영역 &gt; 내용범주</th><th>해석</th><th>가정 활동</th><th>원에서의 놀이</th></tr>
+  <h3>영역별 목표</h3><div class="kbwrap"><table>${Object.entries(AREA_GOALS).map(([a,g])=>`<tr><th>${a}</th><td>${g}</td></tr>`).join('')}</table></div>
+  <h3>지표별 판정 · 해설 · 활동</h3>
+  <div class="kbwrap"><table><tr><th>지표</th><th>연계 영역 &gt; 내용범주 · 내용</th><th>해석</th><th>가정 활동</th><th>원 놀이 · 훈련</th></tr>
   ${METRICS.map(m=>`<tr>
-    <td><b>${m.name}</b><br><span class="sub">${m.range[0]}~${m.range[1]}${m.highGood?' · 높으면 강점':''}</span><br><span class="sub">${m.what}</span></td>
-    <td>${m.link[b].map(l=>l.join(' &gt; ')).join('<br>')}</td>
-    <td><span class="sub">낮음</span> ${m.read.low}<br><span class="sub">정상</span> ${m.read.normal}<br><span class="sub">높음</span> ${m.read.high}</td>
-    <td><span class="sub">낮음</span><ul>${m.home[b].low.map(x=>`<li>${x}</li>`).join('')}</ul><span class="sub">정상</span><ul>${m.home[b].normal.map(x=>`<li>${x}</li>`).join('')}</ul><span class="sub">높음</span><ul>${m.home[b].high.map(x=>`<li>${x}</li>`).join('')}</ul></td>
-    <td><b>${m.play[b][0]}</b><br>${m.play[b][1]}</td></tr>`).join('')}
-  </table></div>`;
+    <td><b>${m.name}</b><br><span class="sub">${m.rule}</span><br><span class="sub">${m.what}</span></td>
+    <td>${m.link.map(l=>`<b>${l[0]} &gt; ${l[1]}</b><br>`+(b==='infant'?`<span class="sub">0~1세</span> ${l[2]}<br><span class="sub">2세</span> ${l[3]}`:`<span class="sub">3~5세</span> ${l[4]}`)).join('<br>')}</td>
+    <td>${st(m).map(([k,l])=>`<span class="sub">${l}</span> ${m.read[k]||m.read.grow}`).join('<br>')}</td>
+    <td>${st(m).map(([k,l])=>`<span class="sub">${l}</span><ul>${(m.home[b][k]||[]).map(x=>`<li>${x}</li>`).join('')}</ul>`).join('')}</td>
+    <td><b>${m.play[b][0]}</b><br>${m.play[b][1]}<br><span class="sub">훈련: ${m.train}</span></td></tr>`).join('')}
+  </table></div>
+  <h3>자기조절 → 훈련 모드</h3>
+  <div class="kbwrap"><table><tr><th>모드</th><th>뇌파 · 기준</th><th>뜻</th><th>원 훈련</th><th>기대 효과</th></tr>
+  ${Object.values(TRAIN_MODES).map(t=>`<tr><td><b>${t.title}</b></td><td>${t.wave} · ${t.base}</td><td>${t.desc}</td><td>${t.games}</td><td>${t.gain}</td></tr>`).join('')}</table></div>
+  <h3>12주 원 훈련 흐름</h3>
+  <div class="kbwrap"><table>${PHASES.map(p=>`<tr><th>${p.weeks}</th><td><b>${p.title}</b> — ${p.desc.replace('{MODE}','아이의 훈련 모드')}</td></tr>`).join('')}</table></div>
+  <h3>참고 연구</h3><ul>${REFS.map(r=>`<li class="sub">${r}</li>`).join('')}</ul>`;
 }
 
 /* ───────── 리포트 조립 ───────── */
@@ -527,15 +624,31 @@ function build(){
   const N = /[가-힣]$/.test(base)&&hasBatchim(base)? base+'이' : base;   // "하은" → "하은이", "서아" → "서아"
   const sub=t=>t.replace(/\{N\}/g,esc(N));
   const data=METRICS.map(m=>{const v=r.metrics[m.key];return {m,v,st:statusOf(m,v)}});
-  const filled=data.filter(d=>d.st!=='none');
-  const dist=d=>{const {score,lo,hi}=d.v;const span=Math.max(hi-lo,1);return score<lo?(lo-score)/span:score>hi?(score-hi)/span:0};
-  const strengths=filled.filter(d=>d.st==='normal'||d.st==='good').sort((a,b)=>(b.st==='good')-(a.st==='good'));
-  const growth=filled.filter(d=>d.st==='low'||d.st==='high').sort((a,b)=>dist(b)-dist(a));
+  const filled=data.filter(d=>d.st.key!=='none');
+  const dist=d=>{const {score}=d.v, m=d.m;
+    if(m.type==='band') return score<d.v.lo?(d.v.lo-score)/(d.v.hi-d.v.lo):score>d.v.hi?(score-d.v.hi)/(d.v.hi-d.v.lo):0;
+    if(m.type==='min') return Math.max(0,(d.v.cut-score)/d.v.cut);
+    return Math.max(0,(score-d.v.cut)/Math.max(d.v.cut,1));};
+  const strengths=filled.filter(d=>d.st.tone==='good').sort((a,b)=>(b.st.key==='high')-(a.st.key==='high'));
+  const growth=filled.filter(d=>d.st.tone!=='good').sort((a,b)=>(b.st.tone==='grow')-(a.st.tone==='grow')||dist(b)-dist(a));
   const hasDom=[r.emoL,r.emoR,r.actL,r.actR].some(x=>x!=='');
   const ageTxt=`만 ${r.age}세`+(r.className?` · ${r.className}`:'');
 
+  /* 자기조절 → 훈련 모드 */
+  const sr={rest:num('srRest'),attn:num('srAttn'),focus:num('srFocus')};
+  const srHas=Object.values(sr).some(x=>x!=null);
+  let mode=null, spread=null;
+  if(srHas){
+    const ent=Object.entries(sr).filter(([,v])=>v!=null);
+    mode=ent.map(([k,v])=>[k,v-TRAIN_MODES[k].base]).sort((a,b)=>a[1]-b[1])[0][0];
+    const vals=ent.map(e=>e[1]);spread=Math.max(...vals)-Math.min(...vals);
+  }
+  const hzL=num('hzL'),hzR=num('hzR'),hzHas=hzL!=null||hzR!=null,hzBase=baseHz(r.age);
+  const hzLow=hzHas&&Math.min(...[hzL,hzR].filter(x=>x!=null))<hzBase;
+
   const pages=[];
   const foot=()=>`<div class="pfoot"><span>${esc(org.orgName)} · BRAIN GROWTH REPORT</span><span>${esc(r.fullName||N)} · {{P}} / {{T}}</span></div>`;
+  const pillOf=st=>`<span class="pill ${st.tone}">${st.label}</span>`;
 
   /* 1. 표지 */
   pages.push(`<section class="page cover">
@@ -548,7 +661,7 @@ function build(){
     <div class="in">
       <div class="kicker">BRAIN GROWTH REPORT · ${C.label}</div>
       <h1>${esc(N)}의<br>뇌 성장 리포트</h1>
-      <p class="lead" contenteditable>뇌파로 살펴본 ${esc(N)}의 지금, 그리고 ${C.label}의 놀이로 12주 동안 함께 키워 갈 힘을 담았어요.</p>
+      <p class="lead" contenteditable>BQ2 뇌기능 검사로 살펴본 ${esc(N)}의 지금, 그리고 ${C.label}의 놀이와 두뇌 훈련으로 12주 동안 함께 키워 갈 힘을 담았어요.</p>
     </div>
     <div class="who">
       <div><small>NAME</small><b>${esc(r.fullName||N)}</b></div>
@@ -565,24 +678,23 @@ function build(){
     <div class="ptitle">이 리포트를 읽기 전에</div>
     <p class="psub">BQ2 검사가 무엇을 보는지, 그래프를 어떻게 읽는지 안내해 드려요.</p>
     <div class="infogrid">
-      <div class="infobox"><b>어떤 검사인가요?</b><p contenteditable>이마에 센서를 붙이고 잠시 편안히 앉아 뇌에서 나오는 전기 신호(뇌파)를 재는 검사예요. 아프지 않고, 잘하고 못하는 시험도 아니에요.</p></div>
-      <div class="infobox"><b>무엇을 알 수 있나요?</b><p contenteditable>집중, 감정, 쉼, 조절 같은 뇌의 기능이 지금 어떤 상태인지 9가지 지표로 보여 줘요. 이 리포트는 그 결과를 ${C.label}의 영역과 이어서 놀이로 도울 방법을 담았어요.</p></div>
-      <div class="infobox"><b>결과는 바뀌나요?</b><p contenteditable>네. 영유아의 뇌는 하루가 다르게 자라고, 그날의 잠·기분·컨디션에 따라서도 달라져요. 그래서 12주 뒤 다시 재서 변화를 살펴봐요.</p></div>
+      <div class="infobox"><b>어떤 검사인가요?</b><p contenteditable>이마에 밴드를 두르고 잠시 편안히 앉아, 뇌세포가 신호를 주고받을 때 생기는 전기 신호(뇌파)를 재는 검사예요. 아프지 않고, 잘하고 못하는 시험도 아니에요.</p></div>
+      <div class="infobox"><b>무엇을 알 수 있나요?</b><p contenteditable>인지, 수면, 정서, 행동, 스트레스, 주의, 뇌균형, 좌우연결, 자기조절 9가지로 지금 뇌의 상태를 보여 줘요. 이 리포트는 그 결과를 ${C.label}의 영역과 이어서 놀이로 도울 방법을 담았어요.</p></div>
+      <div class="infobox"><b>결과는 바뀌나요?</b><p contenteditable>네. 뇌파는 그날의 잠·기분·컨디션에 따라 달라지고, 아이의 뇌는 하루가 다르게 자라요. 그래서 12주 뒤 다시 재서 변화를 살펴봐요.</p></div>
       <div class="infobox"><b>꼭 알아 두세요</b><p contenteditable>이 리포트는 놀이와 생활을 돕기 위한 코칭 자료예요. 발달을 진단하거나 질병을 판단하는 의료 문서가 아니에요.</p></div>
     </div>
     <h3 class="sec">그래프 읽는 법</h3>
     <div class="howto">
-      ${gauge({axis:100,highGood:false},{score:62,lo:40,hi:60})}
+      ${gauge({type:'min',axis:100},{score:72,cut:60})}
       <div class="legend">
-        <span><i class="sw" style="background:#cfe3c6"></i>초록 띠: 정상 범위</span>
-        <span><i class="sw" style="background:#3f6b4a;width:3mm;height:3mm"></i>초록 점: 정상 범위 안</span>
-        <span><i class="sw" style="background:#d9923f;width:3mm;height:3mm"></i>주황 점: 범위보다 낮음</span>
-        <span><i class="sw" style="background:#5e93b0;width:3mm;height:3mm"></i>파란 점: 범위보다 높음</span>
+        <span><i class="sw" style="background:#cfe3c6"></i>초록 띠: 안정 구간</span>
+        <span><i class="sw" style="background:#3f6b4a;width:3mm;height:3mm"></i>초록 점: 안정</span>
+        <span><i class="sw" style="background:#c9a227;width:3mm;height:3mm"></i>노란 점: 살펴봐요</span>
+        <span><i class="sw" style="background:#d9923f;width:3mm;height:3mm"></i>주황 점: 함께 키워요</span>
       </div>
     </div>
-    <h3 class="sec">9가지 지표</h3>
-    <div class="mlist">${METRICS.map(m=>`<div><b>${m.name}</b>${m.what.replace(/ 보여 줘요\.$/,'')}</div>`).join('')}</div>
-    <p class="disclaim" contenteditable>범위보다 높거나 낮다고 해서 '나쁘다'는 뜻은 아니에요. 지금 ${esc(N)}에게 어떤 놀이와 돌봄이 잘 맞는지 알려 주는 신호로 읽어 주세요.</p>
+    <p class="disclaim" contenteditable>'함께 키워요'는 나쁘다는 뜻이 아니에요. 지금 ${esc(N)}에게 어떤 놀이와 돌봄이 잘 맞는지 알려 주는 신호로 읽어 주세요.</p>
+    <div class="refs">판정 기준: 파낙토스 BQ2 뇌기능 검사 결과 리포트 · 참고 연구: ${REFS.join(' / ')}</div>
     ${foot()}
   </section>`);
 
@@ -590,45 +702,77 @@ function build(){
   pages.push(`<section class="page">
     <div class="kicker">SUMMARY</div>
     <div class="ptitle">한눈에 보는 ${esc(N)}의 뇌</div>
-    <p class="psub">9가지 지표의 점수와 정상 범위를 나란히 놓았어요.</p>
+    <p class="psub">9가지 지표의 종합 점수와 안정 구간을 나란히 놓았어요.</p>
     ${data.map(d=>`<div class="sumrow">
       <div class="nm">${d.m.name}<small>${d.m.en}</small></div>
       <div class="sc">${d.v.score??'-'}</div>
-      <div><span class="pill ${d.st}">${{low:'낮음',normal:'정상',high:'높음',good:'강점',none:'-'}[d.st]}</span></div>
+      <div>${pillOf(d.st)}</div>
       <div>${gauge(d.m,d.v)}</div>
     </div>`).join('')}
     <div class="twobox">
-      <div class="s"><b class="h">빛나는 힘</b><ul contenteditable>${(strengths.length?strengths.slice(0,4).map(d=>`<li>${d.m.name}${d.st==='good'?' — 범위보다 높은 강점':''}</li>`):['<li>검사에 끝까지 참여한 씩씩함</li>']).join('')}</ul></div>
-      <div class="g"><b class="h">함께 키워 갈 힘</b><ul contenteditable>${(growth.length?growth.slice(0,4).map(d=>`<li>${d.m.name} — ${d.st==='low'?'조금 더 채우기':'조금 가라앉히기'}</li>`):['<li>지금의 좋은 균형 지키기</li>']).join('')}</ul></div>
+      <div class="s"><b class="h">빛나는 힘</b><ul contenteditable>${(strengths.length?strengths.slice(0,4).map(d=>`<li>${d.m.name}${d.st.key==='high'?' — '+d.st.label:''}</li>`):['<li>검사에 끝까지 참여한 씩씩함</li>']).join('')}</ul></div>
+      <div class="g"><b class="h">함께 키워 갈 힘</b><ul contenteditable>${(growth.length?growth.slice(0,4).map(d=>`<li>${d.m.name} — ${d.st.label}</li>`):['<li>지금의 좋은 균형 지키기</li>']).join('')}</ul></div>
     </div>
     ${foot()}
   </section>`);
 
-  /* 4. 교육과정 영역으로 보기 */
-  const dot=st=>`<i class="dt ${st}"></i>`;
+  /* 4. 뇌 컨디션: 기초율동 · 자기조절 · 훈련 모드 */
+  if(srHas||hzHas){
+    const T=mode?TRAIN_MODES[mode]:null;
+    pages.push(`<section class="page">
+      <div class="kicker">BRAIN CONDITION</div>
+      <div class="ptitle">${esc(N)}의 뇌 컨디션과 맞춤 훈련</div>
+      <p class="psub">뇌의 기본 리듬과 스스로 조절하는 힘을 보고, 원에서 할 훈련 방향을 정했어요.</p>
+      <div class="cond">
+        <div class="cbox"><h4>기초율동</h4>
+          <p>눈을 감고 편안히 쉴 때 나오는 뇌의 기본 리듬이에요. 나이가 어릴수록 느리고, 자라면서 빨라져요.</p>
+          ${hzHas?`<div class="hz"><b>${hzL??'-'} / ${hzR??'-'}</b><small>Hz (좌 / 우)</small></div>
+          <p style="color:var(--muted)">만 ${esc(r.age)}세 기준 약 ${hzBase}Hz</p>
+          <p contenteditable>${hzLow?`기본 리듬이 나이 기준보다 조금 느린 편이에요. 충분한 잠과 바깥 놀이로 뇌가 활기를 찾도록 도와주세요.`:`나이에 맞는 기본 리듬을 보이고 있어요. 뇌가 건강하게 자라고 있다는 신호예요.`}</p>`:'<p style="color:var(--muted)">결과지에 기초율동 값이 없어요.</p>'}
+        </div>
+        <div class="cbox"><h4>자기조절 세부</h4>
+          <p>1분씩 휴식·주의력·집중력 뇌파를 스스로 만들어 본 결과예요. 세 값이 고를수록 좋아요.</p>
+          ${srHas?Object.entries(TRAIN_MODES).map(([k,t])=>{const v=sr[k];const pct=v==null?0:Math.min(100,v/50*100);return `<div class="sr"><span>${t.name} <small style="color:var(--muted)">${t.wave}</small></span><div class="bar"><i class="${v!=null&&v<t.base?'low':''}" style="width:${pct}%"></i><u style="left:${t.base/50*100}%"></u></div><b>${v??'-'}</b></div>`}).join('')
+          +`<p style="color:var(--muted);font-size:8.5pt">세로선: 기준값 (휴식 25 · 주의력 28 · 집중력 28)</p>
+          <p contenteditable>${spread!=null&&spread>=10?`세 값의 차이가 ${spread}점으로 조금 커요. 가장 낮은 <b>${T.name}</b>부터 채워 주면 조절 균형이 좋아져요.`:`세 값이 비교적 고르게 나왔어요. 가장 낮은 <b>${T.name}</b>을 조금 더 키워 주면 좋아요.`}</p>`
+          :'<p style="color:var(--muted)">결과지에 세부 값이 없어요.</p>'}
+        </div>
+      </div>
+      ${T?`<div class="mode"><div class="k">RECOMMENDED TRAINING MODE</div>
+        <h4>${T.title} <span style="font-size:11pt;opacity:.8">(${T.wave})</span></h4>
+        <p contenteditable>${esc(N)}에게는 지금 <b>${T.name}</b>을 키우는 훈련이 가장 잘 맞아요. ${T.desc}</p>
+        <div class="g"><div><small>원에서 하는 훈련</small>${T.games}</div><div><small>기대하는 변화</small>${T.gain}</div></div>
+      </div>`:''}
+      <p class="disclaim" contenteditable>훈련 모드는 자기조절 세 값 중 기준보다 가장 부족한 영역으로 정했어요. 담당 선생님이 아이의 모습을 함께 보고 조정할 수 있어요.</p>
+      ${foot()}
+    </section>`);
+  }
+
+  /* 5. 교육과정 영역으로 보기 */
+  const dot=t=>`<i class="dt ${t}"></i>`;
   pages.push(`<section class="page">
     <div class="kicker">CURRICULUM LINK · ${C.label}</div>
     <div class="ptitle">${C.label} 영역으로 보기</div>
     <p class="psub">${C.target} 교육과정의 영역별로, 관련된 뇌 기능과 원에서 지원할 놀이를 정리했어요.</p>
     <table class="curr">
-      <thead><tr><th style="width:30mm">영역</th><th style="width:56mm">관련 지표</th><th>원에서의 놀이 지원</th></tr></thead>
+      <thead><tr><th style="width:30mm">영역</th><th style="width:52mm">관련 지표</th><th>원에서의 놀이 지원</th></tr></thead>
       <tbody>${Object.entries(C.areas).map(([a,cats])=>{
-        const rel=data.filter(d=>d.m.link[b].some(l=>l[0]===a));
-        const need=rel.filter(d=>d.st==='low'||d.st==='high');
-        const pick=(need.length?need:rel.filter(d=>d.st!=='none')).slice(0,2);
-        return `<tr><td><b>${a}</b><small>${cats.join(' · ')}</small></td>
-          <td>${rel.map(d=>`<div class="rl">${dot(d.st)}${d.m.name} <span>${d.v.score??'-'}</span></div>`).join('')||'<span style="color:var(--muted)">-</span>'}</td>
-          <td contenteditable>${pick.length?pick.map(d=>`<b>${d.m.play[b][0]}</b> ${d.m.play[b][1]}`).join('<br>'):'<span style="color:var(--muted)">일상 놀이 속에서 고르게 경험해요.</span>'}</td></tr>`}).join('')}
+        const rel=data.filter(d=>d.m.link.some(l=>l[0]===a));
+        const need=rel.filter(d=>d.st.tone==='grow'||d.st.tone==='watch');
+        const pick=(need.length?need:rel.filter(d=>d.st.key!=='none')).slice(0,2);
+        return `<tr><td><b>${a}</b><small>${AREA_GOALS[a]}</small></td>
+          <td>${rel.map(d=>`<div class="rl">${dot(d.st.tone)}${d.m.name} <span>${d.v.score??'-'}</span></div>`).join('')||'<span style="color:var(--muted)">-</span>'}</td>
+          <td contenteditable>${pick.length?pick.map(d=>`<b>${d.m.play[b][0]}</b> ${d.m.play[b][1]}<br><span style="color:var(--muted);font-size:8pt">내용: ${links(d.m,r.age).find(l=>l.area===a).content}</span>`).join('<br>'):'<span style="color:var(--muted)">일상 놀이 속에서 고르게 경험해요.</span>'}</td></tr>`}).join('')}
       </tbody>
     </table>
     <div class="legend" style="flex-direction:row;gap:5mm;margin-top:4mm;font-size:8.5pt">
-      <span>${dot('normal')}정상·강점</span><span>${dot('low')}범위보다 낮음</span><span>${dot('high')}범위보다 높음</span>
+      <span>${dot('good')}안정</span><span>${dot('watch')}살펴봐요</span><span>${dot('grow')}함께 키워요</span>
     </div>
     <p class="disclaim">${C.label}은 놀이 중심 교육과정이에요. 뇌 기능 결과는 교사가 아이의 놀이를 이해하고 지원하는 참고 자료로 활용해요.</p>
     ${foot()}
   </section>`);
 
-  /* 5~7. 지표별 해설 (3개씩) */
+  /* 6~8. 지표별 해설 (3개씩) */
   for(let p=0;p<3;p++){
     const chunk=data.slice(p*3,p*3+3);
     pages.push(`<section class="page">
@@ -637,12 +781,12 @@ function build(){
       <p class="psub">점수의 뜻, 연계된 ${C.label} 영역, 집에서 해 볼 놀이예요.</p>
       ${chunk.map((d,i)=>`<div class="mcard">
           <div class="mhead"><span class="no">${String(p*3+i+1).padStart(2,'0')}</span><span class="nm">${d.m.name}</span><span class="en">${d.m.en}</span>
-            <span class="scbox"><b>${d.v.score??'-'}</b><small>정상 ${d.v.lo}~${d.v.hi}</small> <span class="pill ${d.st}">${ST_LABEL[d.st]}</span></span></div>
+            <span class="scbox"><b>${d.v.score??'-'}</b><small>안정 ${cutText(d.m,d.v)}</small> ${pillOf(d.st)}</span></div>
           <p class="mwhat">${d.m.what}</p>
           ${gauge(d.m,d.v,480)}
-          <div class="lks">${linkChips(d.m,b)}</div>
+          <div class="lks">${linkChips(d.m,r.age)}</div>
           <div class="mbody">
-            <div class="read" contenteditable>${readOf(d.m,d.st)}</div>
+            <div class="read"><div contenteditable>${readOf(d.m,d.st)}</div><div class="train"><b>원 훈련 연계</b> · ${d.m.train}</div></div>
             <div class="home"><b>집에서 이렇게 해 보세요</b><ul contenteditable>${homeOf(d.m,b,d.st).map(h=>`<li>${h}</li>`).join('')||'<li>-</li>'}</ul></div>
           </div>
         </div>`).join('')}
@@ -650,13 +794,13 @@ function build(){
     </section>`);
   }
 
-  /* 8. 좌우뇌 우세 */
+  /* 9. 좌우뇌 우세 */
   if(hasDom){
     const domCard=(D,L,R)=>{
       L=Number(L)||0;R=Number(R)||(L?100-L:0);const tot=L+R||1;const lp=Math.round(L/tot*100),rp=100-lp;
       const side=Math.abs(lp-rp)<=10?'bal':lp>rp?'L':'R';
       return `<div class="domcard">
-        <div class="t"><b>${D.title}</b><span class="pill ${side==='bal'?'normal':side==='L'?'high':'low'}">${side==='bal'?'균형':side==='L'?'좌뇌 쪽':'우뇌 쪽'}</span></div>
+        <div class="t"><b>${D.title}</b><span class="pill ${side==='bal'?'good':'watch'}">${side==='bal'?'균형':side==='L'?'좌뇌 쪽':'우뇌 쪽'}</span></div>
         <div class="dombar"><div class="L" style="width:${Math.max(lp,12)}%">좌 ${lp}%</div><div class="R" style="width:${Math.max(rp,12)}%">우 ${rp}%</div></div>
         <p class="pp" style="margin-top:4mm" contenteditable>${sub(D[side])}</p>
       </div>`};
@@ -665,48 +809,51 @@ function build(){
       <div class="ptitle">${esc(N)}는 어느 쪽 뇌를 더 쓸까요?</div>
       <p class="psub">감정을 느낄 때와 행동할 때, 좌뇌와 우뇌 중 어느 쪽이 더 활발한지 비율로 보여 줘요.</p>
       <div class="lr" style="margin-bottom:6mm">
-        <div class="L"><b style="color:#3a6a84">좌뇌가 잘하는 일</b>말, 순서, 규칙 찾기, 차근차근 따져 보기</div>
-        <div class="R"><b style="color:#a3503a">우뇌가 잘하는 일</b>그림과 소리, 분위기 느끼기, 전체 보기, 상상하기</div>
+        <div class="L"><b style="color:#3a6a84">좌뇌 · 공부뇌</b>언어, 숫자, 논리, 순서, 분석</div>
+        <div class="R"><b style="color:#a3503a">우뇌 · 놀이뇌</b>그림, 색, 공간, 상상, 리듬</div>
       </div>
       ${(r.emoL!==''||r.emoR!=='')?domCard(DOMINANCE.emo,r.emoL,r.emoR):''}
       ${(r.actL!==''||r.actR!=='')?domCard(DOMINANCE.act,r.actL,r.actR):''}
-      <p class="disclaim" contenteditable>어느 쪽이 더 좋다는 뜻은 아니에요. 영유아기는 한쪽이 두드러지다가도 금세 달라지는 시기예요. 아이가 편하게 느끼는 방식을 알면 더 잘 도울 수 있어요.</p>
+      <p class="disclaim" contenteditable>어느 쪽이 더 좋다는 뜻은 아니에요. 유아기는 한쪽이 두드러지다가도 금세 달라지는 시기예요. 아이가 편하게 느끼는 방식을 알면 더 잘 도울 수 있어요.</p>
       ${foot()}
     </section>`);
   }
 
-  /* 9. 학부모 편지 + 12주 로드맵 */
+  /* 10. 학부모 편지 + 12주 로드맵 */
   const focus=[...growth];
   filled.filter(d=>!focus.includes(d)).sort((a,b)=>dist(b)-dist(a)).forEach(d=>{if(focus.length<3)focus.push(d)});
-  METRICS.forEach(m=>{if(focus.length<3&&!focus.some(d=>d.m===m))focus.push({m,st:'normal'})});
+  METRICS.forEach(m=>{if(focus.length<3&&!focus.some(d=>d.m===m))focus.push({m,st:{key:'good',tone:'good'}})});
   const sNames=strengths.slice(0,2).map(d=>d.m.name);
   const gNames=growth.slice(0,2).map(d=>d.m.name);
-  const note=r.teacherNote.trim()||`검사하는 동안 ${N}는 낯선 장비 앞에서도 씩씩하게 참여해 주었어요. 그 모습만으로도 충분히 칭찬해 주고 싶어요.`;
-  const areas=[...new Set(focus.slice(0,3).flatMap(d=>d.m.link[b].map(l=>l[0])))];
+  const note=r.teacherNote.trim()||`검사하는 동안 ${N}는 낯선 밴드를 두르고도 씩씩하게 참여해 주었어요. 그 모습만으로도 충분히 칭찬해 주고 싶어요.`;
+  const areas=[...new Set(focus.slice(0,3).flatMap(d=>d.m.link.map(l=>l[0])))];
+  const modeName=mode?TRAIN_MODES[mode].title+' — '+TRAIN_MODES[mode].games:'아이의 자기조절 결과에 맞춘 모드 훈련';
   pages.push(`<section class="page">
     <div class="kicker">DEAR PARENT</div>
     <div class="ptitle">부모님께 드리는 글</div>
     <div class="letter" contenteditable>
       <p>안녕하세요. ${esc(N)}의 뇌 성장 리포트를 전해 드립니다.</p>
       <p>${sNames.length?`이번 검사에서 ${esc(N)}의 가장 빛나는 부분은 ${joinWa(sNames)}${hasBatchim(sNames[sNames.length-1])?'이에요':'예요'}. 이 힘은 앞으로 놀이하고 자라는 데 든든한 뿌리가 될 거예요.`:`이번 검사로 ${esc(N)}에게 지금 어떤 놀이와 돌봄이 잘 맞는지 알 수 있었어요.`}</p>
-      <p>${gNames.length?`${joinWa(gNames)}${hasBatchim(gNames[gNames.length-1])?'은':'는'} 앞으로 조금 더 함께 키워 가면 좋을 부분이에요. 부족하다는 뜻이 아니라, 지금 도와주면 가장 크게 자랄 수 있는 곳이라는 뜻이에요.`:`모든 지표가 고르게 알맞은 범위에 있어요. 지금의 생활 리듬을 잘 지켜 주세요.`}</p>
-      <p>원에서는 앞으로 12주 동안 ${C.label}의 <b>${areas.slice(0,3).join(', ')}</b> 영역 놀이를 중심으로 ${esc(N)}를 지원하겠습니다.</p>
+      <p>${gNames.length?`${joinWa(gNames)}${hasBatchim(gNames[gNames.length-1])?'은':'는'} 앞으로 조금 더 함께 키워 가면 좋을 부분이에요. 부족하다는 뜻이 아니라, 지금 도와주면 가장 크게 자랄 수 있는 곳이라는 뜻이에요.`:`모든 지표가 안정 구간에 있어요. 지금의 생활 리듬을 잘 지켜 주세요.`}</p>
+      <p>원에서는 12주 동안 두뇌 훈련과 함께 ${C.label}의 <b>${areas.slice(0,3).join(', ')}</b> 영역 놀이로 ${esc(N)}를 지원하겠습니다.</p>
       <p>${esc(note)}</p>
       <div class="sign">${esc(org.orgName)}${org.counselor?' '+esc(org.counselor):''} 드림</div>
     </div>
-    <h3 class="sec">12주 놀이 로드맵</h3>
+    <h3 class="sec">12주 성장 로드맵</h3>
     <div class="road">
-      ${[['1~4주',focus[0]],['5~8주',focus[1]],['9~12주',focus[2]]].map(([w,d])=>`<div><span class="wk">${w}</span><b contenteditable>${d.m.play[b][0]}</b><p contenteditable>${d.m.play[b][1]}</p>
-        <div class="lks" style="margin-top:2mm">${linkChips(d.m,b)}</div><p style="color:var(--muted);margin-top:1.5mm">· 중심 지표: ${d.m.name}</p></div>`).join('')}
+      ${PHASES.map((ph,i)=>{const d=focus[i];return `<div><span class="wk">${ph.weeks}</span><b contenteditable>${ph.title}</b>
+        <p contenteditable><span style="color:#3a6a84">훈련</span> ${ph.desc.replace('{MODE}',modeName)}</p>
+        <p contenteditable style="margin-top:1.5mm"><span style="color:var(--forest)">놀이</span> <b style="display:inline;font-size:9.3pt;margin:0">${d.m.play[b][0]}</b> — ${d.m.play[b][1]}</p>
+        <div class="lks" style="margin-top:2mm">${linkChips(d.m,r.age)}</div></div>`}).join('')}
     </div>
     <p class="disclaim">12주 뒤 같은 검사로 다시 재서 변화를 함께 살펴봐요.</p>
     ${foot()}
   </section>`);
 
-  /* 10. 가정 실천표 */
+  /* 11. 가정 실천표 */
   const acts=[];
-  focus.forEach(d=>{const list=homeOf(d.m,b,d.st||'normal');if(list[0]&&acts.length<4)acts.push({a:list[0],m:d.m.name})});
-  acts.push({a:b==='infant'?'잠들기 전 그림책 보며 이야기 들려주기':'잠자리 그림책 한 권 함께 읽기',m:'공통'});
+  focus.forEach(d=>{const list=homeOf(d.m,b,d.st);if(list&&list[0]&&acts.length<3)acts.push({a:list[0],m:d.m.name})});
+  acts.push({a:'"풍선 호흡" 3번 하고 잠자리 그림책 한 권 읽기',m:'공통 · 호흡과 쉼'});
   const days=['월','화','수','목','금','토','일'];
   pages.push(`<section class="page">
     <div class="kicker">HOME PRACTICE</div>
@@ -720,7 +867,7 @@ function build(){
     ${foot()}
   </section>`);
 
-  /* 11. 마무리 */
+  /* 12. 마무리 */
   pages.push(`<section class="page">
     <div class="kicker">NEXT STEP</div>
     <div class="ptitle">상담 기록과 다음 약속</div>
@@ -733,7 +880,7 @@ function build(){
     </div>
     <div class="infobox" style="margin-top:8mm">
       <b>${esc(org.orgName)}</b>
-      <p contenteditable>책과 자연, 몸놀이로 영유아의 뇌가 건강하게 자라도록 돕습니다.${org.counselor?'<br>담당 '+esc(org.counselor):''}${org.contact?' · '+esc(org.contact):''}</p>
+      <p contenteditable>책과 자연, 몸놀이, 두뇌 훈련으로 아이의 뇌가 건강하게 자라도록 돕습니다.${org.counselor?'<br>담당 '+esc(org.counselor):''}${org.contact?' · '+esc(org.contact):''}</p>
     </div>
     <p class="disclaim">이 리포트는 BQ2 뇌기능 검사 결과를 바탕으로 ${C.label}과 연계한 놀이·생활 코칭 자료이며, 발달 진단이나 질병의 진단·치료를 목적으로 하지 않습니다. 아이의 발달이나 건강이 걱정되시면 소아청소년과 등 전문가와 상담해 주세요.</p>
     ${foot()}
@@ -746,8 +893,7 @@ function build(){
 
 function fitPages(){
   const avail=Math.min(window.innerWidth-24,900);
-  const pw=210*96/25.4;
-  const z=Math.min(1,avail/pw);
+  const z=Math.min(1,avail/(210*96/25.4));
   document.querySelectorAll('.pagebox').forEach(b=>b.style.zoom=z);
 }
 window.addEventListener('resize',()=>{if(!$('previewArea').classList.contains('hide'))fitPages()});
@@ -756,15 +902,14 @@ window.addEventListener('afterprint',fitPages);
 
 function go(n){
   if(n===2){
-    const any=METRICS.some(m=>$('sc_'+m.key).value!=='');
-    if(!any){alert('점수를 하나 이상 입력해 주세요.');return}
+    if(!METRICS.some(m=>$('sc_'+m.key).value!=='')){alert('점수를 하나 이상 입력해 주세요.');return}
     saveOrg(); build();
   }
   if(n===3) renderKB(band($('age').value));
   $('inputArea').classList.toggle('hide',n!==1);
-  $('kbArea').classList.toggle('hide',n!==3);$('tab3').classList.toggle('on',n===3);
   $('previewArea').classList.toggle('hide',n!==2);
-  $('tab1').classList.toggle('on',n===1);$('tab2').classList.toggle('on',n===2);
+  $('kbArea').classList.toggle('hide',n!==3);
+  [1,2,3].forEach(i=>$('tab'+i).classList.toggle('on',i===n));
   window.scrollTo(0,0);
 }
 
