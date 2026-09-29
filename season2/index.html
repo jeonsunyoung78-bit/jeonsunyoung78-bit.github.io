@@ -860,6 +860,20 @@
   html, body { overflow-x: hidden; }
   button, a, .pin-wrap, .chip-btn { -webkit-tap-highlight-color: rgba(63, 125, 82, 0.15); }
   img, svg { max-width: 100%; }
+
+  /* ===== 개인정보 안내 ===== */
+  #privacyOverlay { z-index: 70; }
+  .modal.privacy-modal { max-width: 600px; }
+  .privacy-lead { font-size: 16px; line-height: 1.6; margin: 4px 0 10px; word-break: keep-all; }
+  .privacy-list { margin: 0 0 10px; display: grid; grid-template-columns: 96px 1fr; gap: 8px 10px; font-size: 15px; line-height: 1.55; }
+  .privacy-list dt { font-weight: 700; color: var(--navy); }
+  .privacy-list dd { margin: 0; word-break: keep-all; }
+  .privacy-note { font-size: 14px; color: var(--muted); line-height: 1.6; margin: 6px 0 12px; }
+  .privacy-check { display: flex; gap: 8px; align-items: flex-start; font-size: 16px; font-weight: 700; background: #f6faf4; border: 1.5px solid #a9cf8f; border-radius: 12px; padding: 10px 12px; margin: 0 0 12px; line-height: 1.5; cursor: pointer; }
+  .privacy-check input { width: 20px; height: 20px; flex: none; margin-top: 3px; }
+  .privacy-status { font-size: 15px; margin: 4px 0 12px; }
+  .privacy-link { margin-top: 8px; font: inherit; font-size: 14px; background: none; border: none; color: var(--muted); text-decoration: underline; cursor: pointer; }
+  @media (max-width: 420px) { .privacy-list { grid-template-columns: 1fr; gap: 2px; } .privacy-list dd { margin-bottom: 8px; } }
 </style>
 </head>
 <body>
@@ -914,6 +928,10 @@
   <div class="modal" id="modal"></div>
 </div>
 
+<div class="overlay" id="privacyOverlay">
+  <div class="modal privacy-modal" id="privacyModal" role="dialog" aria-modal="true"></div>
+</div>
+
 <div class="overlay" id="uiDialogOverlay">
   <div class="modal ui-dialog" id="uiDialog" role="dialog" aria-modal="true"></div>
 </div>
@@ -948,6 +966,7 @@
   <div class="footer-brand">초록테라스교육연구소</div>
   <div>소담한 양산스토리 · 책 읽고 걷고 담은 기록은 이 브라우저에 자동 저장됩니다</div>
   <div class="footer-contact">문의사항 : jsy7808@naver.com</div>
+  <button type="button" class="privacy-link" onclick="openPrivacy(false)">🔒 개인정보 안내</button>
 </footer>
 
 </div>
@@ -1427,6 +1446,71 @@ function uiDialog({ message, input = false, password = false, dateLabel = "", ok
     setTimeout(() => (field || box.querySelector('[data-act="ok"]')).focus(), 30);
   });
 }
+
+// ===== 개인정보 수집·이용 안내와 동의 =====
+// 이 앱은 서버가 없어서 모든 기록은 이 기기(브라우저)에만 저장된다. 그 사실 그대로 안내한다.
+const CONSENT_KEY = "chaekgeotdam_s2_consent_v1";
+
+function hasConsent() {
+  try { return !!localStorage.getItem(CONSENT_KEY); } catch (e) { return false; }
+}
+
+function privacyBodyHtml() {
+  return `
+    <div class="privacy-body">
+      <p class="privacy-lead">책걷담프로젝트 시즌2 앱은 참가자의 활동 기록을 확인하기 위해 아래 정보를 받습니다.</p>
+      <dl class="privacy-list">
+        <dt>받는 정보</dt><dd>참가자 이름, 생년월일, 활동 사진, 다녀온 날, 메모, 읽은 그림책</dd>
+        <dt>쓰는 곳</dt><dd>같은 이름의 참가자를 구분하고, 책걷담 활동 기록을 확인하는 데에만 씁니다. <b>다른 목적으로 활용하지 않습니다.</b></dd>
+        <dt>저장 위치</dt><dd>지금 쓰고 있는 <b>이 휴대폰·태블릿·컴퓨터 안에만</b> 저장됩니다. 인터넷(서버)으로 보내지 않으며, 운영자(초록테라스)도 볼 수 없습니다.</dd>
+        <dt>다른 사람에게</dt><dd>제3자에게 제공하지 않습니다. 직접 '백업 내보내기'로 만든 파일은 보관에 주의해 주세요.</dd>
+        <dt>보관 기간</dt><dd>직접 지울 때까지입니다. '삭제'나 '현재 참가자 초기화'를 누르거나 브라우저 기록을 지우면 사라집니다.</dd>
+        <dt>동의하지 않으면</dt><dd>동의하지 않으셔도 그림책·장소·지도·축제 안내는 볼 수 있습니다. 참가자 추가와 기록 저장만 할 수 없습니다.</dd>
+      </dl>
+      <p class="privacy-note">만 14세 미만 어린이의 정보는 보호자가 확인하고 입력해 주세요.<br>문의: jsy7808@naver.com</p>
+    </div>`;
+}
+
+// ask=true 이면 동의 받기, false 이면 안내만 보기. 동의하면 true를 돌려준다.
+function openPrivacy(ask) {
+  return new Promise(resolve => {
+    const overlay = document.getElementById("privacyOverlay");
+    const modal = document.getElementById("privacyModal");
+    const agreed = hasConsent();
+    modal.innerHTML = `
+      <div class="modal-header">
+        <h2>🔒 개인정보 수집·이용 안내</h2>
+        <button class="close-btn" data-act="close">✕</button>
+      </div>
+      ${privacyBodyHtml()}
+      ${ask && !agreed ? `
+        <label class="privacy-check"><input type="checkbox" id="privacyAgree"> 위 내용을 확인했고, 개인정보 수집·이용에 동의합니다. (어린이는 보호자가 확인)</label>
+        <div class="ui-dialog-btns">
+          <button type="button" class="btn btn-secondary" data-act="close">구경만 할게요</button>
+          <button type="button" class="btn btn-primary" data-act="agree">동의하고 시작하기</button>
+        </div>` : `
+        <div class="privacy-status">${agreed ? "✅ 이 기기에서 동의했어요." : "아직 동의하지 않았어요. 참가자를 추가하거나 기록을 저장할 때 동의를 받습니다."}</div>
+        <div class="ui-dialog-btns"><button type="button" class="btn btn-primary" data-act="close">닫기</button></div>`}`;
+    const finish = ok => { overlay.classList.remove("active"); syncScrollLock(); resolve(ok); };
+    modal.querySelectorAll('[data-act="close"]').forEach(b => b.onclick = () => finish(hasConsent()));
+    const agreeBtn = modal.querySelector('[data-act="agree"]');
+    if (agreeBtn) agreeBtn.onclick = () => {
+      if (!document.getElementById("privacyAgree").checked) {
+        alert("동의 칸에 체크해 주세요.");
+        return;
+      }
+      try { localStorage.setItem(CONSENT_KEY, new Date().toISOString()); } catch (e) {}
+      finish(true);
+    };
+    overlay.classList.add("active");
+    syncScrollLock();
+  });
+}
+
+async function ensureConsent() {
+  if (hasConsent()) return true;
+  return openPrivacy(true);
+}
 const uiPrompt = (message, opts = {}) => uiDialog({ message, input: true, ...opts });
 const uiConfirm = (message, opts = {}) => uiDialog({ message, okText: "네", cancelText: "아니요", ...opts });
 // 안내 메시지도 같은 창으로 (기다릴 필요가 없는 곳에서만 쓰인다)
@@ -1536,6 +1620,7 @@ function onParticipantChange(name) {
 
 // 동명이인을 구분하려고 이름 뒤에 생년월일을 붙인다. 예: "김소담 (2021.03.15)"
 async function promptAddParticipant() {
+  if (!(await ensureConsent())) return;
   const res = await uiDialog({ message: "추가할 참가자의 이름과 생년월일을 입력하세요", input: true, dateLabel: "생년월일", okText: "추가" });
   if (!res) return;
   const name = res.text.trim();
@@ -1871,6 +1956,7 @@ function renderGrid() {
 
 function handlePhotoBoxClick(event, spotId) {
   event.stopPropagation();
+  if (!hasConsent()) { ensureConsent().then(ok => { if (ok) openPhotoSheet(spotId); }); return; }
   openPhotoSheet(spotId);
 }
 
@@ -2077,6 +2163,7 @@ function handlePhotoUpload(event) {
 }
 
 function saveSpot(spotId) {
+  if (!hasConsent()) { ensureConsent().then(ok => { if (ok) saveSpot(spotId); }); return; }
   const date = document.getElementById("f_date").value;
   const memo = document.getElementById("f_memo").value;
   const records = currentRecords();
@@ -2256,6 +2343,7 @@ function startApp() {
   loadData();
   renderParticipantSelect();
   renderHeaderPhoto();
+  if (!hasConsent()) openPrivacy(true);
   renderGrid();
 }
 
