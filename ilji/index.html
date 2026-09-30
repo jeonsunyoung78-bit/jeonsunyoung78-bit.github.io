@@ -160,9 +160,9 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
   <section id="v-check" role="tabpanel" aria-labelledby="t-check">
     <div class="panel mine">
       <h2>① 내 일지 넣기</h2>
-      <p class="note">오늘 쓴 내 보육일지를 사진으로 찍어 넣어 주세요. 보면서 점검하고, 인쇄·보내기 때 함께 나가요. 여러 장이면 한 장씩 계속 추가하세요. 사진, PDF 모두 돼요. 한글(HWP) 파일은 PDF로 저장해서 넣어 주세요.</p>
+      <p class="note">오늘 쓴 내 보육일지를 사진으로 찍어 넣어 주세요. 보면서 점검하고, 인쇄·보내기 때 함께 나가요. 사진, PDF, 한글(HWP·HWPX) 파일 모두 넣을 수 있어요. 여러 장을 한 번에 골라도 되고, 한 장씩 계속 추가해도 돼요.</p>
       <div class="pages" id="pages"></div>
-      <input type="file" id="pageIn" accept="image/*,.heic,.heif,.pdf,application/pdf" multiple hidden>
+      <input type="file" id="pageIn" accept="image/*,.heic,.heif,.pdf,application/pdf,.hwp,.hwpx" multiple hidden>
       <button class="btn addpage" type="button" id="addPage">+ 내 일지 사진 넣기</button>
       <p class="msg" id="pageMsg" role="status" style="text-align:left"></p>
     </div>
@@ -399,16 +399,108 @@ async function pdfPages(file){
   }
   return out;
 }
+/* 한글 파일: 안의 글(과 그림)을 꺼내 쪽 그림으로 만든다 */
+var libs = {};
+function loadLib(src){
+  if (!libs[src]) libs[src] = new Promise(function(res, rej){ var sc = document.createElement("script"); sc.src = src; sc.onload = res; sc.onerror = function(){ delete libs[src]; rej(new Error("한글 파일을 여는 도구를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.")); }; document.head.appendChild(sc); });
+  return libs[src];
+}
+function tidyText(t){ return t.replace(/[ \t\u00a0]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim(); }
+async function readHwp(file){
+  await Promise.all([loadLib("https://cdn.jsdelivr.net/npm/cfb@1.2.2/dist/cfb.min.js"), loadLib("https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js")]);
+  var cfb = CFB.read(new Uint8Array(await file.arrayBuffer()), {type:"array"}), hdr = CFB.find(cfb, "FileHeader");
+  if (!hdr) throw new Error("한글 파일 형식을 알아보지 못했어요. PDF로 저장해서 넣어 주세요.");
+  var hc = hdr.content, flags = hc[36] | (hc[37]<<8) | (hc[38]<<16) | (hc[39]<<24);
+  if (flags & 2) throw new Error("암호가 걸린 한글 파일이에요. 암호를 풀거나 PDF로 저장해서 넣어 주세요.");
+  if (flags & 4) throw new Error("배포용 한글 파일은 열 수 없어요. PDF로 저장해서 넣어 주세요.");
+  var secs = [], pics = [];
+  cfb.FullPaths.forEach(function(p, i){
+    var m = /BodyText\/Section(\d+)$/.exec(p); if (m) secs.push([+m[1], cfb.FileIndex[i]]);
+    if (/BinData\/[^\/]+\.(jpe?g|png|bmp|gif)$/i.test(p)) pics.push(cfb.FileIndex[i]);
+  });
+  secs.sort(function(a, b){ return a[0] - b[0]; });
+  var out = [];
+  secs.forEach(function(sec){
+    var d = new Uint8Array(sec[1].content); if (flags & 1) d = pako.inflateRaw(d);
+    var dv = new DataView(d.buffer, d.byteOffset, d.byteLength), i = 0;
+    while (i + 4 <= d.length){
+      var hd = dv.getUint32(i, true); i += 4; var tag = hd & 0x3ff, size = hd >>> 20;
+      if (size === 0xfff){ size = dv.getUint32(i, true); i += 4; }
+      if (tag === 67){
+        var str = "";
+        for (var j = i; j + 1 < i + size; j += 2){
+          var c = dv.getUint16(j, true);
+          if (c < 32){ if (c === 0 || c === 10 || c === 13 || c >= 24){ if (c === 10) str += "\n"; else if (c === 30 || c === 31) str += " "; } else { if (c === 9) str += "\t"; j += 14; } }
+          else str += String.fromCharCode(c);
+        }
+        out.push(str);
+      }
+      i += size;
+    }
+  });
+  var blobs = [];
+  for (var k = 0; k < pics.length && k < 10; k++){
+    var raw = new Uint8Array(pics[k].content); try { raw = pako.inflateRaw(raw); } catch(e){}
+    var ext = ((/\.(\w+)$/.exec(pics[k].name) || [])[1] || "png").toLowerCase();
+    blobs.push(new Blob([raw], {type: ext === "jpg" || ext === "jpeg" ? "image/jpeg" : "image/" + ext}));
+  }
+  return {text: tidyText(out.join("\n")), pics: blobs};
+}
+async function readHwpx(file){
+  await loadLib("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
+  var zip = await JSZip.loadAsync(await file.arrayBuffer());
+  var names = Object.keys(zip.files).filter(function(n){ return /^Contents\/section\d+\.xml$/i.test(n); }).sort(function(a, b){ return (+a.match(/\d+/)[0]) - (+b.match(/\d+/)[0]); });
+  var out = "";
+  for (var i = 0; i < names.length; i++){
+    var doc = new DOMParser().parseFromString(await zip.file(names[i]).async("string"), "application/xml");
+    var ts = doc.getElementsByTagNameNS("*", "t"), lastP = null;
+    for (var j = 0; j < ts.length; j++){ var p = ts[j].parentNode; while (p && p.localName !== "p") p = p.parentNode; if (p !== lastP){ out += "\n"; lastP = p; } out += ts[j].textContent; }
+  }
+  var pics = [], bin = Object.keys(zip.files).filter(function(n){ return /^BinData\/.+\.(jpe?g|png|bmp|gif)$/i.test(n); });
+  for (var k = 0; k < bin.length && k < 10; k++){ var ext = bin[k].split(".").pop().toLowerCase(); pics.push(new Blob([await zip.file(bin[k]).async("uint8array")], {type: ext === "jpg" || ext === "jpeg" ? "image/jpeg" : "image/" + ext})); }
+  return {text: tidyText(out), pics: pics};
+}
+// 글을 A4 모양 쪽 그림으로 옮긴다
+async function textToPages(text, title){
+  var W = 1240, H = 1754, M = 96, fz = 27, lh = 42, font = "'IBM Plex Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif";
+  try { await document.fonts.load(fz + "px 'IBM Plex Sans KR'"); } catch(e){}
+  var m = document.createElement("canvas").getContext("2d"); m.font = fz + "px " + font;
+  var lines = [];
+  text.replace(/\t/g, "    ").split("\n").forEach(function(par){
+    if (!par.trim()){ lines.push(""); return; }
+    var line = "";
+    par.split("").forEach(function(ch){ if (m.measureText(line + ch).width > W - M*2 && line){ lines.push(line); line = ch.trim() ? ch : ""; } else line += ch; });
+    lines.push(line);
+  });
+  var per = Math.floor((H - M*2 - 70) / lh), out = [];
+  for (var p = 0; p * per < lines.length || p === 0; p++){
+    var c = document.createElement("canvas"); c.width = W; c.height = H;
+    var x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, W, H);
+    x.fillStyle = "#6B7780"; x.font = "22px " + font; x.textBaseline = "top";
+    x.fillText(title + " · 한글 파일에서 글자만 옮겼어요 (표·그림 모양은 빠져요)", M, M - 50);
+    x.fillStyle = "#1E2A30"; x.font = fz + "px " + font;
+    lines.slice(p * per, (p + 1) * per).forEach(function(l, i){ x.fillText(l, M, M + 20 + i * lh); });
+    out.push(await canvasJpeg(c));
+  }
+  return out;
+}
+async function hwpPages(file){
+  var r = /\.hwpx$/i.test(file.name) ? await readHwpx(file) : await readHwp(file), out = [];
+  if (r.text.replace(/\s/g, "").length >= 20) out = out.concat(await textToPages(r.text, file.name));
+  for (var i = 0; i < r.pics.length; i++){ try { out.push(await shrinkImage(r.pics[i])); } catch(e){} }
+  if (!out.length) throw new Error("한글 파일에서 글자나 그림을 찾지 못했어요. PDF로 저장해서 넣어 주세요.");
+  return out;
+}
 async function addPageFiles(list){
   var pm = $("pageMsg"), files = Array.prototype.slice.call(list), added = 0, failed = [];
   for (var i = 0; i < files.length; i++){
     var f = files[i]; pm.textContent = "'" + f.name + "' 넣는 중 (" + (i+1) + "/" + files.length + ")";
     try {
       var blobs = /\.pdf$/i.test(f.name) || f.type === "application/pdf" ? await pdfPages(f)
-        : /\.hwpx?$/i.test(f.name) ? (function(){ throw new Error("한글 파일은 PDF로 저장해서 넣어 주세요."); })()
+        : /\.hwpx?$/i.test(f.name) ? await hwpPages(f)
         : [await shrinkImage(f)];
       for (var k = 0; k < blobs.length; k++){ var id = "p" + Date.now() + "_" + Math.random().toString(36).slice(2, 7); await putPage(id, blobs[k]); state.pages.push(id); added++; }
-    } catch(e){ failed.push(f.name + ": " + (/한글/.test(e.message) ? e.message : /\.(heic|heif)$/i.test(f.name) ? "아이폰 사진(HEIC)을 열지 못했어요. 화면을 캡처해서 넣어 주세요." : (e.message || "열지 못했어요."))); }
+    } catch(e){ failed.push(f.name + ": " + (/한글|PDF/.test(e.message) ? e.message : /\.(heic|heif)$/i.test(f.name) ? "아이폰 사진(HEIC)을 열지 못했어요. 화면을 캡처해서 넣어 주세요." : (e.message || "열지 못했어요."))); }
   }
   persist(); renderPages();
   pm.textContent = (added ? added + "쪽을 넣었어요." : "") + (failed.length ? " " + failed.join(" / ") : "");
