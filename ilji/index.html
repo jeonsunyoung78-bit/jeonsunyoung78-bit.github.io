@@ -400,7 +400,7 @@ async function pdfPages(file){
     var pg = await pdf.getPage(p), v = pg.getViewport({scale:1}), vp = pg.getViewport({scale: Math.min(2.5, 1600 / v.width)});
     var c = document.createElement("canvas"); c.width = Math.floor(vp.width); c.height = Math.floor(vp.height);
     var x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height);
-    await pg.render({canvasContext: x, viewport: vp}).promise;
+    await pg.render({canvasContext: x, viewport: vp, intent: "print"}).promise;
     out.push(await canvasJpeg(c));
   }
   return out;
