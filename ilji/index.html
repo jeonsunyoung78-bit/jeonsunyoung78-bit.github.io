@@ -109,6 +109,10 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
 .pg .bar2 button{border:1px solid var(--line);background:var(--sheet);color:var(--muted);border-radius:6px;font-size:12px;padding:4px 7px;cursor:pointer}
 .pg .bar2 button:disabled{opacity:.35}
 .panel.mine{border:1.5px solid var(--accent)}
+.pastebox{margin-top:10px;border:1.5px dashed var(--line);border-radius:10px;padding:12px 14px;min-height:52px;font-size:14px;color:var(--muted);background:var(--sheet);cursor:text;outline:none;-webkit-user-select:text;user-select:text;overflow:hidden;max-height:90px}
+.pastebox:focus{border-color:var(--accent);color:var(--ink)}
+.pastebox:empty::before{content:attr(data-ph)}
+.pastebox img{display:none}
 .btn.addpage{font-size:16px;width:100%;border:1.5px dashed var(--accent);color:var(--accent);background:var(--sheet);padding:12px}
 .viewer{position:fixed;inset:0;background:rgba(10,14,12,.92);z-index:20;display:flex;flex-direction:column}
 .viewer .vbar{display:flex;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;color:#fff}
@@ -164,6 +168,7 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
       <div class="pages" id="pages"></div>
       <input type="file" id="pageIn" accept="image/*,.heic,.heif,.pdf,application/pdf,.hwp,.hwpx" multiple hidden>
       <button class="btn addpage" type="button" id="addPage">+ 내 일지 사진 넣기</button>
+      <div class="pastebox" id="pasteBox2" contenteditable="true" role="textbox" aria-label="사진 붙여넣기 칸" data-ph="📋 사진 붙여넣기: 여기를 누르고 Ctrl+V (휴대폰은 길게 눌러 '붙여넣기')"></div>
       <p class="msg" id="pageMsg" role="status" style="text-align:left"></p>
     </div>
 
@@ -540,6 +545,25 @@ $("vZoom").addEventListener("click", function(){ var z = $("vImg").classList.tog
 $("vClose").addEventListener("click", function(){ $("viewer").hidden = true; });
 document.addEventListener("keydown", function(e){ if ($("viewer").hidden) return; if (e.key === "Escape") $("viewer").hidden = true; if (e.key === "ArrowLeft") $("vPrev").click(); if (e.key === "ArrowRight") $("vNext").click(); });
 $("addPage").addEventListener("click", function(){ $("pageIn").click(); });
+var pasteCount = 0;
+function clipImages(dt){
+  var out = [];
+  if (!dt) return out;
+  if (dt.items) for (var i = 0; i < dt.items.length; i++){ var it = dt.items[i]; if (it.kind === "file" && /^image\//.test(it.type)){ var f = it.getAsFile(); if (f) out.push(f); } }
+  if (!out.length && dt.files) for (var j = 0; j < dt.files.length; j++) if (/^image\/|\.pdf$|\.hwpx?$/i.test(dt.files[j].type || dt.files[j].name)) out.push(dt.files[j]);
+  return out.map(function(f){
+    if (f.name && !/^image\.(png|jpe?g|gif|webp)$/i.test(f.name)) return f;
+    pasteCount++; var ext = (f.type.split("/")[1] || "png").replace("jpeg", "jpg");
+    try { return new File([f], "붙여넣은 사진 " + pasteCount + "." + ext, {type: f.type}); } catch(e){ return f; }
+  });
+}
+document.addEventListener("paste", function(e){
+  var imgs = clipImages(e.clipboardData);
+  if (imgs.length){ e.preventDefault(); addPageFiles(imgs); $("pasteBox2").textContent = ""; showTab("check"); return; }
+  if (e.target && e.target.id === "pasteBox2"){ e.preventDefault(); $("pageMsg").textContent = "복사한 것 중에 사진이 없어요. 사진을 복사한 뒤 다시 붙여넣어 주세요."; }
+});
+$("pasteBox2").addEventListener("input", function(){ setTimeout(function(){ $("pasteBox2").textContent = ""; }, 0); });
+$("pasteBox2").addEventListener("keydown", function(e){ if (!(e.ctrlKey || e.metaKey) && e.key.length === 1) e.preventDefault(); });
 $("pageIn").addEventListener("change", function(){ var fl = $("pageIn").files; if (fl && fl.length) addPageFiles(fl).then(function(){ $("pageIn").value = ""; }); });
 
 /* ---------- 오늘 점검 ---------- */
