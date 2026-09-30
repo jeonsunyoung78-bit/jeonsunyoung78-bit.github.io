@@ -175,7 +175,7 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
     <div class="panel">
       <h2>② 일지 정보</h2>
       <div class="grid2">
-        <label class="f" for="cls">반 이름<input type="text" id="cls" placeholder="예: 초록나무반" autocomplete="off"></label>
+        <label class="f" for="cls">반<select id="cls"><option value="">반을 고르세요</option><option>행복한건강한반</option><option>씨앗웃는반</option><option>싱그러운잎새반</option><option>햇살나무반</option><option>튼튼나무반</option><option>사과나무반</option><option>초록나무반</option></select></label>
         <label class="f" for="age">연령
           <select id="age">
             <option value="0">만 0세반</option><option value="1">만 1세반</option><option value="2" selected>만 2세반</option>
@@ -637,8 +637,16 @@ function renderSummary(){
 }
 function info(){ return {cls: $("cls").value.trim(), age: $("age").value, date: $("date").value, kind: $("kind").value, teacher: $("teacher").value.trim(), mixed: $("mixed").checked, inclusive: $("inclusive").checked, memo: $("memo").value}; }
 function persist(){ save(DKEY, {info: info(), items: state.items, ck: state.ck, pages: state.pages, editingId: editingId}); save(PKEY, {cls: $("cls").value.trim(), age: $("age").value, teacher: $("teacher").value.trim(), mixed: $("mixed").checked, inclusive: $("inclusive").checked}); }
+var CLASSES = [{name:"행복한건강한반", age:0}, {name:"씨앗웃는반", age:1}, {name:"싱그러운잎새반", age:2}, {name:"햇살나무반", age:2}, {name:"튼튼나무반", age:3}, {name:"사과나무반", age:4}, {name:"초록나무반", age:5}];
+function monthList(fromHist){
+  var d = new Date(), cur = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"), out = [cur];
+  fromHist.forEach(function(m){ if (m && out.indexOf(m) < 0) out.push(m); });
+  return out.sort().reverse();
+}
+function classList(fromHist){ var out = CLASSES.map(function(c){ return c.name; }); fromHist.forEach(function(c){ if (c && out.indexOf(c) < 0) out.push(c); }); return out; }
+function setCls(v){ var sel = $("cls"); if (v && !Array.prototype.some.call(sel.options, function(o){ return o.value === v; })) sel.append(h("option", {value: v, text: v})); sel.value = v || ""; }
 function fill(inf){
-  $("cls").value = inf.cls || ""; $("age").value = inf.age != null ? inf.age : "2"; $("date").value = inf.date || todayIso();
+  setCls(inf.cls || ""); $("age").value = inf.age != null ? inf.age : "2"; $("date").value = inf.date || todayIso();
   $("kind").value = inf.kind || "일일 보육일지"; $("teacher").value = inf.teacher || ""; $("mixed").checked = !!inf.mixed; $("inclusive").checked = !!inf.inclusive; $("memo").value = inf.memo || "";
 }
 function renderAll(){ renderPages(); renderItems(); renderCk(); renderSummary(); renderRef(); }
@@ -660,7 +668,7 @@ function reportText(){
 function history(){ return load(HKEY, []); }
 function doSave(){
   var f = info();
-  if (!f.cls){ flash("반 이름을 적어 주세요."); $("cls").focus(); return; }
+  if (!f.cls){ flash("반을 골라 주세요."); $("cls").focus(); return; }
   if (!f.date){ flash("일지 날짜를 골라 주세요."); $("date").focus(); return; }
   var list = history(), rec = {id: editingId || ("r" + Date.now()), at: Date.now(), info: f, items: state.items, ck: state.ck, pages: state.pages.slice()};
   var i = list.findIndex(function(x){ return x.id === rec.id; });
@@ -672,9 +680,7 @@ function doSave(){
 }
 function renderMonth(){
   var list = history(), selC = $("mCls"), selM = $("mMon"), pc = selC.value, pm = selM.value;
-  var classes = [], months = [];
-  list.forEach(function(r){ var c = r.info.cls, m = (r.info.date || "").slice(0,7); if (c && classes.indexOf(c) < 0) classes.push(c); if (m && months.indexOf(m) < 0) months.push(m); });
-  months.sort().reverse();
+  var classes = classList(list.map(function(r){ return r.info.cls; })), months = monthList(list.map(function(r){ return (r.info.date || "").slice(0,7); }));
   selC.textContent = ""; selM.textContent = "";
   classes.forEach(function(c){ selC.append(h("option", {value:c, text:c})); });
   months.forEach(function(m){ selM.append(h("option", {value:m, text: m.slice(0,4) + "년 " + (+m.slice(5,7)) + "월"})); });
@@ -772,7 +778,8 @@ function showTab(name){
 var draft = load(DKEY, null), prof = load(PKEY, {});
 if (draft && draft.info){ fill(draft.info); state.items = draft.items || {}; state.ck = draft.ck || {}; state.pages = draft.pages || []; editingId = draft.editingId || null; }
 else fill({cls: prof.cls, age: prof.age, teacher: prof.teacher, mixed: prof.mixed, inclusive: prof.inclusive, date: todayIso()});
-["cls","teacher","memo","kind"].forEach(function(id){ $(id).addEventListener("input", persist); });
+["teacher","memo","kind"].forEach(function(id){ $(id).addEventListener("input", persist); });
+$("cls").addEventListener("change", function(){ var c = CLASSES.filter(function(x){ return x.name === $("cls").value; })[0]; if (c && c.age != null) $("age").value = String(c.age); persist(); renderAll(); });
 ["age","date","mixed","inclusive","kind"].forEach(function(id){ $(id).addEventListener("change", function(){ persist(); renderAll(); }); });
 $("save").addEventListener("click", doSave);
 $("print").addEventListener("click", printCheck);
