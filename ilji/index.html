@@ -121,6 +121,24 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
 .viewer .vimg{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 8px calc(12px + env(safe-area-inset-bottom,0px));text-align:center}
 .viewer .vimg img{max-width:100%;height:auto;background:#fff}
 .viewer .vimg.zoom img{max-width:none;width:200%}
+.prow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.8fr) auto;gap:6px;align-items:end;border-top:1px solid var(--line);padding:10px 0}
+.prow:first-child{border-top:0}
+.prow .ty{font-weight:600;font-size:14px;align-self:center}
+.prow .ty small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.prow input{padding:8px 6px}
+.prow .del{border:0;background:none;color:var(--muted);font-size:20px;cursor:pointer;padding:6px;align-self:center}
+@media (max-width:520px){.prow{grid-template-columns:1fr 1fr}.prow .ty{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline}.prow .del{grid-row:1;grid-column:2;justify-self:end}}
+.playadd{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.playadd .btn{font-size:13.5px;padding:8px 10px}
+.pbar{margin-top:10px}
+.pbar .lab{display:flex;justify-content:space-between;gap:8px;font-size:14px;flex-wrap:wrap}
+.pbar .lab b{font-variant-numeric:tabular-nums}
+.pbar .track{height:12px;border-radius:99px;background:var(--soft);border:1px solid var(--line);overflow:hidden;margin-top:4px}
+.pbar .fill{height:100%;background:var(--amber)}
+.pbar.ok .fill{background:var(--ok)}
+.pbar .say{font-size:13.5px;margin-top:3px;color:var(--amber);font-weight:600}
+.pbar.ok .say{color:var(--ok)}
+.pnote{font-size:13px;color:var(--muted);margin:10px 0 0}
 [hidden]{display:none!important}
 #printArea{display:none}
 @media print{
@@ -194,18 +212,30 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
 
 
     <div class="panel">
-      <h2>③ 일지 내용 점검</h2>
+      <h2>③ 놀이시간 계산</h2>
+      <p class="note" id="playStd"></p>
+      <div id="playRows"></div>
+      <div class="playadd">
+        <button class="btn" type="button" data-add="실내 자유놀이">+ 실내 자유놀이</button>
+        <button class="btn" type="button" data-add="바깥놀이">+ 바깥놀이</button>
+        <button class="btn" type="button" data-add="대체 대근육 놀이">+ 날씨 대체 놀이</button>
+      </div>
+      <div id="playSum"></div>
+    </div>
+
+    <div class="panel">
+      <h2>④ 일지 내용 점검</h2>
       <p class="note">항목마다 내 일지를 떠올리며 골라 주세요. "좋은 예 보기"를 누르면 이렇게 쓰면 된다는 예시가 나와요.</p>
       <div id="items"></div>
     </div>
 
     <div class="panel">
-      <h2>④ 보육일지기록 Check list</h2>
+      <h2>⑤ 보육일지기록 Check list</h2>
       <div id="ck"></div>
     </div>
 
     <div class="panel">
-      <h2>⑤ 점검 결과</h2>
+      <h2>⑥ 점검 결과</h2>
       <div class="sum" id="sum"></div>
       <h3>보완할 것</h3>
       <ul class="todo" id="todo"></ul>
@@ -223,6 +253,10 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
       <div id="month"></div>
       <p class="msg" style="text-align:left">✓ 기록함 · △ 부족 · ✕ 안 함 · – 해당 없음. 한 주에 여러 번 점검하면 가장 잘 된 기록이 표시돼요.</p>
       <button class="btn" type="button" id="printMonth">이 달 Check list 인쇄</button>
+      <p class="pnote" id="keepState"></p>
+      <div class="playadd"><button class="btn" type="button" id="backupSave">기록 백업 파일 저장</button><button class="btn" type="button" id="backupLoad">백업 파일 불러오기</button></div>
+      <input type="file" id="backupIn" accept=".json,application/json" hidden>
+      <p class="pnote">백업 파일에는 점검 기록과 놀이시간이 들어가요(일지 사진은 빠져요). 휴대폰을 바꾸거나 브라우저를 정리하기 전에 저장해 두세요.</p>
     </div>
     <div class="panel">
       <h2>저장한 점검</h2>
@@ -351,7 +385,7 @@ function contentKey(n){ n = +n; return n <= 1 ? "0~1세" : n === 2 ? "2세" : "3
 function outdoor(n){ n = +n; return n === 0 ? "바깥놀이 주 3회 30분 이상 포함, 실내외 매일 2시간~2시간 30분 이상" : n <= 2 ? "매일 바깥놀이 30분 이상 포함, 실내외 2시간 30분 이상" : "매일 바깥놀이 1시간 이상 포함, 실내외 3시간 이상"; }
 
 var HKEY = "sodam-ilji-self-v1", DKEY = "sodam-ilji-self-draft-v1", PKEY = "sodam-ilji-self-profile-v1";
-var state = {items:{}, ck:{}, pages:[]};
+var state = {items:{}, ck:{}, pages:[], play:[]};
 var editingId = null;
 
 /* ---------- 일지 사진 (이 기기의 IndexedDB에 보관) ---------- */
@@ -584,6 +618,65 @@ $("pasteBox2").addEventListener("input", function(){ setTimeout(function(){ $("p
 $("pasteBox2").addEventListener("keydown", function(e){ if (!(e.ctrlKey || e.metaKey) && e.key.length === 1) e.preventDefault(); });
 $("pageIn").addEventListener("change", function(){ var fl = $("pageIn").files; if (fl && fl.length) addPageFiles(fl).then(function(){ $("pageIn").value = ""; }); });
 
+/* ---------- 놀이시간 계산 (2024 개정 어린이집 평가지표 기준) ---------- */
+function playStd(n){ n = +n; return n === 0 ? {outdoor: 0, total: 120, totalHi: 150, weekly: true} : n <= 2 ? {outdoor: 30, total: 150} : {outdoor: 60, total: 180}; }
+function hm(m){ m = Math.max(0, Math.round(m)); var hh = Math.floor(m / 60), mm = m % 60; return (hh ? hh + "시간" : "") + (hh && mm ? " " : "") + (mm || !hh ? mm + "분" : ""); }
+function toMin(t){ var m = /^(\d{1,2}):(\d{2})/.exec(t || ""); return m ? +m[1] * 60 + +m[2] : null; }
+function playCalc(){
+  var r = {indoor: 0, outdoor: 0, sub: 0};
+  (state.play || []).forEach(function(p){
+    var a = toMin(p.s), b = toMin(p.e); if (a == null || b == null || b <= a) return;
+    var m = Math.max(0, b - a - (+p.minus || 0));
+    if (p.type === "바깥놀이") r.outdoor += m; else if (p.type === "대체 대근육 놀이") r.sub += m; else r.indoor += m;
+  });
+  r.total = r.indoor + r.outdoor + r.sub;
+  var st = playStd($("age").value); r.std = st;
+  r.outOk = st.weekly ? true : (r.outdoor + r.sub) >= st.outdoor;
+  r.totOk = r.total >= st.total;
+  return r;
+}
+function renderPlay(){
+  var n = $("age").value, st = playStd(n);
+  $("playStd").textContent = ageLabel(n) + " 기준: " + (st.weekly ? "바깥놀이 주 3회 30분 이상 포함, 실내외 놀이 매일 2시간~2시간 30분 이상" : "매일 바깥놀이 " + hm(st.outdoor) + " 이상 포함, 실내외 놀이 " + hm(st.total) + " 이상") + ". 손 씻기·화장실·정리 같은 전이시간은 빼고 적어 주세요.";
+  var box = $("playRows"); box.textContent = "";
+  if (!state.play) state.play = [];
+  state.play.forEach(function(p, i){
+    function inp(key, type, label, attrs){ var el = h("input", Object.assign({type: type, "aria-label": p.type + " " + label}, attrs || {})); el.value = p[key] || ""; el.addEventListener("change", function(){ p[key] = el.value; persist(); renderPlaySum(); }); return h("label", {class:"f"}, label, el); }
+    box.append(h("div", {class:"prow"},
+      h("div", {class:"ty", text: p.type}, h("small", {text: p.type === "대체 대근육 놀이" ? "비·미세먼지로 바깥놀이 대신" : p.type === "바깥놀이" ? "놀이터·산책 등" : "교실 놀이"})),
+      inp("s", "time", "시작"), inp("e", "time", "끝"), inp("minus", "number", "빼는 분", {min:"0", step:"5", inputmode:"numeric", placeholder:"0"}),
+      h("button", {class:"del", type:"button", "aria-label": p.type + " 줄 빼기", text:"×", onclick: function(){ state.play.splice(i, 1); persist(); renderPlay(); }})));
+  });
+  if (!state.play.length) box.append(h("p", {class:"pnote", text:"아래 버튼으로 오늘 놀이 시간을 넣어 주세요. 오전·오후로 나눠 여러 줄 넣어도 돼요."}));
+  renderPlaySum();
+}
+function renderPlaySum(){
+  var box = $("playSum"); box.textContent = "";
+  if (!state.play || !state.play.length){ return; }
+  var r = playCalc(), st = r.std;
+  function bar(label, got, need, ok, say){
+    var pct = need ? Math.min(100, got / need * 100) : 100;
+    return h("div", {class:"pbar" + (ok ? " ok" : "")},
+      h("div", {class:"lab"}, h("span", {text: label}), h("b", {text: hm(got) + (need ? " / 기준 " + hm(need) : "")})),
+      h("div", {class:"track"}, h("div", {class:"fill", style:"width:" + pct + "%"})),
+      h("div", {class:"say", text: say}));
+  }
+  var out = r.outdoor + r.sub;
+  if (st.weekly) box.append(bar("바깥놀이" + (r.sub ? " (대체 " + hm(r.sub) + " 포함)" : ""), out, 30, out >= 30, out >= 30 ? "오늘 바깥놀이 1회로 셀 수 있어요. 이번 주 3회 이상 채워 주세요." : "만 0세는 주 3회, 한 번에 30분 이상이에요. 오늘 하셨다면 30분 이상인지 확인해 주세요."));
+  else box.append(bar("바깥놀이" + (r.sub ? " (날씨 대체 " + hm(r.sub) + " 포함)" : ""), out, st.outdoor, r.outOk, r.outOk ? "✓ 바깥놀이 기준을 채웠어요." : "바깥놀이 " + hm(st.outdoor - out) + " 더 필요해요."));
+  box.append(bar("실내외 놀이 합계 (실내 " + hm(r.indoor) + " + 바깥 " + hm(out) + ")", r.total, st.total, r.totOk,
+    r.totOk ? "✓ 놀이시간 기준을 채웠어요." + (st.totalHi && r.total < st.totalHi ? " 2시간 30분까지 채우면 더 좋아요." : "") : "놀이시간이 " + hm(st.total - r.total) + " 더 필요해요."));
+  if (r.sub) box.append(h("p", {class:"pnote", text:"날씨 대체 놀이는 바깥놀이를 대신한 시간으로 계산했어요. 일지에 대체한 이유(비, 미세먼지, 폭염특보 등)를 꼭 적어 주세요."}));
+  // 놀이시간 항목을 계산 결과로 맞춰 둔다 (선생님이 바꿀 수 있음)
+  var auto = r.outOk && r.totOk ? "잘 됨" : "보완";
+  if (state.playAuto !== auto || !state.items["놀이시간"]){ state.items["놀이시간"] = auto; state.playAuto = auto; persist(); renderItems(); renderSummary(); }
+}
+document.querySelectorAll("[data-add]").forEach(function(b){ b.addEventListener("click", function(){
+  if (!state.play) state.play = [];
+  var t = b.getAttribute("data-add"), d = {"실내 자유놀이": ["09:30", "10:30"], "바깥놀이": ["10:30", "11:10"], "대체 대근육 놀이": ["10:30", "11:10"]}[t];
+  state.play.push({type: t, s: d[0], e: d[1], minus: ""}); persist(); renderPlay();
+}); });
+
 /* ---------- 오늘 점검 ---------- */
 function visibleItems(){ var n = +$("age").value; return ITEMS.filter(function(it){ return !it.age5 || n === 5; }); }
 function seg(options, current, onPick, label){
@@ -636,7 +729,7 @@ function renderSummary(){
   todo.forEach(function(t){ ul.append(h("li", {text:t})); });
 }
 function info(){ return {cls: $("cls").value.trim(), age: $("age").value, date: $("date").value, kind: $("kind").value, teacher: $("teacher").value.trim(), mixed: $("mixed").checked, inclusive: $("inclusive").checked, memo: $("memo").value}; }
-function persist(){ save(DKEY, {info: info(), items: state.items, ck: state.ck, pages: state.pages, editingId: editingId}); save(PKEY, {cls: $("cls").value.trim(), age: $("age").value, teacher: $("teacher").value.trim(), mixed: $("mixed").checked, inclusive: $("inclusive").checked}); }
+function persist(){ save(DKEY, {info: info(), items: state.items, ck: state.ck, pages: state.pages, play: state.play, playAuto: state.playAuto, editingId: editingId}); save(PKEY, {cls: $("cls").value.trim(), age: $("age").value, teacher: $("teacher").value.trim(), mixed: $("mixed").checked, inclusive: $("inclusive").checked}); }
 var CLASSES = [{name:"행복한건강한반", age:0}, {name:"씨앗웃는반", age:1}, {name:"싱그러운잎새반", age:2}, {name:"햇살나무반", age:2}, {name:"튼튼나무반", age:3}, {name:"사과나무반", age:4}, {name:"초록나무반", age:5}];
 function monthList(fromHist){
   var d = new Date(), cur = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"), out = [cur];
@@ -649,12 +742,13 @@ function fill(inf){
   setCls(inf.cls || ""); $("age").value = inf.age != null ? inf.age : "2"; $("date").value = inf.date || todayIso();
   $("kind").value = inf.kind || "일일 보육일지"; $("teacher").value = inf.teacher || ""; $("mixed").checked = !!inf.mixed; $("inclusive").checked = !!inf.inclusive; $("memo").value = inf.memo || "";
 }
-function renderAll(){ renderPages(); renderItems(); renderCk(); renderSummary(); renderRef(); }
+function renderAll(){ renderPages(); renderPlay(); renderItems(); renderCk(); renderSummary(); renderRef(); }
 function flash(t){ var m = $("msg"); m.textContent = t; clearTimeout(flash.t); flash.t = setTimeout(function(){ m.textContent = ""; }, 4000); }
 
 function reportText(){
   var f = info(), L = [];
   L.push("[보육일지 자가점검] " + (f.cls || "반") + " (" + ageLabel(f.age) + ") " + f.date + " " + f.kind + (f.teacher ? " · " + f.teacher : ""));
+  if (state.play && state.play.length){ var pr = playCalc(); L.push("", "■ 놀이시간: 실내 " + hm(pr.indoor) + " + 바깥 " + hm(pr.outdoor + pr.sub) + (pr.sub ? "(대체 " + hm(pr.sub) + ")" : "") + " = " + hm(pr.total) + " (기준 " + hm(pr.std.total) + " · " + (pr.outOk && pr.totOk ? "충족" : "부족") + ")"); }
   L.push("", "■ 일지 내용 점검");
   visibleItems().forEach(function(it){ L.push("- " + it.name + ": " + (state.items[it.name] || "미점검")); });
   L.push("", "■ 보육일지기록 Check list (" + weekOfMonth(f.date) + "주차)");
@@ -670,11 +764,11 @@ function doSave(){
   var f = info();
   if (!f.cls){ flash("반을 골라 주세요."); $("cls").focus(); return; }
   if (!f.date){ flash("일지 날짜를 골라 주세요."); $("date").focus(); return; }
-  var list = history(), rec = {id: editingId || ("r" + Date.now()), at: Date.now(), info: f, items: state.items, ck: state.ck, pages: state.pages.slice()};
+  var list = history(), rec = {id: editingId || ("r" + Date.now()), at: Date.now(), info: f, items: state.items, ck: state.ck, pages: state.pages.slice(), play: JSON.parse(JSON.stringify(state.play || []))};
   var i = list.findIndex(function(x){ return x.id === rec.id; });
   if (i >= 0) list[i] = rec; else list.unshift(rec);
   if (!save(HKEY, list)){ flash("저장하지 못했어요. 브라우저의 비공개(시크릿) 모드인지 확인해 주세요."); return; }
-  editingId = rec.id; persist();
+  editingId = rec.id; persist(); queueSend(payload(rec));
   flash(f.cls + " " + f.date + " 점검을 저장했어요. 월별 Check list에 표시돼요.");
   renderMonth();
 }
@@ -687,6 +781,7 @@ function renderMonth(){
   var prof = load(PKEY, {});
   if (classes.indexOf(pc) >= 0) selC.value = pc; else if (classes.indexOf(prof.cls) >= 0) selC.value = prof.cls;
   if (months.indexOf(pm) >= 0) selM.value = pm;
+  renderKeepState();
   var box = $("month"); box.textContent = "";
   $("printMonth").hidden = !list.length;
   if (!list.length){ box.append(h("p", {class:"empty", text:"점검을 저장하면 주차별로 여기에 채워져요."})); renderHist(); return; }
@@ -720,19 +815,78 @@ function renderHist(){
       h("button", {class:"linkbtn del", type:"button", text:"지우기", onclick: function(){
         li.textContent = "";
         li.append(h("span", {class:"w", style:"grid-column:1/3", text: r.info.date + " " + r.info.cls + " 점검을 지울까요?"}),
-          h("button", {class:"linkbtn", type:"button", text:"지우기", onclick: function(){ save(HKEY, history().filter(function(x){ return x.id !== r.id; })); if (editingId === r.id) editingId = null; renderMonth(); cleanupPages(); }}),
+          h("button", {class:"linkbtn", type:"button", text:"지우기", onclick: function(){ queueSend(payload(r, true)); save(HKEY, history().filter(function(x){ return x.id !== r.id; })); if (editingId === r.id) editingId = null; renderMonth(); cleanupPages(); }}),
           h("button", {class:"linkbtn del", type:"button", text:"취소", onclick: renderMonth}));
       }}));
     ul.append(li);
   });
 }
-function openRec(r){ editingId = r.id; fill(r.info); state.items = JSON.parse(JSON.stringify(r.items || {})); state.ck = JSON.parse(JSON.stringify(r.ck || {})); state.pages = (r.pages || []).slice(); persist(); renderAll(); showTab("check"); window.scrollTo(0,0); flash(r.info.date + " 점검을 열었어요. 고친 뒤 저장하면 덮어써요."); }
+function openRec(r){ editingId = r.id; fill(r.info); state.items = JSON.parse(JSON.stringify(r.items || {})); state.ck = JSON.parse(JSON.stringify(r.ck || {})); state.pages = (r.pages || []).slice(); state.play = JSON.parse(JSON.stringify(r.play || [])); state.playAuto = null; persist(); renderAll(); showTab("check"); window.scrollTo(0,0); flash(r.info.date + " 점검을 열었어요. 고친 뒤 저장하면 덮어써요."); }
+
+/* ---------- 기록 지키기: 영구 저장 요청 · 원장님 구글 시트로 보내기 · 백업 ---------- */
+// 원장님 구글 시트(Apps Script 웹 앱) 주소를 넣으면 저장할 때마다 시트로도 보낸다. 비어 있으면 보내지 않는다.
+var SHEET_URL = "";
+var QKEY = "sodam-ilji-self-queue-v1", DEVKEY = "sodam-ilji-self-device";
+var persisted = null;
+try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(function(ok){ persisted = ok; renderKeepState(); }); } catch(e){}
+function deviceId(){ var id = load(DEVKEY, null); if (!id){ id = "D" + Math.random().toString(36).slice(2, 8).toUpperCase(); save(DEVKEY, id); } return id; }
+function playOf(play, age){
+  var r = {indoor: 0, outdoor: 0}, st = playStd(age);
+  (play || []).forEach(function(p){ var a = toMin(p.s), b = toMin(p.e); if (a == null || b == null || b <= a) return; var m = Math.max(0, b - a - (+p.minus || 0)); if (p.type === "실내 자유놀이") r.indoor += m; else r.outdoor += m; });
+  r.total = r.indoor + r.outdoor; r.ok = (st.weekly ? true : r.outdoor >= st.outdoor) && r.total >= st.total; return r;
+}
+function payload(rec, deleted){
+  var inf = rec.info || {}, todo = [];
+  for (var k in (rec.items || {})) if (rec.items[k] === "보완") todo.push(k);
+  return {id: rec.id, cls: inf.cls, age: ageLabel(inf.age), date: inf.date, week: weekOfMonth(inf.date), kind: inf.kind, teacher: inf.teacher, memo: inf.memo || "",
+    play: (rec.play || []).length ? playOf(rec.play, inf.age) : null, todo: todo, pages: (rec.pages || []).length, deleted: !!deleted,
+    ck: CHECK_ROWS.map(function(r){ return {id: r.id, label: r.group + " / " + r.label, v: (rec.ck || {})[r.id] || ""}; }),
+    device: deviceId(), sentAt: new Date().toISOString()};
+}
+function queueSend(item){ if (!SHEET_URL) return; var q = load(QKEY, []); q.push(item); save(QKEY, q.slice(-500)); flushQueue(); }
+var flushing = false;
+async function flushQueue(){
+  if (!SHEET_URL || flushing) return; flushing = true;
+  try {
+    var q = load(QKEY, []);
+    while (q.length){
+      try { await fetch(SHEET_URL, {method: "POST", mode: "no-cors", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify(q[0])}); }
+      catch(e){ break; }
+      q = load(QKEY, []).slice(1); save(QKEY, q);
+    }
+  } finally { flushing = false; renderKeepState(); }
+}
+window.addEventListener("online", flushQueue);
+function renderKeepState(){
+  var el = $("keepState"); if (!el) return;
+  var n = history().length, q = load(QKEY, []).length;
+  el.textContent = "저장한 점검 " + n + "건. " + (SHEET_URL ? (q ? "원장님 시트로 보낼 기록 " + q + "건이 남아 있어요. 인터넷이 되면 자동으로 보내요." : "저장할 때마다 원장님 구글 시트에도 쌓여요.") : "이 기기에 저장돼요.") + (persisted === true ? " 이 기기에서 자동으로 지워지지 않게 설정했어요." : persisted === false ? " 브라우저가 공간이 부족하면 지울 수 있으니 가끔 백업 파일을 저장해 두세요." : "");
+}
+$("backupSave").addEventListener("click", function(){
+  var data = {app: "sodam-ilji-self", savedAt: new Date().toISOString(), records: history()};
+  var a = document.createElement("a"), d = new Date();
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type: "application/json"}));
+  a.download = "보육일지자가점검_백업_" + d.getFullYear() + String(d.getMonth()+1).padStart(2,"0") + String(d.getDate()).padStart(2,"0") + ".json";
+  document.body.append(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+});
+$("backupLoad").addEventListener("click", function(){ $("backupIn").click(); });
+$("backupIn").addEventListener("change", function(){
+  var file = $("backupIn").files[0]; if (!file) return;
+  file.text().then(function(t){
+    var d = JSON.parse(t); if (!d || !Array.isArray(d.records)) throw new Error("x");
+    var list = history(), have = {}; list.forEach(function(r){ have[r.id] = 1; });
+    var added = 0; d.records.forEach(function(r){ if (r && r.id && !have[r.id]){ list.push(r); added++; } });
+    save(HKEY, list); renderMonth(); $("keepState").textContent = "백업에서 " + added + "건을 불러왔어요. (이미 있던 기록은 그대로 두었어요)";
+  }).catch(function(){ $("keepState").textContent = "백업 파일을 읽지 못했어요. 이 앱에서 저장한 백업 파일인지 확인해 주세요."; });
+  $("backupIn").value = "";
+});
 
 /* ---------- 인쇄 ---------- */
 var SIGN = "<div class=\"sign\"><table><tr><th>담임</th><th>원감</th><th>원장</th></tr><tr><td></td><td></td><td></td></tr></table></div>";
 function printCheck(){
   var f = info(), wk = weekOfMonth(f.date), last = "";
   var b = "<h1>보육일지 자가점검</h1><div class=\"meta\">" + esc(f.cls || "-") + " (" + esc(ageLabel(f.age)) + ") · " + esc(f.date) + (wk ? " (" + wk + "주차)" : "") + " · " + esc(f.kind) + " · 작성 " + esc(f.teacher || "-") + "</div>";
+  if (state.play && state.play.length){ var pr = playCalc(); b += "<h2>놀이시간</h2><table><tr><th>구분</th><th class=\"c\">시작</th><th class=\"c\">끝</th><th class=\"c\">뺀 시간</th></tr>" + state.play.map(function(p){ return "<tr><td>" + esc(p.type) + "</td><td class=\"c\">" + esc(p.s) + "</td><td class=\"c\">" + esc(p.e) + "</td><td class=\"c\">" + esc(p.minus ? p.minus + "분" : "") + "</td></tr>"; }).join("") + "<tr><th>합계</th><td colspan=\"3\">실내 " + hm(pr.indoor) + " + 바깥 " + hm(pr.outdoor + pr.sub) + " = " + hm(pr.total) + " (기준 " + hm(pr.std.total) + " · " + (pr.outOk && pr.totOk ? "충족" : "부족") + ")</td></tr></table>"; }
   b += "<h2>일지 내용 점검</h2><table><tr><th>항목</th><th>보는 것</th><th class=\"c\">점검</th></tr>" + visibleItems().map(function(it){
     var d = it.name === "놀이시간" ? ageLabel(f.age) + " 기준 " + outdoor(f.age) : it.desc;
     return "<tr><td>" + esc(it.name) + "</td><td>" + esc(d) + "</td><td class=\"c\">" + esc(state.items[it.name] || "") + "</td></tr>"; }).join("") + "</table>";
@@ -776,7 +930,7 @@ function showTab(name){
 
 /* ---------- 시작 ---------- */
 var draft = load(DKEY, null), prof = load(PKEY, {});
-if (draft && draft.info){ fill(draft.info); state.items = draft.items || {}; state.ck = draft.ck || {}; state.pages = draft.pages || []; editingId = draft.editingId || null; }
+if (draft && draft.info){ fill(draft.info); state.items = draft.items || {}; state.ck = draft.ck || {}; state.pages = draft.pages || []; state.play = draft.play || []; state.playAuto = draft.playAuto || null; editingId = draft.editingId || null; }
 else fill({cls: prof.cls, age: prof.age, teacher: prof.teacher, mixed: prof.mixed, inclusive: prof.inclusive, date: todayIso()});
 ["teacher","memo","kind"].forEach(function(id){ $(id).addEventListener("input", persist); });
 $("cls").addEventListener("change", function(){ var c = CLASSES.filter(function(x){ return x.name === $("cls").value; })[0]; if (c && c.age != null) $("age").value = String(c.age); persist(); renderAll(); });
@@ -804,11 +958,12 @@ var resetArmed = false;
 $("reset").addEventListener("click", function(){
   if (!resetArmed){ resetArmed = true; $("reset").textContent = "한 번 더"; flash("한 번 더 누르면 지금 점검을 비우고 새로 시작해요."); setTimeout(function(){ resetArmed = false; $("reset").textContent = "새로"; }, 3000); return; }
   resetArmed = false; $("reset").textContent = "새로";
-  state = {items:{}, ck:{}, pages:[]}; editingId = null; $("pageMsg").textContent = "";
+  state = {items:{}, ck:{}, pages:[], play:[]}; editingId = null; $("pageMsg").textContent = "";
   var p = load(PKEY, {}); fill({cls: p.cls, age: p.age, teacher: p.teacher, mixed: p.mixed, inclusive: p.inclusive, date: todayIso()});
   persist(); renderAll(); window.scrollTo(0,0); flash("새 점검을 시작해요. 반과 이름은 그대로 두었어요.");
 });
 renderAll();
+flushQueue();
 })();
 </script>
 </body>
