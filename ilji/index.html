@@ -164,9 +164,9 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
   <section id="v-check" role="tabpanel" aria-labelledby="t-check">
     <div class="panel mine">
       <h2>① 내 일지 넣기</h2>
-      <p class="note">오늘 쓴 내 보육일지를 사진으로 찍어 넣어 주세요. 보면서 점검하고, 인쇄·보내기 때 함께 나가요. 사진, PDF, 한글(HWP·HWPX) 파일 모두 넣을 수 있어요. 여러 장을 한 번에 골라도 되고, 한 장씩 계속 추가해도 돼요.</p>
+      <p class="note">오늘 쓴 내 보육일지를 사진으로 찍어 넣어 주세요. 보면서 점검하고, 인쇄·보내기 때 함께 나가요. 사진, 스캔(PDF·TIFF), 한글(HWP·HWPX) 파일 모두 넣을 수 있어요. 여러 장을 한 번에 골라도 되고, 한 장씩 계속 추가해도 돼요.</p>
       <div class="pages" id="pages"></div>
-      <input type="file" id="pageIn" accept="image/*,.heic,.heif,.pdf,application/pdf,.hwp,.hwpx" multiple hidden>
+      <input type="file" id="pageIn" accept="image/*,.heic,.heif,.tif,.tiff,.pdf,application/pdf,.hwp,.hwpx" multiple hidden>
       <button class="btn addpage" type="button" id="addPage">+ 내 일지 사진 넣기</button>
       <div class="pastebox" id="pasteBox2" contenteditable="true" role="textbox" aria-label="사진 붙여넣기 칸" data-ph="📋 사진 붙여넣기: 여기를 누르고 Ctrl+V (휴대폰은 길게 눌러 '붙여넣기')"></div>
       <p class="msg" id="pageMsg" role="status" style="text-align:left"></p>
@@ -490,6 +490,23 @@ async function textToPages(text, title){
   }
   return out;
 }
+async function tiffPages(file){
+  await loadLib("https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js");
+  await loadLib("https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.js");
+  var buf = await file.arrayBuffer(), ifds = UTIF.decode(buf), out = [];
+  for (var i = 0; i < ifds.length && out.length < 20; i++){
+    UTIF.decodeImage(buf, ifds[i]);
+    var w = ifds[i].width, hh = ifds[i].height; if (!w || !hh) continue;
+    var rgba = UTIF.toRGBA8(ifds[i]);
+    var c1 = document.createElement("canvas"); c1.width = w; c1.height = hh;
+    c1.getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(rgba.buffer, rgba.byteOffset, w * hh * 4), w, hh), 0, 0);
+    var sc = Math.min(1, 2400 / Math.max(w, hh)), c2 = document.createElement("canvas"); c2.width = Math.round(w*sc); c2.height = Math.round(hh*sc);
+    var x = c2.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, c2.width, c2.height); x.drawImage(c1, 0, 0, c2.width, c2.height);
+    out.push(await new Promise(function(res, rej){ c2.toBlob(function(b){ b ? res(b) : rej(new Error("스캔 파일을 그림으로 바꾸지 못했어요.")); }, "image/jpeg", 0.9); }));
+  }
+  if (!out.length) throw new Error("스캔(TIFF) 파일을 열지 못했어요. PDF나 JPG로 저장해서 올려 주세요.");
+  return out;
+}
 async function hwpPages(file){
   var r = /\.hwpx$/i.test(file.name) ? await readHwpx(file) : await readHwp(file), out = [];
   if (r.text.replace(/\s/g, "").length >= 20) out = out.concat(await textToPages(r.text, file.name));
@@ -504,9 +521,10 @@ async function addPageFiles(list){
     try {
       var blobs = /\.pdf$/i.test(f.name) || f.type === "application/pdf" ? await pdfPages(f)
         : /\.hwpx?$/i.test(f.name) ? await hwpPages(f)
+        : /\.tiff?$/i.test(f.name) || f.type === "image/tiff" ? await tiffPages(f)
         : [await shrinkImage(f)];
       for (var k = 0; k < blobs.length; k++){ var id = "p" + Date.now() + "_" + Math.random().toString(36).slice(2, 7); await putPage(id, blobs[k]); state.pages.push(id); added++; }
-    } catch(e){ failed.push(f.name + ": " + (/한글|PDF/.test(e.message) ? e.message : /\.(heic|heif)$/i.test(f.name) ? "아이폰 사진(HEIC)을 열지 못했어요. 화면을 캡처해서 넣어 주세요." : (e.message || "열지 못했어요."))); }
+    } catch(e){ failed.push(f.name + ": " + (/한글|PDF|스캔/.test(e.message) ? e.message : /\.(heic|heif)$/i.test(f.name) ? "아이폰 사진(HEIC)을 열지 못했어요. 화면을 캡처해서 넣어 주세요." : (e.message || "열지 못했어요."))); }
   }
   persist(); renderPages();
   pm.textContent = (added ? added + "쪽을 넣었어요." : "") + (failed.length ? " " + failed.join(" / ") : "");
