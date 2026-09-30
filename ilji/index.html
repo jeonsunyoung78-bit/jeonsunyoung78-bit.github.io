@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#2E6A4E">
+<meta name="description" content="소담어린이집 선생님용 보육일지 자가점검과 월별 Check list">
+<meta property="og:title" content="소담 보육일지 자가점검">
+<meta property="og:description" content="보육일지를 쓰고 나서 스스로 점검하고, 월별 Check list를 채워요">
+<title>소담 보육일지 자가점검</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* 선생님 책상 위 한 장짜리 점검표: 위에서 아래로 체크하고, 맨 아래에서 저장·인쇄·보내기 */
+:root{
+  --paper:#F5F7F4; --sheet:#FFFFFF; --ink:#1E2A30; --muted:#5B6970; --line:#D8DED9; --soft:#EDF1EE;
+  --accent:#2E6A4E; --accent-ink:#FFFFFF; --red:#C0392B; --amber:#A86A12; --ok:#2E7D4F; --gray:#6B7780;
+  --red-bg:#FBECEA; --amber-bg:#FBF2E2; --ok-bg:#E7F3EC; --gray-bg:#EEF0F1;
+  --display:"Gowun Batang",serif; --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --paper:#131917; --sheet:#1B2320; --ink:#E4EBE7; --muted:#9BA9A2; --line:#2F3B36; --soft:#222C28;
+  --accent:#6DBE93; --accent-ink:#0F1613; --red:#F0806F; --amber:#E2B35E; --ok:#74C79A; --gray:#A3AEB5;
+  --red-bg:#3A2320; --amber-bg:#372B17; --ok-bg:#1E3328; --gray-bg:#262E2B; color-scheme:dark}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;margin:0}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px calc(96px + env(safe-area-inset-bottom,0px))}
+header{border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px}
+header .org{font-size:13px;color:var(--accent);font-weight:600;letter-spacing:.04em}
+h1{font-family:var(--display);font-size:30px;margin:2px 0 4px;letter-spacing:-.5px}
+header p{margin:0;color:var(--muted);font-size:14px}
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.tabs button{font:inherit;font-weight:600;font-size:14.5px;padding:9px 14px;border-radius:99px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.panel{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:16px}
+h2{font-family:var(--display);font-size:19px;margin:0 0 12px}
+h3{font-size:14px;margin:0 0 8px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media (max-width:600px){.grid2,.grid3{grid-template-columns:1fr 1fr}}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);font-weight:500;min-width:0}
+input[type=text],input[type=date],select,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
+textarea{resize:vertical}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chk{display:flex;gap:8px;align-items:center;font-size:14px;margin-top:10px}
+.chk input{width:18px;height:18px}
+.item{border-top:1px solid var(--line);padding:12px 0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;align-items:start}
+.item:first-of-type{border-top:0}
+.item .t{font-weight:600;font-size:15px}
+.item .d{font-size:13.5px;color:var(--muted);margin-top:2px}
+.item .basis{font-size:11.5px;color:var(--accent);margin-left:6px;font-weight:500}
+.item details{grid-column:1/-1;font-size:13.5px}
+.item summary{cursor:pointer;color:var(--accent);font-weight:500;font-size:13px;width:fit-content}
+.item .tip{background:var(--soft);border-radius:8px;padding:8px 10px;margin-top:6px;white-space:pre-line}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:none}
+.seg button{font:inherit;font-size:13.5px;font-weight:600;border:0;background:var(--sheet);color:var(--muted);padding:8px 10px;cursor:pointer;min-width:52px;border-left:1px solid var(--line)}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"].v-ok{background:var(--ok-bg);color:var(--ok)}
+.seg button[aria-pressed="true"].v-amber{background:var(--amber-bg);color:var(--amber)}
+.seg button[aria-pressed="true"].v-red{background:var(--red-bg);color:var(--red)}
+.seg button[aria-pressed="true"].v-gray{background:var(--gray-bg);color:var(--gray)}
+@media (max-width:520px){.item{grid-template-columns:1fr}.seg{width:100%}.seg button{flex:1}}
+.group{font-size:12.5px;font-weight:600;color:var(--accent);margin:14px 0 0;letter-spacing:.02em}
+.group:first-child{margin-top:0}
+.sum{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.pill{display:inline-block;font-size:12.5px;font-weight:600;border-radius:99px;padding:2px 10px}
+.s-ok{background:var(--ok-bg);color:var(--ok)} .s-amber{background:var(--amber-bg);color:var(--amber)} .s-red{background:var(--red-bg);color:var(--red)} .s-gray{background:var(--gray-bg);color:var(--gray)}
+ul.todo{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:14px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--sheet);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;justify-content:center;flex-wrap:wrap;z-index:5}
+.btn{font:inherit;font-weight:600;font-size:14.5px;border-radius:8px;padding:10px 14px;cursor:pointer;border:1px solid var(--line);background:var(--sheet);color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.5}
+.msg{font-size:13px;color:var(--muted);min-height:1.3em;text-align:center;margin:6px 0 0}
+.bar .msg:empty{display:none}
+.bar{flex-wrap:wrap}
+.bar .btn{flex:1 1 0;max-width:160px;padding:10px 6px;white-space:nowrap}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600}
+th.w,td.w{text-align:center;width:48px;font-variant-numeric:tabular-nums}
+td.w{font-size:16px;font-weight:700}
+td.g{color:var(--muted);font-size:12px;white-space:nowrap}
+.mk-ok{color:var(--ok)} .mk-amber{color:var(--amber)} .mk-red{color:var(--red)} .mk-gray{color:var(--gray)}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.hist li{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px}
+.hist .d{color:var(--muted);font-variant-numeric:tabular-nums;font-size:13px}
+.hist .w{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.linkbtn{font:inherit;font-size:13px;background:none;border:0;color:var(--accent);cursor:pointer;padding:4px}
+.linkbtn.del{color:var(--muted)}
+.empty{font-size:14px;color:var(--muted)}
+.ref p,.ref li{font-size:14px}
+.ref ul{padding-left:18px}
+.ref .area{margin:0 0 8px}
+.ref .area b{display:block}
+.note{font-size:13px;color:var(--muted);background:var(--soft);border-radius:8px;padding:10px 12px;margin:0}
+[hidden]{display:none!important}
+#printArea{display:none}
+@media print{
+  @page{size:A4;margin:14mm}
+  body{background:#fff;color:#111;font-size:10.5pt}
+  .wrap,.bar{display:none!important}
+  #printArea{display:block}
+  #printArea h1{font-size:16pt;margin:0 0 4px}
+  #printArea h2{font-size:11.5pt;margin:12px 0 5px;border-bottom:1.5px solid #111;padding-bottom:2px}
+  #printArea .meta{font-size:9.5pt;margin-bottom:6px}
+  #printArea table{border-collapse:collapse;width:100%;font-size:9pt}
+  #printArea th,#printArea td{border:1px solid #777;padding:3px 5px;color:#111}
+  #printArea th{background:#eee}
+  #printArea td.c,#printArea th.c{text-align:center}
+  #printArea tr{page-break-inside:avoid}
+  #printArea .memo{border:1px solid #777;padding:6px 8px;white-space:pre-wrap;min-height:40px}
+  #printArea .sign{margin-top:12px;display:flex;justify-content:flex-end}
+  #printArea .sign table{width:auto}
+  #printArea .sign td,#printArea .sign th{width:64px;text-align:center}
+  #printArea .sign td{height:44px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="org">소담어린이집</div>
+    <h1>보육일지 자가점검</h1>
+    <p>일지를 쓰고 나서 스스로 한 번 점검해요. 기록은 이 휴대폰(컴퓨터)에만 저장되고, 어디에도 보내지지 않아요.</p>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-check" aria-selected="true" aria-controls="v-check">오늘 점검</button>
+    <button role="tab" id="t-month" aria-selected="false" aria-controls="v-month">월별 Check list</button>
+    <button role="tab" id="t-ref" aria-selected="false" aria-controls="v-ref">기준 보기</button>
+  </div>
+
+  <section id="v-check" role="tabpanel" aria-labelledby="t-check">
+    <div class="panel">
+      <h2>일지 정보</h2>
+      <div class="grid2">
+        <label class="f" for="cls">반 이름<input type="text" id="cls" placeholder="예: 초록나무반" autocomplete="off"></label>
+        <label class="f" for="age">연령
+          <select id="age">
+            <option value="0">만 0세반</option><option value="1">만 1세반</option><option value="2" selected>만 2세반</option>
+            <option value="3">만 3세반</option><option value="4">만 4세반</option><option value="5">만 5세반</option>
+          </select>
+        </label>
+        <label class="f" for="date">일지 날짜<input type="date" id="date"></label>
+        <label class="f" for="kind">일지 종류
+          <select id="kind"><option>일일 보육일지</option><option>주간 보육일지</option><option>놀이 관찰기록</option></select>
+        </label>
+        <label class="f" for="teacher">작성 교사<input type="text" id="teacher" placeholder="이름" autocomplete="off"></label>
+      </div>
+      <label class="chk" for="mixed"><input type="checkbox" id="mixed"> 혼합연령반이에요</label>
+      <label class="chk" for="inclusive"><input type="checkbox" id="inclusive"> 장애영유아가 함께 지내요</label>
+    </div>
+
+    <div class="panel">
+      <h2>일지 내용 점검</h2>
+      <p class="note">항목마다 내 일지를 떠올리며 골라 주세요. "좋은 예 보기"를 누르면 이렇게 쓰면 된다는 예시가 나와요.</p>
+      <div id="items"></div>
+    </div>
+
+    <div class="panel">
+      <h2>보육일지기록 Check list</h2>
+      <div id="ck"></div>
+    </div>
+
+    <div class="panel">
+      <h2>점검 결과</h2>
+      <div class="sum" id="sum"></div>
+      <h3>보완할 것</h3>
+      <ul class="todo" id="todo"></ul>
+      <label class="f" for="memo" style="margin-top:12px">메모 (원장님께 전할 말, 다음에 신경 쓸 점)<textarea id="memo" rows="3"></textarea></label>
+    </div>
+  </section>
+
+  <section id="v-month" role="tabpanel" aria-labelledby="t-month" hidden>
+    <div class="panel">
+      <h2>월별 Check list</h2>
+      <div class="grid2" style="margin-bottom:10px">
+        <label class="f" for="mCls">반<select id="mCls"></select></label>
+        <label class="f" for="mMon">월<select id="mMon"></select></label>
+      </div>
+      <div id="month"></div>
+      <p class="msg" style="text-align:left">✓ 기록함 · △ 부족 · ✕ 안 함 · – 해당 없음. 한 주에 여러 번 점검하면 가장 잘 된 기록이 표시돼요.</p>
+      <button class="btn" type="button" id="printMonth">이 달 Check list 인쇄</button>
+    </div>
+    <div class="panel">
+      <h2>저장한 점검</h2>
+      <ul class="hist" id="hist"></ul>
+    </div>
+  </section>
+
+  <section id="v-ref" role="tabpanel" aria-labelledby="t-ref" hidden>
+    <div class="panel ref">
+      <h2>이렇게 쓰면 좋아요</h2>
+      <ul>
+        <li><b>놀이 중심</b>: 계획한 활동 목록보다 아이들이 실제로 논 흐름을 써요.</li>
+        <li><b>◈ 오늘 → ✔ 내일</b>: 일과마다 오늘 본 것과 내일 할 지원을 짝지어 써요.</li>
+        <li><b>객관적 관찰</b>: "짜증을 냈다" 대신 "자동차를 던지며 소리를 질렀다", "한참" 대신 "약 15분".</li>
+        <li><b>배움읽기</b>: 행동 뒤에 괄호로 영역 내용을 이어요. 예) 매트의 끝을 잡고(신체운동·건강: 대소근육을 조절한다) 들어 보며 매트 뒤의 공간에 관심을 가진다(자연탐구: 공간과 모양을 탐색한다).</li>
+        <li><b>놀이평가</b>: 하나의 놀이라도 제대로. 아이의 배움과 나의 운영(잘된 것, 부족했던 것, 특별했던 것)을 함께 써요.</li>
+        <li><b>평가제 필수 기재</b>: 자유놀이 시간, 바깥놀이 시간.</li>
+        <li><b>바깥놀이</b>: 만 0세 주 3회 30분 이상, 만 1~2세 매일 30분 이상, 만 3세 이상 매일 1시간(오전·오후). 날씨가 나쁘면 실내 대근육 놀이로 대체하고 기록해요.</li>
+        <li><b>낮잠</b>: 억지로 재우지 않고 스스로 잠들도록 도와요. 잠이 안 오는 아이는 조용히 쉬거나 혼자 놀이를 해요.</li>
+      </ul>
+      <h2 style="margin-top:18px">5개 영역 내용 <span id="refAge" style="font-size:14px;color:var(--muted)"></span></h2>
+      <div id="refAreas"></div>
+      <p class="note" style="margin-top:12px">근거: 2024 개정 표준보육과정(교육부 고시 제2024-23호)·해설서, 2024 개정 어린이집 평가지표(2026.2.) 4-1·4-2, 영유아 관찰 및 평가·보육일지 교육자료, 평가제 연수자료, 소담어린이집 보육일지기록 Check list</p>
+    </div>
+  </section>
+</div>
+
+<div class="bar" id="bar">
+  <button class="btn primary" type="button" id="save">저장</button>
+  <button class="btn" type="button" id="print">인쇄</button>
+  <button class="btn" type="button" id="share" aria-label="원장님께 보내기">보내기</button>
+  <button class="btn" type="button" id="reset">새로</button>
+  <p class="msg" id="msg" role="status" style="width:100%;margin:0"></p>
+</div>
+
+<div id="printArea"></div>
+
+<script>
+(function(){
+"use strict";
+var ITEMS = [
+  {name:"기본 정보", desc:"반 이름, 연령, 날짜, 출석 인원, 작성 교사 칸을 채웠나요?", tip:"빈칸 없이 채워요."},
+  {name:"평가제 필수 기재", basis:"평가제", desc:"자유놀이 시간과 바깥놀이 시간을 적었나요? 행사·견학 때문에 놀이시간이 모자라지 않았나요?", tip:"예) 09:30~10:50 실내 자유놀이 / 10:50~11:40 바깥놀이(모래놀이터)"},
+  {name:"계획-실행-평가 순환", basis:"평가지표 4-1·4-2", desc:"오늘의 기록과 평가가 내일(다음 주)의 계획으로 이어지나요?", tip:"◈ 블록을 높이 쌓다가 무너지자 다시 쌓기 시작함.\n✔ 내일은 긴 블록과 종이컵을 더 놓아 높이 쌓기를 이어 가도록 돕는다."},
+  {name:"놀이 중심 기록", basis:"해설서", desc:"계획한 활동 나열이 아니라 아이들이 실제로 논 내용과 흐름을 썼나요?", tip:"'블록 놀이 - 블록으로 집 만들기' 대신\n'유아차에 블록을 싣고 나르던 놀이가 여러 명이 참여하는 택배 놀이로 발전함.'"},
+  {name:"융통적 운영", basis:"평가지표 4-1", desc:"아이들의 흥미에 따라 놀이를 바꾸거나 새 놀이가 생겼을 때 그 이유를 적었나요?", tip:"예) 비가 와서 바깥놀이를 강당 대근육 놀이로 바꿈.\n예) 택배 놀이가 이어져 오후에 놀이 공간을 넓혀 줌."},
+  {name:"객관적 관찰", basis:"관찰법", desc:"말, 몸짓, 표정, 시간처럼 보이는 모습을 구체적으로 적었나요?", tip:"'짜증을 냈다' → '가지고 있던 자동차를 던지며 소리를 질렀다'\n'좋아했다' → '입을 크게 벌리고 깔깔거리며 웃었다'\n'한참 동안' → '약 15분 동안'"},
+  {name:"배움에 주목한 기록", basis:"평가지표 4-1", desc:"놀이에서 인상적이었던 것을 바탕으로 아이의 배움을 적었나요?", tip:"'즐겁게 참여함' 대신\n'무너져도 다시 쌓으며 끝까지 해 보려는 마음이 보였다.'"},
+  {name:"놀이평가의 균형", basis:"평가제", desc:"아이의 배움과 나의 운영(잘된 것, 부족했던 것, 특별했던 것)을 함께 적었나요?", tip:"예) 털이 있는 인형이 흥미를 오래 끌었다(잘된 것). 인형 수가 적어 기다리는 아이가 있었다(부족했던 것)."},
+  {name:"5개 영역의 통합", basis:"평가지표 4-1", desc:"영역 이름만 붙이지 않고, 놀이 속 행동과 영역 내용을 이어서 적었나요?", tip:"예) 매트의 끝을 잡고(신체운동·건강: 대소근육을 조절한다) 들어 보며 매트 뒤의 공간에 관심을 가진다(자연탐구: 공간과 모양을 탐색한다)."},
+  {name:"교사의 놀이 지원", basis:"해설서", desc:"공간·자료·말 걸기 등 내가 한 지원과 다음 지원 계획을 적었나요?", tip:"예) 갈등이 반복되는 곳의 동선을 살펴 퍼즐장을 벽 쪽으로 옮김."},
+  {name:"바깥 놀이", basis:"교육자료", desc:"", tip:"만 0세 주 3회 30분 이상 / 만 1~2세 매일 30분 이상 / 만 3세 이상 매일 1시간(오전·오후)\n날씨가 나쁘면 실내 대근육 놀이로 대체하고 기록해요."},
+  {name:"일상생활 지원", basis:"고시문·교육자료", desc:"등원, 급·간식, 정리와 전이, 낮잠·휴식, 배변, 귀가에서 아이의 요구와 나의 지원을 적었나요?", tip:"예) 낮잠 후 먼저 깨서 놀다가 이불 정리를 싫어하는 아이가 있음. ✔ 이불 정리를 먼저 하고 놀이하도록 격려할 예정."},
+  {name:"건강과 안전", desc:"건강 상태, 투약, 다친 일, 수면 안전 등 특이사항을 빠짐없이 적었나요?", tip:"투약 의뢰서 확인과 투약 시간도 함께 적어요."},
+  {name:"개별 지원", basis:"평가지표 4-1", desc:"연령·발달·장애·배경을 고려한 지원이 드러나나요?", tip:"장애영유아는 개별화교육계획의 목표와 오늘 지원을 이어서 적어요."},
+  {name:"가정 연계", basis:"평가지표 4-2", desc:"부모님께 전할 내용, 면담 때 나눌 이야기를 적었나요?", tip:"예) 새 동생이 생겨 등원을 힘들어함. 조부모님과 짧고 분명하게 인사 나누도록 안내."},
+  {name:"존중하는 표현", desc:"아이를 존중하는 표현을 썼나요? 비교, 낙인, 지시 위주 표현이나 맞춤법 오류는 없나요?", tip:"'말을 안 들어서 자리에 앉힘' → '놀이를 더 하고 싶은 마음을 받아 주고 함께 자리로 옴'"},
+  {name:"이음교육", basis:"만 5세", age5:true, desc:"초등학교 생활로 이어지는 놀이·활동을 계획하고 기록했나요?", tip:"초등학교 생활 알아보기, 초등학교 둘러보기, 관련 자료 비치, 졸업생 초대, 스스로 하는 생활습관 등"}
+];
+var ITEM_STATES = [["잘 됨","v-ok"],["보완","v-amber"],["해당 없음","v-gray"]];
+
+var CHECK_ROWS = [
+  {id:"1-1", no:1, group:"일과운영", label:"실내외 놀이시간 변경"},
+  {id:"1-2", no:1, group:"일과운영", label:"공용공간 활용"},
+  {id:"1-3", no:1, group:"일과운영", label:"공간 변경"},
+  {id:"1-4", no:1, group:"일과운영", label:"일상생활을 유연하게"},
+  {id:"2-1", no:2, group:"배움읽기", label:"일상배움"},
+  {id:"2-2", no:2, group:"배움읽기", label:"놀이배움"},
+  {id:"3-1", no:3, group:"지원계획 및 지원반영", label:"지원계획"},
+  {id:"3-2", no:3, group:"지원계획 및 지원반영", label:"지원반영 + 평가"},
+  {id:"4", no:4, group:"계획안에 없는 놀이 실행", label:"주안에 없는 놀이 기록 (주 1회)"},
+  {id:"5", no:5, group:"순환놀이 계획 (1주차)", label:"주간보육과정평가에 계획 기록"},
+  {id:"6", no:6, group:"순환놀이 계획 및 반영 (2~4주차)", label:"주 1회 놀이기록 끝에 '(흥미에 따른 놀이를 지난주 계획하여 순환됨)' 기록, 주간보육과정평가에 이번 주 놀이를 반영한 평가와 다음 주 순환놀이 계획 기록 후 [순환놀이 계획 및 반영] 쓰기"},
+  {id:"7", no:7, group:"대체활동", label:"폭염특보 등으로 인한 대체활동 실시와 실행 기록"},
+  {id:"8-1", no:8, group:"일상나눔·놀이나눔", label:"일상나눔 (형님반·동생반과)"},
+  {id:"8-2", no:8, group:"일상나눔·놀이나눔", label:"놀이나눔 (형님반·동생반과)"},
+  {id:"9-1", no:9, group:"일지 기록사항", label:"안전교육"},
+  {id:"9-2", no:9, group:"일지 기록사항", label:"지역사회연계활동"},
+  {id:"9-3", no:9, group:"일지 기록사항", label:"환경캠페인"},
+  {id:"9-4", no:9, group:"일지 기록사항", label:"기본생활습관"},
+  {id:"10-2", no:10, group:"특이사항 (실행 유무만)", label:"소방대피훈련"},
+  {id:"10-3", no:10, group:"특이사항 (실행 유무만)", label:"비상대응훈련"},
+  {id:"10-4", no:10, group:"특이사항 (실행 유무만)", label:"소담학습공동체"},
+  {id:"11", no:11, group:"이음교육 (만 5세반)", label:"초등학교와 이어지는 놀이·활동 기록"}
+];
+var CK_STATES = [["있음","✓","v-ok"],["부족","△","v-amber"],["없음","✕","v-red"],["해당 없음","–","v-gray"]];
+var CK_MARK = {"있음":"✓","부족":"△","없음":"✕","해당 없음":"–"};
+var CK_CLS = {"있음":"mk-ok","부족":"mk-amber","없음":"mk-red","해당 없음":"mk-gray"};
+var CK_RANK = {"있음":3,"부족":2,"없음":1,"해당 없음":0};
+
+var CONTENT = {
+"0~1세": [["신체운동·건강","신체활동 즐기기: 다양한 감각을 경험한다 / 신체와 주변을 탐색한다 / 대소근육을 조절한다 / 기본 운동을 시도한다 / 실내외 신체활동을 즐긴다. 건강하게 생활하기: 도움을 받아 몸을 깨끗이 한다 / 음식에 관심을 가진다 / 하루 일과를 편안하게 경험한다 / 건강한 배변 습관을 갖는다. 안전하게 생활하기: 안전한 상황에서 놀이하고 생활한다 / 안전한 상황에서 교통수단을 이용해 본다 / 위험하다는 말에 주의한다."],["의사소통","듣기와 말하기: 표정, 몸짓, 말과 주변의 소리에 주의를 기울인다 / 상대방의 이야기를 들으면서 말소리를 낸다 / 표정, 몸짓, 말소리로 의사를 표현한다. 읽기와 쓰기에 관심 가지기: 주변의 그림과 상징에 관심을 가진다 / 끼적이기에 관심을 가진다. 책과 이야기 즐기기: 책에 관심을 가진다 / 말놀이와 이야기에 재미를 느낀다."],["사회관계","나를 알고 존중하기: 나의 고유함을 알아간다 / 나의 욕구와 감정을 표현한다 / 나에게 친숙한 것을 안다. 더불어 생활하기: 안정적인 애착을 형성한다 / 또래에게 관심을 가진다 / 다른 사람의 감정과 행동에 관심을 가진다 / 반에서 편안하게 지낸다."],["예술경험","아름다움 찾아보기: 자연과 생활에서 아름다움을 느낀다 / 예술에서 아름다움을 느낀다. 창의적으로 표현하기: 소리와 리듬, 노래로 표현한다 / 움직임으로 표현한다 / 다양한 미술 재료를 경험한다 / 모방하기를 즐긴다."],["자연탐구","탐구과정 즐기기: 주변 환경과 자연에 대해 호기심을 가진다 / 사물과 자연 탐색하기를 즐긴다. 생활 속에서 탐구하기: 친숙한 물체를 감각으로 탐색한다 / 일상에서 수에 관심을 가진다 / 공간과 모양을 탐색한다 / 규칙성을 경험한다. 자연과 더불어 살기: 주변의 동식물에 관심을 가진다 / 날씨의 변화를 느낀다."]],
+"2세": [["신체운동·건강","신체활동 즐기기: 다양한 감각을 경험한다 / 신체를 인식하고 움직인다 / 대소근육을 조절한다 / 기본 운동을 즐긴다 / 실내외 신체활동을 즐긴다. 건강하게 생활하기: 자신의 몸과 주변을 깨끗이 해 본다 / 음식을 즐겁게 먹는다 / 하루 일과를 즐겁게 경험한다 / 건강한 배변 습관을 갖는다. 안전하게 생활하기: 안전하게 놀이하고 생활한다 / 안전한 상황에서 교통수단을 이용해 본다 / 위험한 상황에 대처하는 방법을 경험한다."],["의사소통","듣기와 말하기: 표정, 몸짓, 말에 주의를 기울여 듣는다 / 상대방의 이야기를 듣고 말한다 / 자신의 요구와 느낌을 말한다. 읽기와 쓰기에 관심 가지기: 주변의 그림과 상징에 관심을 가진다 / 끼적이며 표현하기를 즐긴다. 책과 이야기 즐기기: 책에 관심을 가지고 상상한다 / 말놀이와 이야기에 재미를 느낀다."],["사회관계","나를 알고 존중하기: 나의 고유함을 알아간다 / 나의 욕구와 감정을 표현한다 / 내가 좋아하는 것을 해 본다. 더불어 생활하기: 가족에게 관심을 가진다 / 또래와 함께 놀이한다 / 다른 사람의 감정과 행동에 관심을 가진다 / 지켜야 할 약속이 있음을 안다."],["예술경험","아름다움 찾아보기: 자연과 생활에서 아름다움을 느낀다 / 예술에서 아름다움을 느낀다. 창의적으로 표현하기: 익숙한 노래와 리듬을 표현한다 / 움직임과 춤으로 표현한다 / 다양한 미술 재료와 도구로 표현한다 / 상상놀이를 한다."],["자연탐구","탐구과정 즐기기: 주변 환경과 자연에 대해 호기심을 가진다 / 사물과 자연 탐색하기를 즐긴다. 생활 속에서 탐구하기: 친숙한 물체를 감각으로 탐색한다 / 일상에서 수에 관심을 가진다 / 공간과 모양을 탐색한다 / 규칙성에 관심을 가진다 / 사물을 같고 다름에 따라 구분한다 / 생활 도구에 관심을 가진다. 자연과 더불어 살기: 주변의 동식물에 관심을 가진다 / 날씨와 계절의 변화를 느낀다."]],
+"3~5세": [["신체운동·건강","신체활동 즐기기: 신체를 인식하고 움직인다 / 신체 움직임을 조절한다 / 기초적인 이동운동, 제자리 운동, 도구를 이용한 운동을 한다 / 실내외 신체활동에 자발적으로 참여한다. 건강하게 생활하기: 자신의 몸과 주변을 깨끗이 한다 / 몸에 좋은 음식에 관심을 가지고 바른 태도로 즐겁게 먹는다 / 하루 일과에서 적당한 휴식을 취한다 / 질병을 예방하는 방법을 알고 실천한다. 안전하게 생활하기: 일상에서 안전하게 놀이하고 생활한다 / TV, 컴퓨터, 스마트폰 등을 바르게 사용한다 / 교통안전 규칙을 지킨다 / 안전사고, 화재, 재난, 학대, 유괴 등에 대처하는 방법을 경험한다."],["의사소통","듣기와 말하기: 말이나 이야기를 관심 있게 듣는다 / 자신의 경험, 느낌, 생각을 말한다 / 상황에 적절한 단어를 사용하여 말한다 / 상대방이 하는 이야기를 듣고 관련해서 말한다 / 바른 태도로 듣고 말한다 / 고운 말을 사용한다. 읽기와 쓰기에 관심 가지기: 말과 글의 관계에 관심을 가진다 / 주변의 상징, 글자 등의 읽기에 관심을 가진다 / 자신의 생각을 글자와 비슷한 형태로 표현한다. 책과 이야기 즐기기: 책에 관심을 가지고 상상하기를 즐긴다 / 동화, 동시에서 말의 재미를 느낀다 / 말놀이와 이야기 짓기를 즐긴다."],["사회관계","나를 알고 존중하기: 나를 알고 소중히 여긴다 / 나의 감정을 알고 상황에 맞게 표현한다 / 내가 할 수 있는 것을 스스로 한다. 더불어 생활하기: 가족의 의미를 알고 화목하게 지낸다 / 친구와 서로 도우며 사이좋게 지낸다 / 친구와의 갈등을 긍정적인 방법으로 해결한다 / 서로 다른 감정, 생각, 행동을 존중한다 / 친구와 어른께 예의바르게 행동한다 / 약속과 규칙의 필요성을 알고 지킨다. 사회에 관심 가지기: 내가 살고 있는 곳에 대해 궁금한 것을 알아본다 / 우리나라에 대해 자부심을 가진다 / 다양한 문화에 관심을 가진다."],["예술경험","아름다움 찾아보기: 자연과 생활에서 아름다움을 느끼고 즐긴다 / 예술적 요소에 관심을 갖고 찾아본다. 창의적으로 표현하기: 노래를 즐겨 부른다 / 신체, 사물, 악기로 간단한 소리와 리듬을 만들어 본다 / 신체나 도구를 활용하여 움직임과 춤으로 자유롭게 표현한다 / 다양한 미술 재료와 도구로 자신의 생각과 느낌을 표현한다 / 극놀이로 경험이나 이야기를 표현한다. 예술 감상하기: 다양한 예술을 감상하며 상상하기를 즐긴다 / 서로 다른 예술 표현을 존중한다 / 우리나라 전통 예술에 관심을 갖고 친숙해진다."],["자연탐구","탐구과정 즐기기: 주변 세계와 자연에 대해 지속적으로 호기심을 가진다 / 궁금한 것을 탐구하는 과정에 즐겁게 참여한다 / 탐구과정에서 서로 다른 생각에 관심을 가진다. 생활 속에서 탐구하기: 물체의 특성과 변화를 여러 가지 방법으로 탐색한다 / 물체를 세어 수량을 알아본다 / 물체의 위치와 방향, 모양을 알고 구별한다 / 일상에서 길이, 무게 등의 속성을 비교한다 / 주변에서 반복되는 규칙을 찾는다 / 일상에서 모은 자료를 기준에 따라 분류한다 / 도구와 기계에 대해 관심을 가진다. 자연과 더불어 살기: 주변의 동식물에 관심을 가진다 / 생명과 자연환경을 소중히 여긴다 / 날씨와 계절의 변화를 생활과 관련짓는다."]]
+};
+
+function $(id){ return document.getElementById(id); }
+function h(tag, attrs){
+  var el = document.createElement(tag);
+  if (attrs) for (var k in attrs){
+    if (k === "class") el.className = attrs[k];
+    else if (k === "text") el.textContent = attrs[k];
+    else if (k.slice(0,2) === "on") el.addEventListener(k.slice(2), attrs[k]);
+    else if (attrs[k] != null) el.setAttribute(k, attrs[k]);
+  }
+  for (var i = 2; i < arguments.length; i++){ var c = arguments[i]; if (c == null || c === false) continue; if (Array.isArray(c)) c.forEach(function(x){ if (x != null) el.append(x); }); else el.append(c); }
+  return el;
+}
+function esc(t){ return String(t == null ? "" : t).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+function load(k, d){ try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
+function save(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ return false; } }
+function todayIso(){ var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+function weekOfMonth(iso){
+  var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ""); if (!m) return 0;
+  var first = new Date(+m[1], +m[2]-1, 1), offset = (first.getDay() + 6) % 7;
+  return Math.floor((+m[3] + offset - 1) / 7) + 1;
+}
+function ageLabel(n){ return "만 " + n + "세반"; }
+function contentKey(n){ n = +n; return n <= 1 ? "0~1세" : n === 2 ? "2세" : "3~5세"; }
+function outdoor(n){ n = +n; return n === 0 ? "주 3회, 30분 이상" : n <= 2 ? "매일 30분 이상" : "매일 1시간(오전·오후)"; }
+
+var HKEY = "sodam-ilji-self-v1", DKEY = "sodam-ilji-self-draft-v1", PKEY = "sodam-ilji-self-profile-v1";
+var state = {items:{}, ck:{}};
+var editingId = null;
+
+/* ---------- 오늘 점검 ---------- */
+function visibleItems(){ var n = +$("age").value; return ITEMS.filter(function(it){ return !it.age5 || n === 5; }); }
+function seg(options, current, onPick, label){
+  var box = h("div", {class:"seg", role:"group", "aria-label": label});
+  options.forEach(function(o){
+    var b = h("button", {type:"button", class:o[o.length-1], "aria-pressed": String(current === o[0]), text: o.length === 3 ? o[1] + " " + o[0] : o[0]});
+    b.addEventListener("click", function(){ onPick(current === o[0] ? null : o[0]); });
+    box.append(b);
+  });
+  return box;
+}
+function renderItems(){
+  var box = $("items"); box.textContent = "";
+  var n = +$("age").value;
+  visibleItems().forEach(function(it){
+    var desc = it.name === "바깥 놀이" ? ageLabel(n) + " 기준(" + outdoor(n) + ")을 지켰나요? 날씨가 나쁠 때 실내 대근육 놀이로 바꾼 것도 적었나요?" : it.desc;
+    box.append(h("div", {class:"item"},
+      h("div", null, h("div", {class:"t"}, it.name, it.basis ? h("span", {class:"basis", text: it.basis}) : null), h("div", {class:"d", text: desc})),
+      seg(ITEM_STATES, state.items[it.name] || null, function(v){ if (v) state.items[it.name] = v; else delete state.items[it.name]; persist(); renderItems(); renderSummary(); }, it.name),
+      h("details", null, h("summary", {text:"좋은 예 보기"}), h("div", {class:"tip", text: it.tip}))
+    ));
+  });
+}
+function renderCk(){
+  var box = $("ck"); box.textContent = "";
+  var n = +$("age").value, wk = weekOfMonth($("date").value), last = "";
+  CHECK_ROWS.forEach(function(row){
+    if (row.group !== last){ box.append(h("div", {class:"group", text: row.no + ". " + row.group})); last = row.group; }
+    var hint = "";
+    if (row.id === "5" && wk && wk !== 1) hint = " (" + wk + "주차라 해당 없음)";
+    if (row.id === "6" && wk === 1) hint = " (1주차라 해당 없음)";
+    if (row.id === "11" && n !== 5) hint = " (만 5세반만)";
+    box.append(h("div", {class:"item"},
+      h("div", null, h("div", {class:"d", style:"color:var(--ink)", text: row.label + hint})),
+      seg(CK_STATES, state.ck[row.id] || null, function(v){ if (v) state.ck[row.id] = v; else delete state.ck[row.id]; persist(); renderCk(); renderSummary(); }, row.label)
+    ));
+  });
+}
+function renderSummary(){
+  var cnt = {}, todo = [];
+  visibleItems().forEach(function(it){ var v = state.items[it.name]; if (v){ cnt[v] = (cnt[v]||0) + 1; if (v === "보완") todo.push(it.name); } });
+  var ckc = {}; CHECK_ROWS.forEach(function(r){ var v = state.ck[r.id]; if (v){ ckc[v] = (ckc[v]||0) + 1; if (v === "부족" || v === "없음") todo.push("Check list " + r.id + " " + r.group + ": " + r.label.slice(0, 30) + (v === "없음" ? " (안 함)" : " (부족)")); } });
+  var sum = $("sum"); sum.textContent = "";
+  var done = visibleItems().filter(function(it){ return state.items[it.name]; }).length;
+  sum.append(h("span", {class:"pill s-gray", text:"내용 점검 " + done + "/" + visibleItems().length}));
+  [["잘 됨","s-ok"],["보완","s-amber"]].forEach(function(p){ if (cnt[p[0]]) sum.append(h("span", {class:"pill " + p[1], text: p[0] + " " + cnt[p[0]]})); });
+  [["있음","s-ok","✓"],["부족","s-amber","△"],["없음","s-red","✕"]].forEach(function(p){ if (ckc[p[0]]) sum.append(h("span", {class:"pill " + p[1], text: "Check list " + p[2] + " " + ckc[p[0]]})); });
+  var ul = $("todo"); ul.textContent = "";
+  if (!todo.length) ul.append(h("li", {class:"empty", text: done ? "보완할 것이 없어요." : "위에서 항목을 골라 주세요."}));
+  todo.forEach(function(t){ ul.append(h("li", {text:t})); });
+}
+function info(){ return {cls: $("cls").value.trim(), age: $("age").value, date: $("date").value, kind: $("kind").value, teacher: $("teacher").value.trim(), mixed: $("mixed").checked, inclusive: $("inclusive").checked, memo: $("memo").value}; }
+function persist(){ save(DKEY, {info: info(), items: state.items, ck: state.ck, editingId: editingId}); save(PKEY, {cls: $("cls").value.trim(), age: $("age").value, teacher: $("teacher").value.trim(), mixed: $("mixed").checked, inclusive: $("inclusive").checked}); }
+function fill(inf){
+  $("cls").value = inf.cls || ""; $("age").value = inf.age != null ? inf.age : "2"; $("date").value = inf.date || todayIso();
+  $("kind").value = inf.kind || "일일 보육일지"; $("teacher").value = inf.teacher || ""; $("mixed").checked = !!inf.mixed; $("inclusive").checked = !!inf.inclusive; $("memo").value = inf.memo || "";
+}
+function renderAll(){ renderItems(); renderCk(); renderSummary(); renderRef(); }
+function flash(t){ var m = $("msg"); m.textContent = t; clearTimeout(flash.t); flash.t = setTimeout(function(){ m.textContent = ""; }, 4000); }
+
+function reportText(){
+  var f = info(), L = [];
+  L.push("[보육일지 자가점검] " + (f.cls || "반") + " (" + ageLabel(f.age) + ") " + f.date + " " + f.kind + (f.teacher ? " · " + f.teacher : ""));
+  L.push("", "■ 일지 내용 점검");
+  visibleItems().forEach(function(it){ L.push("- " + it.name + ": " + (state.items[it.name] || "미점검")); });
+  L.push("", "■ 보육일지기록 Check list (" + weekOfMonth(f.date) + "주차)");
+  CHECK_ROWS.forEach(function(r){ var v = state.ck[r.id]; if (v) L.push("- " + r.id + " " + r.group + " / " + r.label.slice(0, 30) + ": " + CK_MARK[v] + " " + v); });
+  if (f.memo.trim()) L.push("", "■ 메모", f.memo.trim());
+  return L.join("\n");
+}
+
+/* ---------- 저장과 월별 표 ---------- */
+function history(){ return load(HKEY, []); }
+function doSave(){
+  var f = info();
+  if (!f.cls){ flash("반 이름을 적어 주세요."); $("cls").focus(); return; }
+  if (!f.date){ flash("일지 날짜를 골라 주세요."); $("date").focus(); return; }
+  var list = history(), rec = {id: editingId || ("r" + Date.now()), at: Date.now(), info: f, items: state.items, ck: state.ck};
+  var i = list.findIndex(function(x){ return x.id === rec.id; });
+  if (i >= 0) list[i] = rec; else list.unshift(rec);
+  if (!save(HKEY, list)){ flash("저장하지 못했어요. 브라우저의 비공개(시크릿) 모드인지 확인해 주세요."); return; }
+  editingId = rec.id; persist();
+  flash(f.cls + " " + f.date + " 점검을 저장했어요. 월별 Check list에 표시돼요.");
+  renderMonth();
+}
+function renderMonth(){
+  var list = history(), selC = $("mCls"), selM = $("mMon"), pc = selC.value, pm = selM.value;
+  var classes = [], months = [];
+  list.forEach(function(r){ var c = r.info.cls, m = (r.info.date || "").slice(0,7); if (c && classes.indexOf(c) < 0) classes.push(c); if (m && months.indexOf(m) < 0) months.push(m); });
+  months.sort().reverse();
+  selC.textContent = ""; selM.textContent = "";
+  classes.forEach(function(c){ selC.append(h("option", {value:c, text:c})); });
+  months.forEach(function(m){ selM.append(h("option", {value:m, text: m.slice(0,4) + "년 " + (+m.slice(5,7)) + "월"})); });
+  var prof = load(PKEY, {});
+  if (classes.indexOf(pc) >= 0) selC.value = pc; else if (classes.indexOf(prof.cls) >= 0) selC.value = prof.cls;
+  if (months.indexOf(pm) >= 0) selM.value = pm;
+  var box = $("month"); box.textContent = "";
+  $("printMonth").hidden = !list.length;
+  if (!list.length){ box.append(h("p", {class:"empty", text:"점검을 저장하면 주차별로 여기에 채워져요."})); renderHist(); return; }
+  var t = monthTable(selC.value, selM.value);
+  var last = "";
+  box.append(h("div", {class:"tbl"}, h("table", null,
+    h("thead", null, h("tr", null, h("th", {text:"제목"}), h("th", {text:"내용"}), t.cols.map(function(w){ return h("th", {class:"w", text: w + "주" + (t.weeks[w].length ? " (" + t.weeks[w].length + ")" : "")}); }))),
+    h("tbody", null, CHECK_ROWS.map(function(row){
+      var first = row.group !== last; last = row.group;
+      return h("tr", null, h("td", {class:"g", text: first ? row.no + ". " + row.group : ""}), h("td", {text: row.label.length > 36 ? row.label.slice(0, 34) + "…" : row.label, title: row.label}),
+        t.cols.map(function(w){ var b = t.best(row.id, w); return h("td", {class:"w " + (b ? CK_CLS[b] : ""), text: b ? CK_MARK[b] : "", title: b || "저장한 점검 없음"}); }));
+    })))));
+  renderHist();
+}
+function monthTable(cls, mon){
+  var weeks = {1:[],2:[],3:[],4:[],5:[],6:[]};
+  history().forEach(function(r){ if (r.info.cls === cls && (r.info.date || "").slice(0,7) === mon){ var w = weekOfMonth(r.info.date); if (weeks[w]) weeks[w].push(r); } });
+  var cols = [1,2,3,4].concat(weeks[5].length ? [5] : []).concat(weeks[6].length ? [6] : []);
+  return {weeks: weeks, cols: cols, best: function(id, w){ var b = null; weeks[w].forEach(function(r){ var v = r.ck[id]; if (v && (b === null || CK_RANK[v] > CK_RANK[b])) b = v; }); return b; }};
+}
+function renderHist(){
+  var ul = $("hist"); ul.textContent = "";
+  var list = history();
+  if (!list.length){ ul.append(h("li", {class:"empty", style:"border:0;padding:0", text:"아직 저장한 점검이 없어요."})); return; }
+  list.slice().sort(function(a,b){ return (b.info.date || "").localeCompare(a.info.date || ""); }).forEach(function(r){
+    var bo = 0; for (var k in r.items) if (r.items[k] === "보완") bo++;
+    var li = h("li", null,
+      h("span", {class:"d", text: (r.info.date || "").slice(5).replace("-", "/")}),
+      h("span", {class:"w", text: r.info.cls + " · " + r.info.kind + (bo ? " · 보완 " + bo : "")}),
+      h("button", {class:"linkbtn", type:"button", text:"열기", onclick: function(){ openRec(r); }}),
+      h("button", {class:"linkbtn del", type:"button", text:"지우기", onclick: function(){
+        li.textContent = "";
+        li.append(h("span", {class:"w", style:"grid-column:1/3", text: r.info.date + " " + r.info.cls + " 점검을 지울까요?"}),
+          h("button", {class:"linkbtn", type:"button", text:"지우기", onclick: function(){ save(HKEY, history().filter(function(x){ return x.id !== r.id; })); if (editingId === r.id) editingId = null; renderMonth(); }}),
+          h("button", {class:"linkbtn del", type:"button", text:"취소", onclick: renderMonth}));
+      }}));
+    ul.append(li);
+  });
+}
+function openRec(r){ editingId = r.id; fill(r.info); state.items = JSON.parse(JSON.stringify(r.items || {})); state.ck = JSON.parse(JSON.stringify(r.ck || {})); persist(); renderAll(); showTab("check"); window.scrollTo(0,0); flash(r.info.date + " 점검을 열었어요. 고친 뒤 저장하면 덮어써요."); }
+
+/* ---------- 인쇄 ---------- */
+var SIGN = "<div class=\"sign\"><table><tr><th>담임</th><th>원감</th><th>원장</th></tr><tr><td></td><td></td><td></td></tr></table></div>";
+function printCheck(){
+  var f = info(), wk = weekOfMonth(f.date), last = "";
+  var b = "<h1>보육일지 자가점검</h1><div class=\"meta\">" + esc(f.cls || "-") + " (" + esc(ageLabel(f.age)) + ") · " + esc(f.date) + (wk ? " (" + wk + "주차)" : "") + " · " + esc(f.kind) + " · 작성 " + esc(f.teacher || "-") + "</div>";
+  b += "<h2>일지 내용 점검</h2><table><tr><th>항목</th><th>보는 것</th><th class=\"c\">점검</th></tr>" + visibleItems().map(function(it){
+    var d = it.name === "바깥 놀이" ? ageLabel(f.age) + " 기준 " + outdoor(f.age) : it.desc;
+    return "<tr><td>" + esc(it.name) + "</td><td>" + esc(d) + "</td><td class=\"c\">" + esc(state.items[it.name] || "") + "</td></tr>"; }).join("") + "</table>";
+  b += "<h2>보육일지기록 Check list</h2><table><tr><th class=\"c\">NO</th><th>제목</th><th>내용</th><th class=\"c\">기록</th></tr>" + CHECK_ROWS.map(function(r){
+    var first = r.group !== last; last = r.group; var v = state.ck[r.id];
+    return "<tr><td class=\"c\">" + (first ? r.no : "") + "</td><td>" + (first ? esc(r.group) : "") + "</td><td>" + esc(r.label) + "</td><td class=\"c\">" + (v ? CK_MARK[v] + " " + esc(v) : "") + "</td></tr>"; }).join("") + "</table>";
+  b += "<h2>메모</h2><div class=\"memo\">" + esc(f.memo) + "</div>" + SIGN;
+  doPrint(b);
+}
+function printMonth(){
+  var cls = $("mCls").value, mon = $("mMon").value; if (!cls || !mon) return;
+  var t = monthTable(cls, mon), last = "";
+  var b = "<h1>보육일지기록 Check list</h1><div class=\"meta\">" + esc(cls) + " · " + mon.slice(0,4) + "년 " + (+mon.slice(5,7)) + "월 · ✓ 기록함 △ 부족 ✕ 안 함 – 해당 없음</div>";
+  b += "<table><tr><th class=\"c\">NO</th><th>제목</th><th>내용</th>" + t.cols.map(function(w){ return "<th class=\"c\">" + w + "주</th>"; }).join("") + "</tr>" + CHECK_ROWS.map(function(r){
+    var first = r.group !== last; last = r.group;
+    return "<tr><td class=\"c\">" + (first ? r.no : "") + "</td><td>" + (first ? esc(r.group) : "") + "</td><td>" + esc(r.label) + "</td>" + t.cols.map(function(w){ var v = t.best(r.id, w); return "<td class=\"c\">" + (v ? CK_MARK[v] : "") + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>" + SIGN;
+  doPrint(b);
+}
+function doPrint(html){ $("printArea").innerHTML = html; window.print(); }
+
+/* ---------- 기준 보기 ---------- */
+function renderRef(){
+  var n = $("age").value; $("refAge").textContent = "(" + ageLabel(n) + ")";
+  var box = $("refAreas"); box.textContent = "";
+  CONTENT[contentKey(n)].forEach(function(a){ box.append(h("p", {class:"area"}, h("b", {text:a[0]}), a[1])); });
+}
+
+/* ---------- 탭 ---------- */
+function showTab(name){
+  ["check","month","ref"].forEach(function(t){ var on = t === name; $("t-" + t).setAttribute("aria-selected", String(on)); $("v-" + t).hidden = !on; });
+  $("bar").hidden = name !== "check";
+  if (name === "month") renderMonth();
+}
+["check","month","ref"].forEach(function(t){ $("t-" + t).addEventListener("click", function(){ showTab(t); }); });
+
+/* ---------- 시작 ---------- */
+var draft = load(DKEY, null), prof = load(PKEY, {});
+if (draft && draft.info){ fill(draft.info); state.items = draft.items || {}; state.ck = draft.ck || {}; editingId = draft.editingId || null; }
+else fill({cls: prof.cls, age: prof.age, teacher: prof.teacher, mixed: prof.mixed, inclusive: prof.inclusive, date: todayIso()});
+["cls","teacher","memo","kind"].forEach(function(id){ $(id).addEventListener("input", persist); });
+["age","date","mixed","inclusive","kind"].forEach(function(id){ $(id).addEventListener("change", function(){ persist(); renderAll(); }); });
+$("save").addEventListener("click", doSave);
+$("print").addEventListener("click", printCheck);
+$("printMonth").addEventListener("click", printMonth);
+$("mCls").addEventListener("change", renderMonth);
+$("mMon").addEventListener("change", renderMonth);
+$("share").addEventListener("click", function(){
+  var t = reportText();
+  if (navigator.share){ navigator.share({title:"보육일지 자가점검", text:t}).catch(function(){}); return; }
+  if (navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ flash("복사했어요. 카카오톡에 붙여넣어 원장님께 보내 주세요."); }, function(){ flash("복사하지 못했어요."); });
+});
+var resetArmed = false;
+$("reset").addEventListener("click", function(){
+  if (!resetArmed){ resetArmed = true; $("reset").textContent = "한 번 더"; flash("한 번 더 누르면 지금 점검을 비우고 새로 시작해요."); setTimeout(function(){ resetArmed = false; $("reset").textContent = "새로"; }, 3000); return; }
+  resetArmed = false; $("reset").textContent = "새로";
+  state = {items:{}, ck:{}}; editingId = null;
+  var p = load(PKEY, {}); fill({cls: p.cls, age: p.age, teacher: p.teacher, mixed: p.mixed, inclusive: p.inclusive, date: todayIso()});
+  persist(); renderAll(); window.scrollTo(0,0); flash("새 점검을 시작해요. 반과 이름은 그대로 두었어요.");
+});
+renderAll();
+})();
+</script>
+</body>
+</html>
