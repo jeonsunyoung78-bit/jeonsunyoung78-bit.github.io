@@ -108,7 +108,8 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
 .pg .bar2 b{flex:1;color:var(--accent)}
 .pg .bar2 button{border:1px solid var(--line);background:var(--sheet);color:var(--muted);border-radius:6px;font-size:12px;padding:4px 7px;cursor:pointer}
 .pg .bar2 button:disabled{opacity:.35}
-.btn.addpage{width:100%;border:1.5px dashed var(--accent);color:var(--accent);background:var(--sheet);padding:12px}
+.panel.mine{border:1.5px solid var(--accent)}
+.btn.addpage{font-size:16px;width:100%;border:1.5px dashed var(--accent);color:var(--accent);background:var(--sheet);padding:12px}
 .viewer{position:fixed;inset:0;background:rgba(10,14,12,.92);z-index:20;display:flex;flex-direction:column}
 .viewer .vbar{display:flex;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;color:#fff}
 .viewer .vbar b{flex:1}
@@ -157,8 +158,17 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
   </div>
 
   <section id="v-check" role="tabpanel" aria-labelledby="t-check">
+    <div class="panel mine">
+      <h2>① 내 일지 넣기</h2>
+      <p class="note">오늘 쓴 내 보육일지를 사진으로 찍어 넣어 주세요. 보면서 점검하고, 인쇄·보내기 때 함께 나가요. 여러 장이면 한 장씩 계속 추가하세요. 사진, PDF 모두 돼요. 한글(HWP) 파일은 PDF로 저장해서 넣어 주세요.</p>
+      <div class="pages" id="pages"></div>
+      <input type="file" id="pageIn" accept="image/*,.heic,.heif,.pdf,application/pdf" multiple hidden>
+      <button class="btn addpage" type="button" id="addPage">+ 내 일지 사진 넣기</button>
+      <p class="msg" id="pageMsg" role="status" style="text-align:left"></p>
+    </div>
+
     <div class="panel">
-      <h2>일지 정보</h2>
+      <h2>② 일지 정보</h2>
       <div class="grid2">
         <label class="f" for="cls">반 이름<input type="text" id="cls" placeholder="예: 초록나무반" autocomplete="off"></label>
         <label class="f" for="age">연령
@@ -177,28 +187,20 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
       <label class="chk" for="inclusive"><input type="checkbox" id="inclusive"> 장애영유아가 함께 지내요</label>
     </div>
 
-    <div class="panel">
-      <h2>일지 사진</h2>
-      <p class="note">내 일지를 찍어 넣으면 보면서 점검할 수 있어요. 여러 장이면 한 장씩 계속 추가하세요. 사진, PDF 모두 돼요. 한글(HWP) 파일은 PDF로 저장해서 넣어 주세요.</p>
-      <div class="pages" id="pages"></div>
-      <input type="file" id="pageIn" accept="image/*,.heic,.heif,.pdf,application/pdf" multiple hidden>
-      <button class="btn addpage" type="button" id="addPage">+ 일지 사진 넣기</button>
-      <p class="msg" id="pageMsg" role="status" style="text-align:left"></p>
-    </div>
 
     <div class="panel">
-      <h2>일지 내용 점검</h2>
+      <h2>③ 일지 내용 점검</h2>
       <p class="note">항목마다 내 일지를 떠올리며 골라 주세요. "좋은 예 보기"를 누르면 이렇게 쓰면 된다는 예시가 나와요.</p>
       <div id="items"></div>
     </div>
 
     <div class="panel">
-      <h2>보육일지기록 Check list</h2>
+      <h2>④ 보육일지기록 Check list</h2>
       <div id="ck"></div>
     </div>
 
     <div class="panel">
-      <h2>점검 결과</h2>
+      <h2>⑤ 점검 결과</h2>
       <div class="sum" id="sum"></div>
       <h3>보완할 것</h3>
       <ul class="todo" id="todo"></ul>
@@ -233,7 +235,7 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
         <li><b>배움읽기</b>: 행동 뒤에 괄호로 영역 내용을 이어요. 예) 매트의 끝을 잡고(신체운동·건강: 대소근육을 조절한다) 들어 보며 매트 뒤의 공간에 관심을 가진다(자연탐구: 공간과 모양을 탐색한다).</li>
         <li><b>놀이평가</b>: 하나의 놀이라도 제대로. 아이의 배움과 나의 운영(잘된 것, 부족했던 것, 특별했던 것)을 함께 써요.</li>
         <li><b>평가제 필수 기재</b>: 자유놀이 시간, 바깥놀이 시간.</li>
-        <li><b>바깥놀이</b>: 만 0세 주 3회 30분 이상, 만 1~2세 매일 30분 이상, 만 3세 이상 매일 1시간(오전·오후). 날씨가 나쁘면 실내 대근육 놀이로 대체하고 기록해요.</li>
+        <li><b>놀이시간</b> (2024 개정 어린이집 평가지표): 만 0세 바깥놀이 주 3회 30분 이상 포함 실내외 매일 2시간~2시간 30분 이상 / 만 1~2세 매일 바깥놀이 30분 이상 포함 실내외 2시간 30분 이상 / 만 3~5세 매일 바깥놀이 1시간 이상 포함 실내외 3시간 이상. 전이시간(손 씻기, 화장실, 정리)은 빼고, 오전·오후로 나눠도 돼요. 혼합반은 가장 어린 연령 기준. 날씨가 나쁘면 실내 대근육 놀이로 대체하고 기록해요.</li>
         <li><b>낮잠</b>: 억지로 재우지 않고 스스로 잠들도록 도와요. 잠이 안 오는 아이는 조용히 쉬거나 혼자 놀이를 해요.</li>
       </ul>
       <h2 style="margin-top:18px">5개 영역 내용 <span id="refAge" style="font-size:14px;color:var(--muted)"></span></h2>
@@ -272,7 +274,7 @@ var ITEMS = [
   {name:"놀이평가의 균형", basis:"평가제", desc:"아이의 배움과 나의 운영(잘된 것, 부족했던 것, 특별했던 것)을 함께 적었나요?", tip:"예) 털이 있는 인형이 흥미를 오래 끌었다(잘된 것). 인형 수가 적어 기다리는 아이가 있었다(부족했던 것)."},
   {name:"5개 영역의 통합", basis:"평가지표 4-1", desc:"영역 이름만 붙이지 않고, 놀이 속 행동과 영역 내용을 이어서 적었나요?", tip:"예) 매트의 끝을 잡고(신체운동·건강: 대소근육을 조절한다) 들어 보며 매트 뒤의 공간에 관심을 가진다(자연탐구: 공간과 모양을 탐색한다)."},
   {name:"교사의 놀이 지원", basis:"해설서", desc:"공간·자료·말 걸기 등 내가 한 지원과 다음 지원 계획을 적었나요?", tip:"예) 갈등이 반복되는 곳의 동선을 살펴 퍼즐장을 벽 쪽으로 옮김."},
-  {name:"바깥 놀이", basis:"교육자료", desc:"", tip:"만 0세 주 3회 30분 이상 / 만 1~2세 매일 30분 이상 / 만 3세 이상 매일 1시간(오전·오후)\n날씨가 나쁘면 실내 대근육 놀이로 대체하고 기록해요."},
+  {name:"놀이시간", basis:"평가지표", desc:"", tip:"만 0세: 바깥놀이 주 3회 30분 이상 포함, 실내외 매일 2시간~2시간 30분 이상\n만 1~2세: 매일 바깥놀이 30분 이상 포함, 실내외 2시간 30분 이상\n만 3~5세: 매일 바깥놀이 1시간 이상 포함, 실내외 3시간 이상\n손 씻기·화장실·정리 같은 전이시간은 놀이시간에 넣지 않아요. 혼합반은 가장 어린 연령 기준이에요.\n날씨가 나쁘면 실내 대근육 놀이로 바꾸고 기록해요."},
   {name:"일상생활 지원", basis:"고시문·교육자료", desc:"등원, 급·간식, 정리와 전이, 낮잠·휴식, 배변, 귀가에서 아이의 요구와 나의 지원을 적었나요?", tip:"예) 낮잠 후 먼저 깨서 놀다가 이불 정리를 싫어하는 아이가 있음. ✔ 이불 정리를 먼저 하고 놀이하도록 격려할 예정."},
   {name:"건강과 안전", desc:"건강 상태, 투약, 다친 일, 수면 안전 등 특이사항을 빠짐없이 적었나요?", tip:"투약 의뢰서 확인과 투약 시간도 함께 적어요."},
   {name:"개별 지원", basis:"평가지표 4-1", desc:"연령·발달·장애·배경을 고려한 지원이 드러나나요?", tip:"장애영유아는 개별화교육계획의 목표와 오늘 지원을 이어서 적어요."},
@@ -340,7 +342,7 @@ function weekOfMonth(iso){
 }
 function ageLabel(n){ return "만 " + n + "세반"; }
 function contentKey(n){ n = +n; return n <= 1 ? "0~1세" : n === 2 ? "2세" : "3~5세"; }
-function outdoor(n){ n = +n; return n === 0 ? "주 3회, 30분 이상" : n <= 2 ? "매일 30분 이상" : "매일 1시간(오전·오후)"; }
+function outdoor(n){ n = +n; return n === 0 ? "바깥놀이 주 3회 30분 이상 포함, 실내외 매일 2시간~2시간 30분 이상" : n <= 2 ? "매일 바깥놀이 30분 이상 포함, 실내외 2시간 30분 이상" : "매일 바깥놀이 1시간 이상 포함, 실내외 3시간 이상"; }
 
 var HKEY = "sodam-ilji-self-v1", DKEY = "sodam-ilji-self-draft-v1", PKEY = "sodam-ilji-self-profile-v1";
 var state = {items:{}, ck:{}, pages:[]};
@@ -413,7 +415,7 @@ async function addPageFiles(list){
 }
 function renderPages(){
   var box = $("pages"); box.textContent = "";
-  $("addPage").textContent = state.pages.length ? "+ 쪽 추가하기" : "+ 일지 사진 넣기";
+  $("addPage").textContent = state.pages.length ? "+ 쪽 추가하기" : "+ 내 일지 사진 넣기";
   state.pages.forEach(function(id, i){
     var img = h("img", {alt: (i+1) + "쪽 일지"});
     pageUrl(id).then(function(u){ if (u) img.src = u; else img.alt = "사진을 찾지 못했어요"; });
@@ -462,7 +464,7 @@ function renderItems(){
   var box = $("items"); box.textContent = "";
   var n = +$("age").value;
   visibleItems().forEach(function(it){
-    var desc = it.name === "바깥 놀이" ? ageLabel(n) + " 기준(" + outdoor(n) + ")을 지켰나요? 날씨가 나쁠 때 실내 대근육 놀이로 바꾼 것도 적었나요?" : it.desc;
+    var desc = it.name === "놀이시간" ? ageLabel(n) + " 기준(" + outdoor(n) + ")을 채웠나요? 전이시간은 빼고 세요." : it.desc;
     box.append(h("div", {class:"item"},
       h("div", null, h("div", {class:"t"}, it.name, it.basis ? h("span", {class:"basis", text: it.basis}) : null), h("div", {class:"d", text: desc})),
       seg(ITEM_STATES, state.items[it.name] || null, function(v){ if (v) state.items[it.name] = v; else delete state.items[it.name]; persist(); renderItems(); renderSummary(); }, it.name),
@@ -591,7 +593,7 @@ function printCheck(){
   var f = info(), wk = weekOfMonth(f.date), last = "";
   var b = "<h1>보육일지 자가점검</h1><div class=\"meta\">" + esc(f.cls || "-") + " (" + esc(ageLabel(f.age)) + ") · " + esc(f.date) + (wk ? " (" + wk + "주차)" : "") + " · " + esc(f.kind) + " · 작성 " + esc(f.teacher || "-") + "</div>";
   b += "<h2>일지 내용 점검</h2><table><tr><th>항목</th><th>보는 것</th><th class=\"c\">점검</th></tr>" + visibleItems().map(function(it){
-    var d = it.name === "바깥 놀이" ? ageLabel(f.age) + " 기준 " + outdoor(f.age) : it.desc;
+    var d = it.name === "놀이시간" ? ageLabel(f.age) + " 기준 " + outdoor(f.age) : it.desc;
     return "<tr><td>" + esc(it.name) + "</td><td>" + esc(d) + "</td><td class=\"c\">" + esc(state.items[it.name] || "") + "</td></tr>"; }).join("") + "</table>";
   b += "<h2>보육일지기록 Check list</h2><table><tr><th class=\"c\">NO</th><th>제목</th><th>내용</th><th class=\"c\">기록</th></tr>" + CHECK_ROWS.map(function(r){
     var first = r.group !== last; last = r.group; var v = state.ck[r.id];
