@@ -142,6 +142,12 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
 .refs li{margin-bottom:6px}
 .refs li span{color:var(--muted);font-size:13px}
 .pnote{font-size:13px;color:var(--muted);margin:10px 0 0}
+.ctnl{grid-column:1/-1;font-size:13.5px}
+.ctnl summary{cursor:pointer;color:var(--accent);font-weight:500;font-size:13px;width:fit-content}
+.ctnl p{margin:6px 0;line-height:1.9}
+.ctnl b{display:block;font-size:13px}
+.ctn{font:inherit;font-size:13px;display:inline-block;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:2px 7px;margin:2px 4px 2px 0;cursor:pointer;color:var(--ink)}
+.ctn:hover{border-color:var(--accent);color:var(--accent)}
 [hidden]{display:none!important}
 #printArea{display:none}
 @media print{
@@ -316,6 +322,7 @@ var ITEMS = [
   {name:"객관적 관찰", basis:"관찰법", desc:"말, 몸짓, 표정, 시간처럼 보이는 모습을 구체적으로 적었나요?", tip:"'짜증을 냈다' → '가지고 있던 자동차를 던지며 소리를 질렀다'\n'좋아했다' → '입을 크게 벌리고 깔깔거리며 웃었다'\n'한참 동안' → '약 15분 동안'"},
   {name:"배움에 주목한 기록", basis:"평가지표 4-1", desc:"놀이에서 인상적이었던 것을 바탕으로 아이의 배움을 적었나요?", tip:"'즐겁게 참여함' 대신\n'무너져도 다시 쌓으며 끝까지 해 보려는 마음이 보였다.'"},
   {name:"놀이평가의 균형", basis:"평가제", desc:"아이의 배움과 나의 운영(잘된 것, 부족했던 것, 특별했던 것)을 함께 적었나요?", tip:"예) 털이 있는 인형이 흥미를 오래 끌었다(잘된 것). 인형 수가 적어 기다리는 아이가 있었다(부족했던 것)."},
+  {name:"놀이배움 영역 내용 연결", basis:"평가지표 4-1", areaList:true, desc:"놀이배움마다 관찰한 행동 뒤에 우리 반 연령의 영역 '내용' 문장을 이었나요? 영역 이름만 쓰거나 다른 연령 문장을 쓰지 않았나요?", tip:"예(2세) ) 분필로 바닥에 동그라미와 네모를 그리며(자연탐구: 공간과 모양을 탐색한다) \"이건 동그라미예요!\" 하고 말하였다(의사소통: 자신의 요구와 느낌을 말한다).\n✕ (자연탐구 영역)처럼 이름만 쓰기  ✕ 2세반에 누리과정(3~5세) 문장 쓰기\n아래 '우리 반 연령 내용 문장'을 누르면 (영역: 문장) 모양으로 복사돼요."},
   {name:"5개 영역의 통합", basis:"평가지표 4-1", desc:"영역 이름만 붙이지 않고, 놀이 속 행동과 영역 내용을 이어서 적었나요?", tip:"예) 매트의 끝을 잡고(신체운동·건강: 대소근육을 조절한다) 들어 보며 매트 뒤의 공간에 관심을 가진다(자연탐구: 공간과 모양을 탐색한다)."},
   {name:"교사의 놀이 지원", basis:"해설서·2026 작성법", desc:"공간·자료·일과·상호작용·안전 중 내가 한 지원과 다음 지원 계획을 적었나요? 계획은 간단하게 세우고 놀이를 따라가며 더해요.", tip:"평가매뉴얼 예) 창밖을 보려고 좁은 곳에 모이는 영아들을 보고, 놀이자료장을 벽면으로 옮겨 공간을 재구성함.\n평가매뉴얼 예) 실내에서 더 놀고 싶다는 유아들의 의사를 존중해 실내 놀이 시간을 연장함."},
   {name:"의미 있는 순간 기록", basis:"2026 작성법", desc:"계획과 달라진 놀이·일과와 그 이유, 여러 아이가 관심을 보인 놀이, 갈등과 해결, 발달 변화를 골라 적었나요? 일과를 나열만 하지는 않았나요?", tip:"이런 순간을 골라 적어요: 변화가 나타날 때(계획·실행·바뀐 부분·추가 계획), 갈등과 해결, 일상생활 실행 시간과 바뀐 부분, 특별 프로그램, 발달 변화와 반응, 활동 난이도 평가, 계획과 다르게 된 일과, 여러 아이가 관심 보인 놀이.\n영아반은 그날 아이의 고유한 특성이나 의미 있는 변화를, 유아반은 의미 있다고 본 놀이를 골라 적어요."},
@@ -388,6 +395,29 @@ function weekOfMonth(iso){
   return Math.floor((+m[3] + offset - 1) / 7) + 1;
 }
 function ageLabel(n){ return "만 " + n + "세반"; }
+// 고시문 "영역 - 내용범주: 내용 / 내용." 글에서 영역별 내용 문장 꺼내기
+function contentSentences(text){
+  var out = [];
+  String(text).split("\n").forEach(function(line){
+    var m = /^(.+?) - ([\s\S]*)$/.exec(line.trim()); if (!m) return;
+    m[2].split(/\.\s*/).forEach(function(chunk){
+      var body = chunk.replace(/^[^:]+:\s*/, "");
+      body.split(/\s\/\s/).forEach(function(t){ t = t.trim().replace(/\.$/, ""); if (t.length > 3) out.push({area: m[1].trim(), text: t}); });
+    });
+  });
+  return out;
+}
+function sentNorm(t){ return String(t || "").replace(/[\s"'“”‘’.,!?~…·()\[\]{}:;\-]/g, ""); }
+function sentSim(a, b){
+  a = sentNorm(a); b = sentNorm(b); if (!a || !b) return 0; if (a.indexOf(b) >= 0 || b.indexOf(a) >= 0) return 1;
+  var g = {}; for (var i = 0; i < a.length - 1; i++) g[a.substr(i, 2)] = 1; var hit = 0, n = 0; for (var j = 0; j < b.length - 1; j++){ n++; if (g[b.substr(j, 2)]) hit++; } return n ? hit / n : 0;
+}
+// 일지에 쓴 영역 표현이 그 반 연령 내용 문장인지 직접 대조
+function verifyAreaText(text, ownKey, contentObj){
+  var best = {own: 0, ownS: null, other: 0, otherS: null, otherKey: ""};
+  Object.keys(contentObj).forEach(function(k){ contentSentences(contentObj[k]).forEach(function(s){ var sc = sentSim(text, s.text); if (k === ownKey){ if (sc > best.own){ best.own = sc; best.ownS = s; } } else if (sc > best.other){ best.other = sc; best.otherS = s; best.otherKey = k; } }); });
+  return best;
+}
 function contentKey(n){ n = +n; return n <= 1 ? "0~1세" : n === 2 ? "2세" : "3~5세"; }
 function outdoor(n){ n = +n; return n === 0 ? "바깥놀이 주 3회 30분 이상 포함, 실내외 매일 2시간~2시간 30분 이상" : n <= 2 ? "매일 바깥놀이 30분 이상 포함, 실내외 2시간 30분 이상" : "매일 바깥놀이 1시간 이상 포함, 실내외 3시간 이상"; }
 
@@ -703,7 +733,8 @@ function renderItems(){
     box.append(h("div", {class:"item"},
       h("div", null, h("div", {class:"t"}, it.name, it.basis ? h("span", {class:"basis", text: it.basis}) : null), h("div", {class:"d", text: desc})),
       seg(ITEM_STATES, state.items[it.name] || null, function(v){ if (v) state.items[it.name] = v; else delete state.items[it.name]; persist(); renderItems(); renderSummary(); }, it.name),
-      h("details", null, h("summary", {text:"좋은 예 보기"}), h("div", {class:"tip", text: it.tip}))
+      h("details", null, h("summary", {text:"좋은 예 보기"}), h("div", {class:"tip", text: it.tip})),
+      it.areaList ? h("details", {class:"ctnl"}, h("summary", {text: ageLabel(n) + " 내용 문장 보기 (" + (contentKey(n) === "3~5세" ? "누리과정" : "표준보육과정 " + contentKey(n)) + ")"}), CONTENT[contentKey(n)].map(function(a){ return h("p", null, h("b", {text: a[0]}), contentSentences(a[0] + " - " + a[1]).map(function(s){ return h("button", {type:"button", class:"ctn", title:"눌러서 복사", text: s.text, onclick: function(){ var t = "(" + s.area + ": " + s.text + ")"; try { navigator.clipboard.writeText(t).then(function(){ flash("복사했어요: " + t); }, function(){ flash(t); }); } catch(e){ flash(t); } }}); })); })) : null
     ));
   });
 }
