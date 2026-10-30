@@ -141,6 +141,14 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
 .refs{padding-left:20px;font-size:14px}
 .refs li{margin-bottom:6px}
 .refs li span{color:var(--muted);font-size:13px}
+.cyform{display:grid;gap:12px;margin-top:12px}
+.cyform textarea{resize:vertical}
+.cyex{margin-top:12px;font-size:14px}
+.cyex summary{cursor:pointer;font-weight:600}
+.cyex p{margin:8px 0 0;line-height:1.6}
+.cyout{border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:12px}
+.cyout h3{margin:0 0 6px}
+.cyout pre{white-space:pre-wrap;font:inherit;font-size:15px;line-height:1.65;margin:0 0 8px;color:var(--ink)}
 .pnote{font-size:13px;color:var(--muted);margin:10px 0 0}
 .ctnl{grid-column:1/-1;font-size:13.5px}
 .ctnl summary{cursor:pointer;color:var(--accent);font-weight:500;font-size:13px;width:fit-content}
@@ -184,6 +192,7 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
 
   <div class="tabs" role="tablist">
     <button role="tab" id="t-check" aria-selected="true" aria-controls="v-check">오늘 점검</button>
+    <button role="tab" id="t-cycle" aria-selected="false" aria-controls="v-cycle">순환놀이 쓰기</button>
     <button role="tab" id="t-month" aria-selected="false" aria-controls="v-month">월별 Check list</button>
     <button role="tab" id="t-ref" aria-selected="false" aria-controls="v-ref">기준 보기</button>
   </div>
@@ -249,6 +258,38 @@ td.g{color:var(--muted);font-size:12px;white-space:nowrap}
       <h3>보완할 것</h3>
       <ul class="todo" id="todo"></ul>
       <label class="f" for="memo" style="margin-top:12px">메모 (원장님께 전할 말, 다음에 신경 쓸 점)<textarea id="memo" rows="3"></textarea></label>
+    </div>
+  </section>
+
+  <section id="v-cycle" role="tabpanel" aria-labelledby="t-cycle" hidden>
+    <div class="panel">
+      <h2>순환놀이 쓰기 도우미</h2>
+      <p class="note">칸을 짧게 채우면 놀이기록 끝에 붙일 글과 주간보육과정평가에 쓸 글이 원 Check list(5·6번) 형식대로 만들어져요. 쓴 내용은 이 기기에 저장되고, 다음 주에 열면 "지난주에 계획한 놀이"가 미리 채워져 있어요.</p>
+      <div class="grid2" style="margin-top:12px">
+        <label class="f" for="cyCls">반<select id="cyCls"></select></label>
+        <label class="f" for="cyDate">이번 주 (아무 날이나 고르세요)<input type="date" id="cyDate"></label>
+      </div>
+      <p class="pnote" id="cyWeek"></p>
+      <div class="cyform">
+        <label class="f cy2" for="cyPrev">① 지난주에 계획한 순환놀이<textarea id="cyPrev" rows="2" placeholder="예: 비 온 뒤 웅덩이 놀이"></textarea></label>
+        <p class="pnote cy2" id="cyPrevNote"></p>
+        <label class="f cy2" for="cyDay">② 이번 주 어느 날 이어졌나요? (이날 놀이기록 끝에 붙여요)<select id="cyDay"><option>월요일</option><option>화요일</option><option>수요일</option><option>목요일</option><option>금요일</option></select></label>
+        <label class="f" for="cyKids">③ 이번 주 아이들 모습 한두 가지 (본 대로, 아이 말 그대로)<textarea id="cyKids" rows="3" placeholder="예: ○○가 물웅덩이에 발을 넣고 &quot;첨벙 소리 나!&quot; 하며 웃었다. 친구들도 따라 발을 굴렀다."></textarea></label>
+        <label class="f" for="cyNew">④ 이번 주 새로 보인 관심<input type="text" id="cyNew" placeholder="예: 물에 비친 얼굴 보기" autocomplete="off"></label>
+        <label class="f" for="cyNextName">⑤ 다음 주에 이어 갈 놀이 (짧게, 다음 주 ①칸으로 가요)<input type="text" id="cyNextName" placeholder="예: 물에 비친 얼굴 보기 놀이" autocomplete="off"></label>
+        <label class="f" for="cyNext">⑥ 어떻게 도와줄까요? (공간·자료·말 걸기 중 한두 가지)<textarea id="cyNext" rows="2" placeholder="예: 바깥 놀이터에 작은 거울과 물그릇을 두어 물에 비친 모습을 살펴볼 수 있게 하려고 한다."></textarea></label>
+      </div>
+      <details class="cyex"><summary>연령별 예시 보기</summary>
+        <p><b>영아반 (0~2세)</b><br>③ ○○가 비닐봉지를 흔들며 &quot;바람!&quot; 하고 웃었다. 옆 친구도 봉지를 들고 따라 뛰었다.<br>⑤ 바람 따라 흔들기 놀이<br>⑥ 가벼운 천과 리본을 바깥에 걸어 두어 바람에 흔들리는 모습을 보고 만져 볼 수 있게 하려고 한다.</p>
+        <p><b>유아반 (3~5세)</b><br>③ ○○가 &quot;우리 가게 열었어요, 사과 두 개에 백 원!&quot; 하며 블록으로 계산대를 만들었다. 친구들이 줄을 서서 물건을 샀다.<br>⑤ 가게 놀이<br>⑥ 종이와 펜, 빈 상자를 역할 영역에 두어 아이들이 가게 간판과 물건값을 직접 만들어 볼 수 있게 하려고 한다.</p>
+        <p class="pnote">어려운 말(발달시킴, 향상, 유기적 등) 대신 본 장면을 쉬운 말로 써요. 영역 내용은 괄호로 붙이지 않고 글 속에 녹여요.</p>
+      </details>
+    </div>
+    <div class="panel">
+      <h2>만들어진 글</h2>
+      <div id="cyOut"></div>
+      <div class="playadd"><button class="btn" type="button" id="cySave">다음 주를 위해 저장</button><button class="btn" type="button" id="cyClear">이번 주 칸 비우기</button></div>
+      <p class="pnote" id="cyMsg" role="status"></p>
     </div>
   </section>
 
@@ -902,7 +943,7 @@ function renderKeepState(){
   el.textContent = "저장한 점검 " + n + "건. " + (SHEET_URL ? (q ? "원장님 시트로 보낼 기록 " + q + "건이 남아 있어요. 인터넷이 되면 자동으로 보내요." : "저장할 때마다 원장님 구글 시트에도 쌓여요.") : "이 기기에 저장돼요.") + (persisted === true ? " 이 기기에서 자동으로 지워지지 않게 설정했어요." : persisted === false ? " 브라우저가 공간이 부족하면 지울 수 있으니 가끔 백업 파일을 저장해 두세요." : "");
 }
 $("backupSave").addEventListener("click", function(){
-  var data = {app: "sodam-ilji-self", savedAt: new Date().toISOString(), records: history()};
+  var data = {app: "sodam-ilji-self", savedAt: new Date().toISOString(), records: history(), cycle: load(CYKEY, {})};
   var a = document.createElement("a"), d = new Date();
   a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type: "application/json"}));
   a.download = "보육일지자가점검_백업_" + d.getFullYear() + String(d.getMonth()+1).padStart(2,"0") + String(d.getDate()).padStart(2,"0") + ".json";
@@ -915,6 +956,7 @@ $("backupIn").addEventListener("change", function(){
     var d = JSON.parse(t); if (!d || !Array.isArray(d.records)) throw new Error("x");
     var list = history(), have = {}; list.forEach(function(r){ have[r.id] = 1; });
     var added = 0; d.records.forEach(function(r){ if (r && r.id && !have[r.id]){ list.push(r); added++; } });
+    if (d.cycle && typeof d.cycle === "object"){ var cy = load(CYKEY, {}); Object.keys(d.cycle).forEach(function(c){ cy[c] = cy[c] || {}; Object.keys(d.cycle[c] || {}).forEach(function(w){ if (!cy[c][w]) cy[c][w] = d.cycle[c][w]; }); }); save(CYKEY, cy); }
     save(HKEY, list); renderMonth(); $("keepState").textContent = "백업에서 " + added + "건을 불러왔어요. (이미 있던 기록은 그대로 두었어요)";
   }).catch(function(){ $("keepState").textContent = "백업 파일을 읽지 못했어요. 이 앱에서 저장한 백업 파일인지 확인해 주세요."; });
   $("backupIn").value = "";
@@ -959,13 +1001,87 @@ function renderRef(){
   CONTENT[contentKey(n)].forEach(function(a){ box.append(h("p", {class:"area"}, h("b", {text:a[0]}), a[1])); });
 }
 
+/* ---------- 순환놀이 쓰기 ---------- */
+// 반별·주별(월요일 날짜)로 저장: {반: {"2026-10-26": {prev, day, kids, newi, next}}}
+var CYKEY = "sodam-ilji-cycle-v1", CYTAIL = "(흥미에 따른 놀이를 지난주 계획하여 순환됨)";
+function isoOf(d){ return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+function mondayOf(iso){ var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || todayIso()); var d = new Date(+m[1], +m[2]-1, +m[3]); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return d; }
+function cyKeys(){ var mon = mondayOf($("cyDate").value), prev = new Date(mon); prev.setDate(prev.getDate() - 7); return {cls: $("cyCls").value || "우리 반", wk: isoOf(mon), prevWk: isoOf(prev), mon: mon}; }
+function cyWeekNo(mon){ var thu = new Date(mon); thu.setDate(thu.getDate() + 3); return {month: thu.getMonth() + 1, no: Math.floor((thu.getDate() - 1) / 7) + 1}; }
+function cyClean(t){ return String(t || "").trim().replace(/\s+/g, " "); }
+function cyEnd(t){ t = cyClean(t); return t && !/[.!?。]$/.test(t) ? t + "." : t; }
+function cyPlay(t){ t = cyClean(t).replace(/[.。]$/, ""); return /놀이$/.test(t) ? t : t + " 놀이"; }
+var cyLoading = false;
+function cyOpen(){
+  var sel = $("cyCls"), cur = sel.value || $("cls").value || load(PKEY, {}).cls || "";
+  sel.innerHTML = ""; classList([]).forEach(function(c){ sel.append(h("option", {value: c, text: c})); });
+  if (cur) sel.value = cur;
+  if (!$("cyDate").value) $("cyDate").value = todayIso();
+  cyLoad();
+}
+function cyLoad(){
+  var k = cyKeys(), all = load(CYKEY, {}), mine = all[k.cls] || {}, w = mine[k.wk] || {}, last = mine[k.prevWk];
+  cyLoading = true;
+  $("cyPrev").value = w.prev != null ? w.prev : (last && last.nextName ? last.nextName : "");
+  $("cyDay").value = w.day || "월요일"; $("cyKids").value = w.kids || ""; $("cyNew").value = w.newi || ""; $("cyNextName").value = w.nextName || ""; $("cyNext").value = w.next || "";
+  cyLoading = false;
+  $("cyPrevNote").textContent = w.prev == null && last && last.nextName ? "지난주에 저장한 '다음 주 계획'을 가져왔어요. 실제로 이어진 놀이에 맞게 고쳐도 돼요." : (!last ? "지난주에 저장한 계획이 없어요. 지난주 주간보육과정평가의 다음 주 계획을 옮겨 적어 주세요." : "");
+  cyRender();
+}
+function cyStore(){
+  if (cyLoading) return;
+  var k = cyKeys(), all = load(CYKEY, {});
+  all[k.cls] = all[k.cls] || {};
+  all[k.cls][k.wk] = {prev: $("cyPrev").value, day: $("cyDay").value, kids: $("cyKids").value, newi: $("cyNew").value, nextName: $("cyNextName").value, next: $("cyNext").value, at: Date.now()};
+  return save(CYKEY, all);
+}
+function cyCopyBox(title, text, tip){
+  return h("div", {class:"cyout"}, h("h3", {text: title}), h("pre", {text: text}),
+    h("button", {class:"btn", type:"button", text:"복사", onclick: function(){ if (navigator.clipboard) navigator.clipboard.writeText(text).then(function(){ $("cyMsg").textContent = "복사했어요. 일지에 붙여넣고 내 말투로 다듬어 주세요."; }, function(){ $("cyMsg").textContent = "복사하지 못했어요. 글을 길게 눌러 복사해 주세요."; }); }}),
+    tip ? h("p", {class:"pnote", text: tip}) : null);
+}
+function cyRender(){
+  var k = cyKeys(), wn = cyWeekNo(k.mon), first = wn.no === 1, out = $("cyOut");
+  $("cyWeek").textContent = k.cls + " · " + wn.month + "월 " + wn.no + "주차 (" + k.wk.slice(5).replace("-", "/") + " 월요일부터) · " + (first ? "1주차는 주간보육과정평가에 다음 주 순환놀이 계획만 쓰면 돼요 (Check list 5번)." : "2~4주차는 놀이기록 끝 한 줄 + 주간 평가의 [순환놀이 계획 및 반영]을 써요 (Check list 6번).");
+  document.querySelectorAll(".cy2").forEach(function(x){ x.hidden = first; });
+  var prev = cyClean($("cyPrev").value), kids = cyEnd($("cyKids").value), newi = cyClean($("cyNew").value), nextName = cyClean($("cyNextName").value), next = cyEnd($("cyNext").value), day = $("cyDay").value;
+  out.innerHTML = "";
+  var need = [];
+  if (!first && !prev) need.push("①");
+  if (first && !newi) need.push("④");
+  if (!kids) need.push("③"); if (!nextName) need.push("⑤"); if (!next) need.push("⑥");
+  if (need.length) out.append(h("p", {class:"pnote", text: need.join(", ") + " 칸을 채우면 글이 더 잘 만들어져요. 비어 있는 곳은 ○○○로 남겨 둘게요."}));
+  var P = prev || "○○○", K = kids || "○○○.", N = next || "○○○.";
+  if (!first){
+    out.append(cyCopyBox(day + " 놀이기록 끝에 붙일 글",
+      "지난주에 계획한 " + cyPlay(P) + "를 이어 갔다. " + K + " " + CYTAIL,
+      "한 주에 한 번, 순환놀이가 이어진 날의 놀이기록 끝에만 붙이면 돼요."));
+  }
+  var lines = [first ? "[순환놀이 계획]" : "[순환놀이 계획 및 반영]"];
+  if (!first) lines.push("지난주에 계획한 " + cyPlay(P) + "를 " + day + "에 이어 갔다. " + K);
+  else lines.push("이번 주 아이들은 " + (newi || "○○○") + "에 관심을 보였다. " + K);
+  if (!first && newi) lines.push("이번 주에는 " + newi + "에 새롭게 관심을 보였다.");
+  lines.push("다음 주에는 " + cyPlay(nextName || "○○○") + "를 이어 가려고 한다. " + N.replace(/^다음 주에는\s*/, ""));
+  out.append(cyCopyBox("주간보육과정평가에 쓸 글", lines.join("\n"), "만들어진 글은 뼈대예요. 우리 반 아이들 이야기로 한두 문장 다듬어 주세요."));
+}
+["cyPrev","cyKids","cyNew","cyNextName","cyNext"].forEach(function(id){ $(id).addEventListener("input", function(){ cyStore(); cyRender(); }); });
+$("cyDay").addEventListener("change", function(){ cyStore(); cyRender(); });
+$("cyCls").addEventListener("change", cyLoad);
+$("cyDate").addEventListener("change", cyLoad);
+$("cySave").addEventListener("click", function(){
+  if (!cyClean($("cyNextName").value)){ $("cyMsg").textContent = "⑤ 다음 주에 이어 갈 놀이를 써 주세요. 다음 주에 ①칸으로 가져와요."; return; }
+  $("cyMsg").textContent = cyStore() ? "저장했어요. 다음 주에 이 탭을 열면 ①칸에 이번 계획이 들어가 있어요." : "저장하지 못했어요. 비공개(시크릿) 모드인지 확인해 주세요.";
+});
+$("cyClear").addEventListener("click", function(){ ["cyKids","cyNew","cyNextName","cyNext"].forEach(function(id){ $(id).value = ""; }); cyStore(); cyRender(); $("cyMsg").textContent = "③~⑥ 칸을 비웠어요."; });
+
 /* ---------- 탭 ---------- */
 function showTab(name){
-  ["check","month","ref"].forEach(function(t){ var on = t === name; $("t-" + t).setAttribute("aria-selected", String(on)); $("v-" + t).hidden = !on; });
+  ["check","cycle","month","ref"].forEach(function(t){ var on = t === name; $("t-" + t).setAttribute("aria-selected", String(on)); $("v-" + t).hidden = !on; });
   $("bar").hidden = name !== "check";
   if (name === "month") renderMonth();
+  if (name === "cycle") cyOpen();
 }
-["check","month","ref"].forEach(function(t){ $("t-" + t).addEventListener("click", function(){ showTab(t); }); });
+["check","cycle","month","ref"].forEach(function(t){ $("t-" + t).addEventListener("click", function(){ showTab(t); }); });
 
 /* ---------- 시작 ---------- */
 var draft = load(DKEY, null), prof = load(PKEY, {});
