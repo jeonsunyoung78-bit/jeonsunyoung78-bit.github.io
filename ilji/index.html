@@ -1053,18 +1053,29 @@ function cyRender(){
   if (first && !newi) need.push("④");
   if (!kids) need.push("③"); if (!nextName) need.push("⑤"); if (!next) need.push("⑥");
   if (need.length) out.append(h("p", {class:"pnote", text: need.join(", ") + " 칸을 채우면 글이 더 잘 만들어져요. 비어 있는 곳은 ○○○로 남겨 둘게요."}));
-  var P = prev || "○○○", K = kids || "○○○.", N = next || "○○○.";
+  var P = cyPlay(prev || "○○○"), K = kids || "○○○.", X = cyPlay(nextName || "○○○"), N = (next || "○○○.").replace(/^다음 주에는\s*/, "");
+  // 영아반(만 0~2세)과 유아반(만 3~5세)은 이어 주는 문장을 다르게 쓴다
+  var c = CLASSES.filter(function(x){ return x.name === k.cls; })[0], baby = c ? c.age <= 2 : false;
   if (!first){
     out.append(cyCopyBox(day + " 놀이기록 끝에 붙일 글",
-      "지난주에 계획한 " + cyPlay(P) + "를 이어 갔다. " + K + " " + CYTAIL,
+      "지난주에 계획한 " + P + "를 오늘 다시 열어 주었다. " + K + " " + CYTAIL,
       "한 주에 한 번, 순환놀이가 이어진 날의 놀이기록 끝에만 붙이면 돼요."));
   }
+  var teach = baby
+    ? "교사는 곁에서 아이의 표정과 몸짓에 반응해 주고, 아이가 하고 싶은 만큼 충분히 만지고 움직여 볼 수 있도록 기다려 주려고 한다."
+    : "교사는 아이들이 나누는 말과 생각에 귀 기울이고, 놀이 방법과 규칙을 아이들이 스스로 정해 가며 놀이를 이끌어 갈 수 있도록 함께하려고 한다.";
   var lines = [first ? "[순환놀이 계획]" : "[순환놀이 계획 및 반영]"];
-  if (!first) lines.push("지난주에 계획한 " + cyPlay(P) + "를 " + day + "에 이어 갔다. " + K);
-  else lines.push("이번 주 아이들은 " + (newi || "○○○") + "에 관심을 보였다. " + K);
-  if (!first && newi) lines.push("이번 주에는 " + newi + "에 새롭게 관심을 보였다.");
-  lines.push("다음 주에는 " + cyPlay(nextName || "○○○") + "를 이어 가려고 한다. " + N.replace(/^다음 주에는\s*/, ""));
-  out.append(cyCopyBox("주간보육과정평가에 쓸 글", lines.join("\n"), "만들어진 글은 뼈대예요. 우리 반 아이들 이야기로 한두 문장 다듬어 주세요."));
+  if (!first){
+    lines.push("지난주 아이들이 보인 관심을 이어 가기 위해 계획한 " + P + "를 이번 주 " + day + "에 다시 열어 주었다. " + K + " " +
+      (baby ? "아이들은 지난주에 해 본 놀이를 기억하고 먼저 다가와 몸으로 다시 해 보며 즐거워하였다." : "아이들은 지난주에 해 본 경험을 떠올리며 친구와 생각을 나누고, 놀이를 스스로 이어 가며 넓혀 갔다.") +
+      (newi ? " 놀이하는 동안 " + newi + "에도 새롭게 관심을 보였다." : ""));
+    lines.push("다음 주에는 " + (newi ? "이번 주에 새로 보인 관심을 살려 " : "이번 주 놀이의 흐름을 이어 ") + X + "를 해 보려고 한다. " + N + " " + teach);
+  } else {
+    lines.push("이번 주 아이들은 " + (newi || "○○○") + "에 관심을 보였다. " + K + " " +
+      (baby ? "아이들이 이 즐거움을 더 오래 느끼며 탐색할 수 있도록" : "아이들의 이런 관심이 더 깊은 놀이로 이어질 수 있도록") +
+      " 다음 주 순환놀이로 " + X + "를 계획하였다. " + N + " " + teach);
+  }
+  out.append(cyCopyBox("주간보육과정평가에 쓸 글", lines.join("\n\n"), "칸에 쓴 내용을 이어 완성된 글로 만들었어요. 우리 반 아이들 모습과 다른 문장이 있으면 그 부분만 고쳐 주세요."));
 }
 ["cyPrev","cyKids","cyNew","cyNextName","cyNext"].forEach(function(id){ $(id).addEventListener("input", function(){ cyStore(); cyRender(); }); });
 $("cyDay").addEventListener("change", function(){ cyStore(); cyRender(); });
