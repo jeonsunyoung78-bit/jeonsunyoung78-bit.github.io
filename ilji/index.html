@@ -431,11 +431,13 @@ function esc(t){ return String(t == null ? "" : t).replace(/[&<>"]/g, function(c
 function load(k, d){ try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
 function save(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ return false; } }
 function todayIso(){ var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
-function weekOfMonth(iso){
-  var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ""); if (!m) return 0;
-  var first = new Date(+m[1], +m[2]-1, 1), offset = (first.getDay() + 6) % 7;
-  return Math.floor((+m[3] + offset - 1) / 7) + 1;
+// 소담 주차: 월~금 한 주는 그 주 목요일이 속한 달의 주로 센다 (9/28~10/2 → 10월 1주, 11/2~6 → 11월 1주)
+function weekThu(iso){
+  var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ""); if (!m) return null;
+  var d = new Date(+m[1], +m[2]-1, +m[3]); d.setDate(d.getDate() - (d.getDay() + 6) % 7 + 3); return d;
 }
+function weekOfMonth(iso){ var t = weekThu(iso); return t ? Math.floor((t.getDate() - 1) / 7) + 1 : 0; }
+function weekMonth(iso){ var t = weekThu(iso); return t ? t.getFullYear() + "-" + String(t.getMonth()+1).padStart(2,"0") : ""; }
 function ageLabel(n){ return "만 " + n + "세반"; }
 // 고시문 "영역 - 내용범주: 내용 / 내용." 글에서 영역별 내용 문장 꺼내기
 function contentSentences(text){
@@ -831,7 +833,7 @@ function reportText(){
   if (state.play && state.play.length){ var pr = playCalc(); L.push("", "■ 놀이시간: 실내 " + hm(pr.indoor) + " + 바깥 " + hm(pr.outdoor + pr.sub) + (pr.sub ? "(대체 " + hm(pr.sub) + ")" : "") + " = " + hm(pr.total) + " (기준 " + hm(pr.std.total) + " · " + (pr.outOk && pr.totOk ? "충족" : "부족") + ")"); }
   L.push("", "■ 일지 내용 점검");
   visibleItems().forEach(function(it){ L.push("- " + it.name + ": " + (state.items[it.name] || "미점검")); });
-  L.push("", "■ 보육일지기록 Check list (" + weekOfMonth(f.date) + "주차)");
+  L.push("", "■ 보육일지기록 Check list (" + (+weekMonth(f.date).slice(5)) + "월 " + weekOfMonth(f.date) + "주차)");
   CHECK_ROWS.forEach(function(r){ var v = state.ck[r.id]; if (v) L.push("- " + r.id + " " + r.group + " / " + r.label.slice(0, 30) + ": " + CK_MARK[v] + " " + v); });
   if (state.pages.length) L.push("", "■ 일지 사진 " + state.pages.length + "쪽 첨부");
   if (f.memo.trim()) L.push("", "■ 메모", f.memo.trim());
@@ -854,7 +856,7 @@ function doSave(){
 }
 function renderMonth(){
   var list = history(), selC = $("mCls"), selM = $("mMon"), pc = selC.value, pm = selM.value;
-  var classes = classList(list.map(function(r){ return r.info.cls; })), months = monthList(list.map(function(r){ return (r.info.date || "").slice(0,7); }));
+  var classes = classList(list.map(function(r){ return r.info.cls; })), months = monthList(list.map(function(r){ return weekMonth(r.info.date); }));
   selC.textContent = ""; selM.textContent = "";
   classes.forEach(function(c){ selC.append(h("option", {value:c, text:c})); });
   months.forEach(function(m){ selM.append(h("option", {value:m, text: m.slice(0,4) + "년 " + (+m.slice(5,7)) + "월"})); });
@@ -878,7 +880,7 @@ function renderMonth(){
 }
 function monthTable(cls, mon){
   var weeks = {1:[],2:[],3:[],4:[],5:[],6:[]};
-  history().forEach(function(r){ if (r.info.cls === cls && (r.info.date || "").slice(0,7) === mon){ var w = weekOfMonth(r.info.date); if (weeks[w]) weeks[w].push(r); } });
+  history().forEach(function(r){ if (r.info.cls === cls && weekMonth(r.info.date) === mon){ var w = weekOfMonth(r.info.date); if (weeks[w]) weeks[w].push(r); } });
   var cols = [1,2,3,4].concat(weeks[5].length ? [5] : []).concat(weeks[6].length ? [6] : []);
   return {weeks: weeks, cols: cols, best: function(id, w){ var b = null; weeks[w].forEach(function(r){ var v = r.ck[id]; if (v && (b === null || CK_RANK[v] > CK_RANK[b])) b = v; }); return b; }};
 }
@@ -1007,7 +1009,7 @@ var CYKEY = "sodam-ilji-cycle-v1", CYTAIL = "(흥미에 따른 놀이를 지난�
 function isoOf(d){ return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
 function mondayOf(iso){ var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || todayIso()); var d = new Date(+m[1], +m[2]-1, +m[3]); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return d; }
 function cyKeys(){ var mon = mondayOf($("cyDate").value), prev = new Date(mon); prev.setDate(prev.getDate() - 7); return {cls: $("cyCls").value || "우리 반", wk: isoOf(mon), prevWk: isoOf(prev), mon: mon}; }
-function cyWeekNo(mon){ var thu = new Date(mon); thu.setDate(thu.getDate() + 3); return {month: thu.getMonth() + 1, no: Math.floor((thu.getDate() - 1) / 7) + 1}; }
+function cyWeekNo(mon){ var iso = isoOf(mon); return {month: +weekMonth(iso).slice(5), no: weekOfMonth(iso)}; }
 function cyClean(t){ return String(t || "").trim().replace(/\s+/g, " "); }
 function cyEnd(t){ t = cyClean(t); return t && !/[.!?。]$/.test(t) ? t + "." : t; }
 function cyPlay(t){ t = cyClean(t).replace(/[.。]$/, ""); return /놀이$/.test(t) ? t : t + " 놀이"; }
